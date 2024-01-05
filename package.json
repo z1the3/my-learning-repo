@@ -1,0 +1,13 @@
+{
+  "name": "monorepo-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev-zdoc": "cd ./projects/z1the3-doc && pnpm run start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
