@@ -3,11 +3,25 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev-zdoc": "cd ./projects/z1the3-doc && pnpm run start"
+    "dev-zdoc": "pnpm -F z-1-the-3-doc docusaurus start",
+    "commit": "git-cz"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "commitizen": "^4.3.0",
+    "typescript": "5.2.2"
+  },
+  "dependencies": {
+    "cz-conventional-changelog": "^3.3.0"
+  }
 }
