@@ -58,7 +58,7 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'My Site',
+      title: 'z1the3-doc Site',
       logo: {
         alt: 'My Site Logo',
         src: 'img/logo.svg',
@@ -66,9 +66,15 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'techSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: '技术实践',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'cogSidebar',
+          position: 'left',
+          label: '认知领域',
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
