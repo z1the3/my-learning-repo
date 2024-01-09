@@ -12,4 +12,39 @@ tags: [Commitzen, 前端工程化]
 `commitizen` 可以用**轮询交互**的方式帮我们生成符合规范的`commit message`
 
 ## Angular 规范
-<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/84210c2678dd4c6eb2004625c3458408~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp"/>
+
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/2433117761.png" width="500"/>
+
+
+## 使用
+
+### 全局安装
+
+1. 全局下载两个包
+`npm install -g commitizen cz-conventional-changelog`
+
+2. 创建 ~/.czrc 文件，写入如下内容
+`{ "path": "cz-conventional-changelog" }`
+
+3. 这时就可以全局使用 git cz 命令来**代替** git commit 命令了
+
+### 项目内安装
+
+1. 只要下commitizen, dev依赖
+`npm install --save-dev commitizen`
+
+2. 配置，打开项目的 package.json 文件，配置如下
+```
+ {
+  "scripts": {
+    "commit": "git-cz",
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  }
+}
+```
+
+3. 使用 npm run commit 代替 git commit
