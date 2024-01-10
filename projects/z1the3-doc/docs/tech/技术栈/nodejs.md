@@ -19,3 +19,25 @@
 在大多数平台上，只要目录中文件名出现或消失，就会触发 'rename'。
 
 新增和删除文件触发的是rename事件
+
+
+## util
+
+### 字符串占位（格式化）
+
+`util.format(format[, ...args])`
+
+```js
+util.format('%s:%s', 'foo');
+// Returns: 'foo:%s'
+
+util.formatWithOptions({ colors: true }, 'See object %O', { foo: 42 });
+// Returns 'See object { foo: 42 }', where `42` is colored as a number
+// when printed to a terminal.
+```
+
+option配置对象https://nodejs.org/docs/latest/api/util.html#utilinspectobject-options
+
+返回：格式化字符串
+
+https://nodejs.org/docs/latest/api/util.html#utilformatformat-args
