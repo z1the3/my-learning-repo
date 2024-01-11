@@ -1,8 +1,8 @@
 # ts相关
 
-## Error [ERR_REQUIRE_ESM]: require() of ES Module
+## Error ERR_REQUIRE_ESM: require() of ES Module
 
-Error [ERR_REQUIRE_ESM]: require() of ES Module /Users/teqi/Desktop/Projects/myCDNassets/node_modules/.pnpm/chalk@5.3.0/node_modules/chalk/source/index.js from /Users/teqi/Desktop/Projects/myCDNassets/main.js not supported.
+Error ERR_REQUIRE_ESM: require() of ES Module /Users/teqi/Desktop/Projects/myCDNassets/node_modules/.pnpm/chalk@5.3.0/node_modules/chalk/source/index.js from /Users/teqi/Desktop/Projects/myCDNassets/main.js not supported.
 
 chalk最新版采用ESM规范，但是main.ts被错误地编译成CJS规范的main.js
 
@@ -57,8 +57,11 @@ https://github.com/microsoft/TypeScript/pull/51669
 
 https://nodejs.org/docs/latest-v16.x/api/esm.html#interoperability-with-commonjs
 
-import statements
-An import statement can reference an ES module or a CommonJS module. import statements are permitted only in ES modules, but dynamic import() expressions are supported in CommonJS for loading ES modules.
+### import statements
+An import statement can reference an ES module or a CommonJS module.
+ import statements are permitted only in ES modules,
+  but dynamic `import()` expressions are supported in CommonJS for loading ES modules.
+
 
 可以在cjs中动态引入esm模块，使用import()
 
@@ -70,6 +73,8 @@ require
 The CommonJS module require always treats the files it references as CommonJS.
 
 Using require to load an ES module is not supported because ES modules have asynchronous execution. Instead, use import() to load an ES module from a CommonJS module.
+
+
 
 ## 如何使用 tsc 打包出 esm 和 cjs 两种包？
 在不考虑上述问题(依赖库只支持es)的情况下，如何使用 tsc 打出esm 和 cjs 两种类型的包。
