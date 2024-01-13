@@ -159,5 +159,32 @@ MarkDown中插入图片的语法是![描述](图片地址 "图片替代文本")�
 ~~删除线~~
 
 
+# Markdown 扩展
+
+常用的 CommonMarkdown 非常简单
+
+https://commonmark.org/help/
+
+
+
+什么是 GitHub 风格的 Markdown？
+GitHub Flavored Markdown（通常缩写为 GFM）是 Markdown 的方言，目前 GitHub.com 和 GitHub Enterprise 上的用户内容支持该方言。
+
+该正式规范基于 CommonMark 规范，定义了该方言的语法和语义。
+
+GFM 是 CommonMark 的严格超集。因此，GitHub 用户内容中支持且原始 CommonMark 规范中未指定的所有功能都称为扩展，并如此突出显示。
+
+虽然 GFM 支持广泛的输入，但值得注意的是，GitHub.com 和 GitHub Enterprise 在 GFM 转换为 HTML 后执行额外的后处理和清理，以确保网站的安全性和一致性。
+
+
+
+常见的 Markdown 扩展，例如 MDX、math 和 frontmatter。
+
+
+
+https://github.github.com/gfm/#what-is-github-flavored-markdown-
+
 ## 引用
 https://zhuanlan.zhihu.com/p/24575242
+
+
