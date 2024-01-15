@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev-zdoc": "pnpm -F z-1-the-3-doc docusaurus start",
+    "dev:doc": "pnpm -C projects/z1the3-doc start",
     "commit": "git-cz"
   },
   "config": {
