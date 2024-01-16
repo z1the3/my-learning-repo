@@ -32,3 +32,8 @@ packages:
   # all packages in direct subdirs of packages/
   - 'packages/*'
 ```
+
+
+### 根目录
+
+根目录适合安装开发相关的依赖和小而通用的类库

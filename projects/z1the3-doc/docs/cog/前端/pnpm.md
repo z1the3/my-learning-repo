@@ -147,4 +147,11 @@ Pnpm 当前存在一定的兼容问题，在少数场景不可用。主要可能
 [https://juejin.cn/post/6844903601563762702](https://juejin.cn/post/6844903601563762702)
 [https://zhuanlan.zhihu.com/p/107343333](https://zhuanlan.zhihu.com/p/107343333)
 [https://pnpm.io/zh/blog/2020/05/27/flat-node-modules-is-not-the-only-way](https://pnpm.io/zh/blog/2020/05/27/flat-node-modules-is-not-the-only-way)
-### 
+
+
+
+### peerDependencies
+
+目的是**提示**宿主环境去安装满足peerDependencies所指定的依赖
+在依赖包时，永远都是引用宿主环境统一安装的依赖包
+最终解决插件依赖包不一致问题

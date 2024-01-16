@@ -38,7 +38,32 @@ packages:
 
 # 5.安装全局依赖包
 
-安装到根目录
+全局依赖包安装到根目录
 
 常用的编译依赖包：rollup, execa, chalk, enquirer, fs-extra, minimist,
 npm-run-all, typescript
+
+-w 表示在workspace的根目录下安装而不是当前目录
+-D 表示devDependencies
+
+-Dw
+```
+pnpm add typescript -Dw
+```
+
+删除依赖包可用
+```
+pnpm rm/remove
+pnpm un/uninstall
+```
+
+# 安装子包依赖
+
+
+# 启动子项目
+
+```
+pnpm -C <workspace-name> <command>
+
+pnpm -C projects/z1the3-doc start
+```

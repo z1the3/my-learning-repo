@@ -12,3 +12,7 @@ https://vueuse.org/
 ## immerjs
 
 https://immerjs.github.io/immer/
+
+
+## oxlint
+https://github.com/oxc-project/oxc
