@@ -11,13 +11,14 @@
 以及一些有用的资源
 
 
-## /learning-demo
+## /learning-template
 一些demo，包括了模版和基建
 
-### /jest-learning
+### /jest-template
+一个tsc编译后进行单元测试的学习用模版 
 
-
-todo
-* 配置eslint
+# todo
+* ~~全局配置jest~~
+* 全局配置eslint
 * 部署文档站
 * 文档更新同步到readme中
