@@ -11,3 +11,8 @@ https://github.com/vueuse/
 ## 中文技术文档写作规范
 
 https://github.com/ruanyf/document-style-guide?tab=readme-ov-file
+
+## ignore
+https://github.com/github/gitignore/blob/main/Node.gitignore
+
+https://github.com/github/gitignore
