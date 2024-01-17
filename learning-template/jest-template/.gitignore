@@ -1,4 +1,7 @@
-# Dependencies
+/dist
+
+
+## Dependencies
 /node_modules
 
 # Production
