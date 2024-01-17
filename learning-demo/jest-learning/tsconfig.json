@@ -1,0 +1,14 @@
+{
+    "include": ["main.mts","dist"],
+    "compilerOptions": {
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "removeComments": true,
+        "outDir": "./dist"
+    },
+    "files": [
+        "main.mts",
+        "__tests__/main.spec.mts"
+      ],
+    
+}

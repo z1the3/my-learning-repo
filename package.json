@@ -5,7 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:jest-learning": "pnpm -C learning-demo/jest-learning test",
     "dev:doc": "pnpm -C projects/z1the3-doc start",
     "commit": "git-cz"
   },
@@ -18,10 +18,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^29.5.11",
     "commitizen": "^4.3.0",
-    "typescript": "5.2.2",
-    "cz-conventional-changelog": "^3.3.0"
-  },
-  "dependencies": {
+    "cz-conventional-changelog": "^3.3.0",
+    "jest": "^29.7.0",
+    "ts-node": "^10.9.2",
+    "typescript": "5.2.2"
   }
 }
