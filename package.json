@@ -7,7 +7,8 @@
   "scripts": {
     "test:jest-learning": "pnpm -C learning-demo/jest-learning test",
     "dev:doc": "pnpm -C projects/z1the3-doc start",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "build:doc": "pnpm -C projects/z1the3-doc build"
   },
   "config": {
     "commitizen": {
