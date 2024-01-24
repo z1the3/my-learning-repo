@@ -2,12 +2,12 @@
 
 ## 有用链接
 
-* NodeJs中文文档 https://nodejs.cn/api/
-
+* NodeJs中文文档 <https://nodejs.cn/api/>
 
 ## fs模块
 
 ### 监听文件变动
+
 `fs.watch(filename[, options][, listener])`
 
 监视 filename 的变化，其中 filename 是文件或目录。
@@ -19,7 +19,6 @@
 在大多数平台上，只要目录中文件名出现或消失，就会触发 'rename'。
 
 新增和删除文件触发的是rename事件
-
 
 ## util
 
@@ -36,8 +35,8 @@ util.formatWithOptions({ colors: true }, 'See object %O', { foo: 42 });
 // when printed to a terminal.
 ```
 
-option配置对象https://nodejs.org/docs/latest/api/util.html#utilinspectobject-options
+option配置对象<https://nodejs.org/docs/latest/api/util.html#utilinspectobject-options>
 
 返回：格式化字符串
 
-https://nodejs.org/docs/latest/api/util.html#utilformatformat-args
+<https://nodejs.org/docs/latest/api/util.html#utilformatformat-args>

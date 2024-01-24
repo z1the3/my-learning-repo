@@ -13,6 +13,7 @@ tags: [npm]
 `yarn global list --depth=0`
 
 ## npx
+
 如果有些包我们**只会使用一次，或者只想尝试一下**，不想安装到全局，也不想作为当前项目的依赖
 可以使用 npx 的方式来执行
 
@@ -30,27 +31,23 @@ $ npx mocha
 ```
 
 * 也可直接执行那些不在当前项目，也没在全局安装过的 npm 工具包，比如：create-react-app
+
 ```
-$ npx create-react-app my-app
+npx create-react-app my-app
 ```
 
 执行以上这条命令 npx 会按以下顺序工作：
+
 1. 先查看当前项目有没 create-react-app
 2. 如果当前项目找不到，会去全局查找 create-react-app
 3. 如果全局还找不到，会帮我们**临时从 npm 包仓库安装 create-react-app，不会污染到当前项目，也不会装到全局**
-
 
 ## npm install
 
 --save 指安装为依赖（生产环境）；--save-dev指安装为dev依赖（开发环境）；--save-exact是使用精确版本安装；--force是指强制安装
 
-
-
-
-
-
 ## 引用
 
 原文作者：z__r
-转自链接：https://learnku.com/articles/16798/quick-view-of-npm-and-yarn-global-installed-packages
+转自链接：<https://learnku.com/articles/16798/quick-view-of-npm-and-yarn-global-installed-packages>
 版权声明：著作权归作者所有。商业转载请联系作者获得授权，非商业转载请保留以上作者信息和原文链接。

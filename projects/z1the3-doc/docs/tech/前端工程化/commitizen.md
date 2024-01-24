@@ -15,7 +15,6 @@ tags: [Commitzen, 前端工程化]
 
 <img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/2433117761.png" width="500"/>
 
-
 ## 使用
 
 ### 全局安装
@@ -34,6 +33,7 @@ tags: [Commitzen, 前端工程化]
 `npm install --save-dev commitizen`
 
 2. 配置，打开项目的 package.json 文件，配置如下
+
 ```
  {
   "scripts": {

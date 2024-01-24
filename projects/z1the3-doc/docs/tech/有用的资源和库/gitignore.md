@@ -2,7 +2,6 @@
 
 `git check-ignore`
 
-
 ## 语法
 
 ```
@@ -18,6 +17,7 @@ bin/gen/
 *ignore*/
 
 ```
+
 ## .gitignore 样板
 
 ```
@@ -55,8 +55,8 @@ yarn-debug.log*
 yarn-error.log*
 ```
 
-
 ## Node.ignore
+
 ```
 # Logs
 logs

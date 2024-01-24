@@ -19,6 +19,7 @@ tags: [Markdown]
 ---
 
 ```
+
 ## 3.列表
 
 ```
@@ -28,6 +29,7 @@ tags: [Markdown]
 1. 有序1
 1. 有序2
 ```
+
 * 无序1
 * 无序2
 
@@ -39,10 +41,11 @@ tags: [Markdown]
 ```
 [描述](https://baidu.com)
 ```
+
 [描述.com](https://baidu.com)
 
-
 ## 5.引用
+
 ```
 > 你好
 > 这是一个引用
@@ -58,7 +61,6 @@ tags: [Markdown]
 > 你好
 >
 > 这样才可以换行
-
 
 ## 6.代码
 
@@ -68,8 +70,8 @@ tags: [Markdown]
 
 三个反引号加 `title="docusaurus.config.js"`
 
-
 ## 7.粗体和斜体
+
 在MarkDown语法中，使用不同数量的*内容*号即可设定文字是粗体、斜体、或者两者都是。
 
 *1个星号代表斜体*
@@ -130,7 +132,6 @@ MarkDown中插入图片的语法是![描述](图片地址 "图片替代文本")�
 |left|center|left|right|
 |aaaa<br/>aaa多行|bbb|
 
-
 ## 10.caution
 
 ```
@@ -142,6 +143,7 @@ MarkDown中插入图片的语法是![描述](图片地址 "图片替代文本")�
 笔记
 :::
 ```
+
 :::caution
 小心
 :::
@@ -158,14 +160,11 @@ MarkDown中插入图片的语法是![描述](图片地址 "图片替代文本")�
 
 ~~删除线~~
 
-
 # Markdown 扩展
 
 常用的 CommonMarkdown 非常简单
 
-https://commonmark.org/help/
-
-
+<https://commonmark.org/help/>
 
 什么是 GitHub 风格的 Markdown？
 GitHub Flavored Markdown（通常缩写为 GFM）是 Markdown 的方言，目前 GitHub.com 和 GitHub Enterprise 上的用户内容支持该方言。
@@ -176,15 +175,9 @@ GFM 是 CommonMark 的严格超集。因此，GitHub 用户内容中支持且原
 
 虽然 GFM 支持广泛的输入，但值得注意的是，GitHub.com 和 GitHub Enterprise 在 GFM 转换为 HTML 后执行额外的后处理和清理，以确保网站的安全性和一致性。
 
-
-
 常见的 Markdown 扩展，例如 MDX、math 和 frontmatter。
 
-
-
-https://github.github.com/gfm/#what-is-github-flavored-markdown-
+<https://github.github.com/gfm/#what-is-github-flavored-markdown->
 
 ## 引用
-https://zhuanlan.zhihu.com/p/24575242
-
-
+<https://zhuanlan.zhihu.com/p/24575242>

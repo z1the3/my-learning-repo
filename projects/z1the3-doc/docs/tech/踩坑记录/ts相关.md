@@ -23,16 +23,16 @@ node16/nodenext: TS 4.7 提出，为了更好的兼容 es module 和 commonjs �
 
 **当我们使用node16或者nodenext时，文件引入必须强制写后缀**
 
-https://nodejs.org/docs/latest-v16.x/api/esm.html#enabling
+<https://nodejs.org/docs/latest-v16.x/api/esm.html#enabling>
 
 其他可选配置
 
 * node10(alias node): commonjs
 
-* bundler：ts5新特性，结合第三方构建工具使用。 
-https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/#moduleresolution-bundler
+* bundler：ts5新特性，结合第三方构建工具使用。
+<https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/#moduleresolution-bundler>
 
-https://github.com/microsoft/TypeScript/pull/51669
+<https://github.com/microsoft/TypeScript/pull/51669>
 
 ```json title="package.json"
 
@@ -52,16 +52,15 @@ https://github.com/microsoft/TypeScript/pull/51669
 
 实在不行也可以考虑将包降级处理
 
-
 ## 在 esm 中使用commonjs
 
-https://nodejs.org/docs/latest-v16.x/api/esm.html#interoperability-with-commonjs
+<https://nodejs.org/docs/latest-v16.x/api/esm.html#interoperability-with-commonjs>
 
 ### import statements
+
 An import statement can reference an ES module or a CommonJS module.
  import statements are permitted only in ES modules,
   but dynamic `import()` expressions are supported in CommonJS for loading ES modules.
-
 
 可以在cjs中动态引入esm模块，使用import()
 
@@ -74,9 +73,8 @@ The CommonJS module require always treats the files it references as CommonJS.
 
 Using require to load an ES module is not supported because ES modules have asynchronous execution. Instead, use import() to load an ES module from a CommonJS module.
 
-
-
 ## 如何使用 tsc 打包出 esm 和 cjs 两种包？
+
 在不考虑上述问题(依赖库只支持es)的情况下，如何使用 tsc 打出esm 和 cjs 两种类型的包。
 
 step 1
@@ -94,17 +92,12 @@ how to fix it ？
 
 打包出来的结果确实是不含mjs后缀的，但是因为package.json中指定了"type": "module"导致在解析的时候，默认认为 .js 后缀是使用 es module 的方式运行。你同样需要将 .js 修改成 .cjs 才能正常运行。
 
-
-
 打包成两种格式就是为了让自己的库有更好的兼容性，使用者可以根据情况来选择使用 esm 还是 cjs。那么如何配置发包配置呢？
 在 package.json 文件中，"exports"、"module" 和 "main" 字段有着不同的作用。
 
 "exports" 字段是在 Node.js 版本 12 及以上引入的，它用于指定模块的导出方式。导入模块时应该使用 cjs 还是 esm 取决于使用时的导入语法。
 "module" 字段是在 Node.js 版本 8 及以上引入的，它用于指定 ES 模块的入口文件路径。在使用支持 ES 模块的环境中，例如现代浏览器或 Node.js 版本 13 及以上，这个字段可以用来指定默认的模块入口。
 "main" 字段是 Node.js 中常用的字段，它用于指定 CommonJS 模块的入口文件路径。在使用 CommonJS 模块的环境中，例如 Node.js 版本 12 及以下，这个字段可以用来指定默认的模块入口。
-
-
-
 
 ```json title="package.json"
 {
@@ -128,8 +121,7 @@ how to fix it ？
 
 ```
 
-
 作者：七钥
-链接：https://juejin.cn/post/7282758586108526592
+链接：<https://juejin.cn/post/7282758586108526592>
 来源：稀土掘金
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。

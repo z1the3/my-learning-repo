@@ -26,7 +26,6 @@
 
 仍然不会因为更新上游依赖而消失，相当于永久留档
 
-
 ## 优点
 
 * 您不必创建（和维护）自己的 npm 存储库，但可以获得与 npm 包相同的好处。
@@ -43,4 +42,4 @@
 
 非npm第三方包该怎么处理？
 
-https://stackoverflow.com/questions/11207638/advantages-of-bundleddependencies-over-normal-dependencies-in-npm
+<https://stackoverflow.com/questions/11207638/advantages-of-bundleddependencies-over-normal-dependencies-in-npm>
