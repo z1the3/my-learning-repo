@@ -96,6 +96,29 @@ hard links指通过索引节点来进行连接。在 Linux 的文件系统中，
 
 2. 依赖分身问题：相同的依赖只会在全局 store 中安装一次。项目中的都是源文件的副本，几乎不占用任何空间，没有了依赖分身。节省磁盘空间，一个包全局只保存一份，剩下的都是软硬连接
 
+
+软链接本身也几乎不会占用多少额外的存储空间，硬链接模式更是零额外内存空间占用，所以对于相同的包，pnpm 额外占用的存储空间可以约等于零。
+
+
+## 硬链接
+理解 pnpm 软硬链接的设计，首先要复习一下操作系统文件子系统对软硬链接的实现。
+
+硬链接通过 ln originFilePath newFilePath 创建，如 ln ./my.txt ./hard.txt，这样创建出来的 hard.txt 文件与 my.txt 都指向同一个文件存储地址，因此无论修改哪个文件，都因为直接修改了原始地址的内容，导致这两个文件内容同时变化。进一步说，通过硬链接创建的 N 个文件都是等效的，通过 ls -li ./ 查看文件属性时，可以看到通过硬链接创建的两个文件拥有相同的 inode 索引：
+
+```
+ls -li ./
+84976912 -rw-r--r-- 2 author staff 489 Jun 9 15:41 my.txt
+84976912 -rw-r--r-- 2 author staff 489 Jun 9 15:41 hard.txt
+```
+
+其中第三个参数 2 表示该文件指向的存储地址有两个硬链接引用。硬链接如果要指向目录就麻烦多了，第一个问题是这样会导致文件的父目录有歧义，同时还要将所有子文件都创建硬链接，实现复杂度较高，因此 Linux 并没有提供这种能力
+
+
+## 软链接
+软链接通过 ln -s originFilePath newFilePath 创建，可以认为是指向文件地址指针的指针，即它本身拥有一个**新的 inode 索引**，但**文件内容**仅包含指向的文件路径
+
+源文件被删除时，软链接也会失效，但硬链接不会，**软链接可以对文件夹生效**。
+
 #### 不足之处
 
 1. 全局hardlink也会导致一些问题，比如改了link的代码，所有项目都受影响，比如对postinstall不友好，例如在postinstall里修改了代码，可能导致其他项目出问题，pnpm 默认就是 copy on write [https://pnpm.io/npmrc#package-import-method](https://pnpm.io/npmrc#package-import-method) ，但是 copy on write 这个配置对mac没生效——[https://github.com/pnpm/pnpm/issues/2761](https://github.com/pnpm/pnpm/issues/2761)，其实是node没支持导致的
@@ -105,6 +128,15 @@ hard links指通过索引节点来进行连接。在 Linux 的文件系统中，
 #### 解决Phantom dependencies
 Phantom dependencies 被称之为幽灵依赖，解释起来很简单，即某个包没有被安装(package.json中并没有，但是用户却能够引用到这个包)
 这个现象的出现原理很好理解，在npm推出v3以后，一个库只要被其他库依赖，哪怕没有显式声明在package.json中，也可以会被安装在node_modules的一级目录里，我们可以“自由”的在项目中使用这些幽灵依赖
+
+项目代码引用的某个包没有直接定义在 package.json 中，而是作为子依赖被某个包顺带安装了。代码里依赖幻影依赖的最大隐患是，对包的语义化控制不能穿透到其子包，也就是包 a@patch 的改动可能意味着其子依赖包 b@major 级别的 Break Change。
+
+
+正因为这三层寻址的设计，使得第一层可以仅包含 package.json 定义的包，使 node_modules **不可能寻址**到未定义在 package.json 中的包，自然就解决了幻影依赖的问题。
+
+但还有一种**更难以解决**的幻影依赖问题，即用户在 Monorepo 项目根目录安装了某个包，这个包可能被某个子 Package 内的代码寻址到，要彻底解决这个问题，需要配合使用 Rush，在工程上通过依赖问题检测来彻底解决。pnpm workspace并不能解决这个问题，在子目录引用到了根目录的依赖，
+不过这种引用会更容易定位。
+
 试想这种case：
 ```package.json -> a(b 被 a 依赖)
 node_modules
@@ -140,6 +172,8 @@ export default async function prune (storeDir: string) {
 #### Pnpm 缺点
 Pnpm 当前存在一定的兼容问题，在少数场景不可用。主要可能有以下两个原因。1、软链接本身在不同环境下存在一定兼容问题。2、部分 npm 包在进行软链接的之后会产生意料之外的bug。
 
+另一种形式的幽灵依赖
+
 
 
 ### 拓展
@@ -155,3 +189,83 @@ Pnpm 当前存在一定的兼容问题，在少数场景不可用。主要可能
 目的是**提示**宿主环境去安装满足peerDependencies所指定的依赖
 在依赖包时，永远都是引用宿主环境统一安装的依赖包
 最终解决插件依赖包不一致问题
+
+pnpm 对 peer-dependences 有一套严格的安装规则。对于定义了 peer-dependences 的包来说，意味着为 peer-dependences 内容是敏感的，潜台词是说，**对于不同的 peer-dependences，这个包可能拥有不同的表现**，因此 pnpm 针对不同的 peer-dependences 环境，**可能对同一个包创建多份拷贝**。
+
+比如包 bar peer-dependences 依赖了 baz^1.0.0 与 foo^1.0.0，那我们在 Monorepo 环境两个 Packages 下分别安装不同版本的包会如何呢？
+
+```
+- foo-parent-1
+  - bar@1.0.0
+  - baz@1.0.0
+  - foo@1.0.0
+- foo-parent-2
+  - bar@1.0.0
+  - baz@1.1.0
+  - foo@1.0.0
+
+node_modules
+└── .pnpm
+    ├── foo@1.0.0_bar@1.0.0+baz@1.0.0
+    │   └── node_modules
+    │       ├── foo
+    │       ├── bar   -> ../../bar@1.0.0/node_modules/bar
+    │       ├── baz   -> ../../baz@1.0.0/node_modules/baz
+    │       ├── qux   -> ../../qux@1.0.0/node_modules/qux
+    │       └── plugh -> ../../plugh@1.0.0/node_modules/plugh
+    ├── foo@1.0.0_bar@1.0.0+baz@1.1.0
+    │   └── node_modules
+    │       ├── foo
+    │       ├── bar   -> ../../bar@1.0.0/node_modules/bar
+    │       ├── baz   -> ../../baz@1.1.0/node_modules/baz
+    │       ├── qux   -> ../../qux@1.0.0/node_modules/qux
+    │       └── plugh -> ../../plugh@1.0.0/node_modules/plugh
+    ├── bar@1.0.0
+    ├── baz@1.0.0 *
+    ├── baz@1.1.0 **
+    ├── qux@1.0.0
+    ├── plugh@1.0.0
+```
+
+可以看到，安装了两个相同版本的 foo，虽然内容完全一样，但却分别拥有不同的名称!：foo@1.0.0_bar@1.0.0+baz@1.0.0、foo@1.0.0_bar@1.0.0+baz@1.1.0
+
+这也是 pnpm 规则严格的体现，任何包都不应该有全局副作用，或者考虑好单例实现，否则可能会被 pnpm 装多次。
+
+
+
+
+## 全局安装目录 pnpm-store 的组织方式
+
+硬链接目标文件并不是普通的 NPM 包源码，而是一个哈希文件，这种文件组织方式叫做 content-addressable（基于内容的寻址）。
+
+简单来说，基于内容的寻址比基于文件名寻址的好处是，即便包版本升级了，也仅需存储改动 Diff，而不需要存储新版本的完整文件内容，在版本管理上进一步节约了存储空间。
+
+pnpm-store 的组织方式大概是这样的：
+
+```
+~/.pnpm-store
+- v3
+  - files
+    - 00
+      - e4e13870602ad2922bfc7..
+      - e99f6ffa679b846dfcbb1..
+      ..
+    - 01
+      ..
+    - ..
+      ..
+    - ff
+      ..
+
+```
+
+也就是采用文件内容寻址，而非文件位置寻址的存储方式。之所以能采用这种存储方式，是因为 NPM 包一经发布内容就不会再改变，因此适合内容寻址这种内容固定的场景，同时内容寻址也忽略了包的结构关系，当一个新包下载下来解压后，遇到相同文件 Hash 值时就可以抛弃，仅存储 Hash 值不存在的文件，这样就自然实现了开头说的，pnpm 对于同一个包不同的版本也仅存储其增量改动的能力。
+
+
+## 另一个遗留问题
+但其苛刻的包管理逻辑，使我们单独使用 pnpm 管理大型 Monorepo 时容易遇到一些符合逻辑但又觉得别扭的地方，比如如果每个 Package 对于同一个包的引用版本产生了分化，可能会导致 Peer Deps 了这些包的包产生多份实例，而这些包版本的分化可能是不小心导致的，我们可能需要使用 Rush 等 Monorepo 管理工具来保证版本的一致性。
+
+
+## 参考
+
+https://github.com/ascoders/weekly/blob/master/%E5%89%8D%E6%B2%BF%E6%8A%80%E6%9C%AF/253.%E7%B2%BE%E8%AF%BB%E3%80%8Apnpm%E3%80%8B.md

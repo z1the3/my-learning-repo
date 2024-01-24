@@ -40,6 +40,10 @@ $ npx create-react-app my-app
 3. 如果全局还找不到，会帮我们**临时从 npm 包仓库安装 create-react-app，不会污染到当前项目，也不会装到全局**
 
 
+## npm install
+
+--save 指安装为依赖（生产环境）；--save-dev指安装为dev依赖（开发环境）；--save-exact是使用精确版本安装；--force是指强制安装
+
 
 
 
