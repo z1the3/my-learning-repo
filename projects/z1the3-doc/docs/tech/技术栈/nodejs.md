@@ -2,7 +2,7 @@
 
 ## 有用链接
 
-* NodeJs中文文档 <https://nodejs.cn/api/>
+* NodeJs中文文档 https://nodejs.cn/api/
 
 ## fs模块
 
@@ -35,8 +35,8 @@ util.formatWithOptions({ colors: true }, 'See object %O', { foo: 42 });
 // when printed to a terminal.
 ```
 
-option配置对象<https://nodejs.org/docs/latest/api/util.html#utilinspectobject-options>
+option配置对象https://nodejs.org/docs/latest/api/util.html#utilinspectobject-options
 
 返回：格式化字符串
 
-<https://nodejs.org/docs/latest/api/util.html#utilformatformat-args>
+https://nodejs.org/docs/latest/api/util.html#utilformatformat-args

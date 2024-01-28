@@ -23,16 +23,16 @@ node16/nodenext: TS 4.7 提出，为了更好的兼容 es module 和 commonjs �
 
 **当我们使用node16或者nodenext时，文件引入必须强制写后缀**
 
-<https://nodejs.org/docs/latest-v16.x/api/esm.html#enabling>
+https://nodejs.org/docs/latest-v16.x/api/esm.html#enabling
 
 其他可选配置
 
 * node10(alias node): commonjs
 
 * bundler：ts5新特性，结合第三方构建工具使用。
-<https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/#moduleresolution-bundler>
+https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/#moduleresolution-bundler
 
-<https://github.com/microsoft/TypeScript/pull/51669>
+https://github.com/microsoft/TypeScript/pull/51669
 
 ```json title="package.json"
 
@@ -54,7 +54,7 @@ node16/nodenext: TS 4.7 提出，为了更好的兼容 es module 和 commonjs �
 
 ## 在 esm 中使用commonjs
 
-<https://nodejs.org/docs/latest-v16.x/api/esm.html#interoperability-with-commonjs>
+https://nodejs.org/docs/latest-v16.x/api/esm.html#interoperability-with-commonjs
 
 ### import statements
 
@@ -122,6 +122,6 @@ how to fix it ？
 ```
 
 作者：七钥
-链接：<https://juejin.cn/post/7282758586108526592>
+链接：https://juejin.cn/post/7282758586108526592
 来源：稀土掘金
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。

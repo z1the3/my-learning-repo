@@ -18,6 +18,7 @@ Monorepo是一种代码管理模式，指在一个项目仓库 (repo) 中管理�
 Monorepo 中的子项目称为一个 workspace，多个 workspace 构成 workspaces。
 
 使用 workspaces(以 yarn 为例)好处:
+
 * 依赖包可以被 linked 到一起，这意味着你的工作区可以相互依赖，代码是实时更新的。这是比 `yarn link` 更好的方式因为这只会影响工作区部分，不会影响整个文件系统。
 
 * 所有项目的依赖会被一起安装，这让 Yarn 更方便的优化安装依赖。

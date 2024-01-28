@@ -42,4 +42,4 @@
 
 非npm第三方包该怎么处理？
 
-<https://stackoverflow.com/questions/11207638/advantages-of-bundleddependencies-over-normal-dependencies-in-npm>
+https://stackoverflow.com/questions/11207638/advantages-of-bundleddependencies-over-normal-dependencies-in-npm

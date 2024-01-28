@@ -2,7 +2,7 @@
 
 When the projects configuration is provided with an array of paths or glob patterns, Jest will run tests in all of the specified projects at the same time. This is great for **monorepos** or when working on multiple projects at the same time
 
-<https://jestjs.io/docs/configuration#testmatch-arraystring>
+https://jestjs.io/docs/configuration#testmatch-arraystring
 
 设置`testMatch`目录
 
@@ -40,13 +40,13 @@ jest仅仅实验性支持ESM，不支持直接调用jest命令
 
 其他步骤见
 
-<https://jestjs.io/docs/ecmascript-modules>
+https://jestjs.io/docs/ecmascript-modules
 
 可能需要指定为mjs
 
 ### 第三方模块报错
 
-<https://juejin.cn/post/7032623660896796709?from=search-suggest>
+https://juejin.cn/post/7032623660896796709?from=search-suggest
 
 映射到cjs或者mock
 
@@ -54,7 +54,7 @@ jest仅仅实验性支持ESM，不支持直接调用jest命令
 
 ## 支持typescript
 
-<https://jestjs.io/docs/getting-started#using-typescript>
+https://jestjs.io/docs/getting-started#using-typescript
 
 可以用babel转换（不支持类型检查），或者tsc编译后再做测试
 

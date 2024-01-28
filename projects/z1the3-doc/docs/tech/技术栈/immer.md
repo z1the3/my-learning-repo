@@ -2,10 +2,12 @@
 # immerjs
 
 ## 文档
-<https://immerjs.github.io/immer/>
+
+https://immerjs.github.io/immer/
 
 ## 仓库
-<https://github.com/immerjs/immer?tab=readme-ov-file>
+
+https://github.com/immerjs/immer?tab=readme-ov-file
 
 ## 介绍
 
@@ -94,7 +96,7 @@ produce: IProduce = (base: any, recipe?: any, patchListener?: any) => {
   free to mutate its first argument however it wants. All mutations are
   only ever applied to a __copy__ of the base state.
 
-  **Pass only a function** to create a "curried producer" which relieves you from passing the recipe function every time.
+  __Pass only a function__ to create a "curried producer" which relieves you from passing the recipe function every time.
 
    ```js
    // curried invocation
@@ -125,7 +127,7 @@ produce: IProduce = (base: any, recipe?: any, patchListener?: any) => {
   
   Only plain objects and arrays are made mutable. All other objects are
   considered uncopyable.
- 
+
 ## 源码(早期版本)
 
 我们看 produce 函数 callback 部分：
@@ -282,4 +284,5 @@ Immer 因此完成了不可思议的操作：Create the next immutable state by 
 4 总结
 
 ## 引用
-<https://github.com/ascoders/weekly/blob/master/%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/48.%E7%B2%BE%E8%AF%BB%E3%80%8AImmer.js%E3%80%8B%E6%BA%90%E7%A0%81.md>
+
+https://github.com/ascoders/weekly/blob/master/%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/48.%E7%B2%BE%E8%AF%BB%E3%80%8AImmer.js%E3%80%8B%E6%BA%90%E7%A0%81.md

@@ -49,5 +49,5 @@ npx create-react-app my-app
 ## 引用
 
 原文作者：z__r
-转自链接：<https://learnku.com/articles/16798/quick-view-of-npm-and-yarn-global-installed-packages>
+转自链接：https://learnku.com/articles/16798/quick-view-of-npm-and-yarn-global-installed-packages
 版权声明：著作权归作者所有。商业转载请联系作者获得授权，非商业转载请保留以上作者信息和原文链接。

@@ -2,15 +2,16 @@
 
 ## TypeScript中文文档
 
-<https://www.tslang.cn/docs/>
+https://www.tslang.cn/docs/
 
 ## Vueuse
 
-<https://vueuse.org/>
+https://vueuse.org/
 
 ## immerjs
 
-<https://immerjs.github.io/immer/>
+https://immerjs.github.io/immer/
 
 ## oxlint
-<https://github.com/oxc-project/oxc>
+
+https://github.com/oxc-project/oxc

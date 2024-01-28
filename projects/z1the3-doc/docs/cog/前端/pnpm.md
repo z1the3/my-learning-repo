@@ -231,7 +231,11 @@ node_modules
     ├── plugh@1.0.0
 ```
 
-可以看到，安装了两个相同版本的 foo，虽然内容完全一样，但却分别拥有不同的名称!：<foo@1.0.0_bar>@1.0.0+baz@1.0.0、<foo@1.0.0_bar>@1.0.0+baz@1.1.0
+可以看到，安装了两个相同版本的 foo，虽然内容完全一样，但却分别拥有不同的名称!：
+
+```
+<foo@1.0.0_bar>@1.0.0+baz@1.0.0、<foo@1.0.0_bar>@1.0.0+baz@1.1.0
+```
 
 这也是 pnpm 规则严格的体现，任何包都不应该有全局副作用，或者考虑好单例实现，否则可能会被 pnpm 装多次。
 
@@ -268,4 +272,4 @@ pnpm-store 的组织方式大概是这样的：
 
 ## 参考
 
-<https://github.com/ascoders/weekly/blob/master/%E5%89%8D%E6%B2%BF%E6%8A%80%E6%9C%AF/253.%E7%B2%BE%E8%AF%BB%E3%80%8Apnpm%E3%80%8B.md>
+https://github.com/ascoders/weekly/blob/master/%E5%89%8D%E6%B2%BF%E6%8A%80%E6%9C%AF/253.%E7%B2%BE%E8%AF%BB%E3%80%8Apnpm%E3%80%8B.md

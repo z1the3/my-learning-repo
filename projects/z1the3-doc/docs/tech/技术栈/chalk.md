@@ -4,8 +4,8 @@ tags: [第三方库]
 
 # Chalk
 
-* npm包 <https://www.npmjs.com/package/chalk>
-* 仓库 <https://github.com/chalk/chalk>
+* npm包 https://www.npmjs.com/package/chalk
+* 仓库 https://github.com/chalk/chalk
 
 <img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/43432423.png" width="500"/>
 

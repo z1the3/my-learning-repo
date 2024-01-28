@@ -7,10 +7,12 @@ tags: [mac, 技巧]
 # Mac 使用
 
 ## HomeBrew 安装
-<https://blog.csdn.net/Darling_qi/article/details/122239824>
+
+https://blog.csdn.net/Darling_qi/article/details/122239824
 
 ## mac配置github ssh-key
-<https://blog.csdn.net/weixin_45717809/article/details/128360185>
+
+https://blog.csdn.net/weixin_45717809/article/details/128360185
 
 ## 在Mac终端中使用vim编辑文件
 
