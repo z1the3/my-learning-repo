@@ -9,7 +9,7 @@
     "dev:doc": "pnpm -C projects/z1the3-doc start",
     "commit": "pnpm run lint && git-cz",
     "build:doc": "pnpm -C projects/z1the3-doc build",
-    "lint:md": "markdownlint -q -c .markdownlintrc --fix .",
+    "lint:md": "markdownlint -c .markdownlintrc -f . -j",
     "lint": "lint-staged"
   },
   "lint-staged": {
