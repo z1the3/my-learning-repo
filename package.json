@@ -7,10 +7,15 @@
   "scripts": {
     "test:jest-learning": "pnpm -C learning-demo/jest-learning test",
     "dev:doc": "pnpm -C projects/z1the3-doc start",
-    "commit": "git-cz",
+    "commit": "pnpm run lint && git-cz",
     "build:doc": "pnpm -C projects/z1the3-doc build",
-    "lint:md": "markdownlint --config -fix .markdownlint.js ."
-
+    "lint:md": "markdownlint -q -c .markdownlintrc --fix .",
+    "lint": "lint-staged"
+  },
+  "lint-staged": {
+    "./**/*.md": [
+      "pnpm run lint:md"
+    ]
   },
   "config": {
     "commitizen": {
@@ -25,6 +30,7 @@
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
     "jest": "^29.7.0",
+    "lint-staged": "^15.2.0",
     "markdownlint-cli": "^0.38.0",
     "ts-node": "^10.9.2",
     "typescript": "5.2.2"
