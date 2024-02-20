@@ -46,6 +46,21 @@ npx create-react-app my-app
 
 --save 指安装为依赖（生产环境）；--save-dev指安装为dev依赖（开发环境）；--save-exact是使用精确版本安装；--force是指强制安装
 
+## prepare
+
+关于husky install官网推荐的是在packgae.json中添加prepare脚本
+  ，prepare脚本会在npm install（不带参数）之后自动执行。
+
+这样少输一次命令，相当于把脚手架初始化命令放到npm install中
+
+```
+{
+  "scripts": {
+    "prepare": "husky install"
+  }
+}
+```
+
 ## 引用
 
 原文作者：z__r

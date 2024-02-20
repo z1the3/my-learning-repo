@@ -52,3 +52,7 @@ sudo chown -R 用户名:admin node_modules
 ```
 sudo chown -R guojufeng:admin xingorg1Note
 ```
+
+## Mac 安装 node.js 及环境配置
+
+https://cloud.tencent.com/developer/article/2084919

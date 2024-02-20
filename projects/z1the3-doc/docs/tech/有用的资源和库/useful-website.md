@@ -21,3 +21,7 @@ https://vercel.com/
 私有化部署npm包
 
 https://verdaccio.org/
+
+## caniuse特性兼容性
+
+https://caniuse.com/?search=focus-visible
