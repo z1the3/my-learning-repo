@@ -123,6 +123,90 @@ group触发hover，透传到每个子元素上
 
 通过`peer-[选择器]`和`_&`精准查找
 
+### `*-{modifier}`
+
+父元素 `*:utility` 在所有子元素上应用
+
+子类不能覆盖这一类型的样式
+
+### `has-[伪类]:utility`
+
+子代触发该伪类, 则父元素触发该效果
+
+### peer-has-*
+
+元素1标有peer
+
+元素2通过peer-has联动元素1的**子元素**的状态
+
+```html
+<fieldset>
+  <legend>Today</legend>
+
+  <div>
+    <label class="peer ...">
+      <input type="checkbox" name="todo[1]" checked />
+      Create a to do list
+    </label>
+    <svg class="peer-has-[:checked]:hidden ...">
+    </svg>
+  </div>
+
+</fieldset>
+
+
+```
+
+### before and after
+
+一旦使用一个`before:utility`
+
+tailwind会自动加上该utility，不用手动添加
+
+```
+before:content-[``]
+```
+
+当然可以手动覆盖
+
+:::note
+考虑到preflight base styles，可能自动添加会失效
+
+则需要手动加上
+:::
+
+### 顺序误区
+
+不同的组织顺序可能会触发不同效果
+
+```css
+/* dark:group-hover:opacity-100 */
+.dark .group:hover .dark\:group-hover\:opacity-100 {
+  opacity: 1;
+}
+
+/* group-hover:dark:opacity-100 */
+/* 这种情况dark变成group类的子类才能触发 */
+.group:hover .dark .group-hover\:dark\:opacity-100 {
+  opacity: 1;
+}
+```
+
+整个元素被hover时触发和元素为h1时被hover
+
+```css
+/* prose-headings:hover:underline */
+.prose-headings\:hover\:underline:hover :is(:where(h1, h2, h3, h4, th)) {
+  text-decoration: underline;
+}
+
+/* hover:prose-headings:underline */
+.hover\:prose-headings\:underline :is(:where(h1, h2, h3, h4, th)):hover {
+  text-decoration: underline;
+}
+
+```
+
 ## 响应式
 
 ## dark mode

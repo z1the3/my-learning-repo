@@ -64,6 +64,33 @@ function curry(fn) {
 
 ```
 
+### 2.带占位符的柯里化
+
+```js
+curriedJoin(_, 2)(1, 3) // '1_2_3'
+```
+
+```js
+function curry(func) {
+  return function curried(...args) {
+    const complete = args.length >= func.length && !args.slice(0, func.length).includes(curry.placeholder);
+    if(complete) return func.call(this, ...args)
+
+
+    return function(...newArgs) {
+      // replace placeholders in args with values from newArgs
+      // _,_,_  + _,a -> _,_,_ + a -> a,_,_ 
+      const res = args.map(arg => arg === curry.placeholder && newArgs.length ? newArgs.shift() : arg);
+      return curried(...res, ...newArgs);
+    }
+  }
+}
+
+curry.placeholder = Symbol()
+
+
+```
+
 ## react
 
 ### 8.useDebounce()
