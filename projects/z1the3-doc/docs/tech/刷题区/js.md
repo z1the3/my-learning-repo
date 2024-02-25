@@ -91,6 +91,91 @@ curry.placeholder = Symbol()
 
 ```
 
+## 补充
+
+### 1.快排
+
+```js
+const _quickSort = array => {
+    // 补全代码
+    myQuickSort(array, 0, array.length - 1)
+    return array
+}
+// 启动函数
+
+// 重点
+function myQuickSort(array, l, r) {
+    if(l < r) {
+        let index = partition(array, l, r) //进行一轮快排
+        myQuickSort(array, l, index - 1)
+        myQuickSort(array, index + 1, r)
+    }
+}
+function partition(array, l, r) {
+    // 随机l-r取值
+    let pivot = array[Math.floor(Math.random() * (r - l + 1)) + l]
+  // *****这里是双重循环
+    while(l < r) {
+        while(array[l] < pivot) l++
+        while(array[r] > pivot) r--
+      // 此时其实都等于pivot
+        if(l < r && array[l] == array[r]) l++
+        else if(l < r) { //此时array[l]>pivot,array[r]<pivot (=的情况已经排除)
+            let t = array[l]
+            array[l] = array[r]
+            array[r] = t
+        }
+    }
+    //此时l==r
+    return l
+}
+
+```
+
+### 2.归并
+
+```js
+// mergeSort(一个数组）
+function mergeSort (nums) {
+  if(nums.length < 2) return nums;
+  const mid = parseInt(nums.length / 2);
+  let left = nums.slice(0,mid);
+  let right = nums.slice(mid);
+  return merge(mergeSort(left), mergeSort(right));
+}
+
+// merge（数组1，数组2）两个数组
+function merge(left, right) {
+  let res = [];
+  let leftLen = left.length;
+  let rightLen = right.length;
+  let len = leftLen + rightLen;
+  for(let index = 0, i = 0, j = 0; index < len; index ++) {
+    if(i >= leftLen){ 
+      res[index] = right[j ++];
+      continue
+    }
+    if (j >= rightLen){
+      res[index] = left[i ++];
+      continue
+    } 
+    res[index++] = left[i]<=right[j]?left[i++]:right[j++]
+    // if (left[i] <= right[j]) res[index] = left[i ++];
+    // else {
+    //   res[index] = right[j ++];
+    //   sum += leftLen - i;//求逆序对时在归并排序中唯一加的一行代码
+   // 因为i后面的数肯定都满足大于右边的那一位，能组成逆序对
+    // }
+  }
+  return res;
+}
+ 
+var arr = [3,5,7,1,4,56,12,78,25,0,9,8,42,37];
+var res = mergeSort(arr);
+console.log(arr, res) 
+
+```
+
 ## react
 
 ### 8.useDebounce()

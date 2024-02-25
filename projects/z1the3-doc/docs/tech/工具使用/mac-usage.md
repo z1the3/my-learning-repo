@@ -56,3 +56,9 @@ sudo chown -R guojufeng:admin xingorg1Note
 ## Mac 安装 node.js 及环境配置
 
 https://cloud.tencent.com/developer/article/2084919
+
+## mac推荐工具
+
+### 超级右键
+
+Appstore中安装

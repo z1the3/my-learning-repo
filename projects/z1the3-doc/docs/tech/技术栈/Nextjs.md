@@ -11,6 +11,8 @@
 |Optimizations|图片字体和脚本优化提升体验|
 |Typescript|支持typescript，并且有更好的类型检测和高效编译，支持ts插件|
 
+## 服务端组件
+
 ## App Router vs Page Router
 
 App Router支持React最新功能，如服务端组件和流

@@ -175,6 +175,26 @@ before:content-[``]
 则需要手动加上
 :::
 
+### placeholder文本
+
+`placeholder:文本相关utility`来控制输入框中占位文本的样式
+
+### marker
+
+控制list中counter或bullet的样式，
+
+可以用在ul上继承到li，或者直接用在li上
+
+### selection
+
+控制选中文本的样式
+
+在body标签上比较方便
+
+### first-line: first-letter
+
+控制第一行和第一个字母
+
 ### 顺序误区
 
 不同的组织顺序可能会触发不同效果
@@ -208,6 +228,43 @@ before:content-[``]
 ```
 
 ## 响应式
+
+https://tailwindcss.com/docs/responsive-design
+
+tailwind提供响应式断点的前缀
+
+分别对应媒体查询在屏幕不同尺寸的情况
+
+如
+sm -> `@media (min-width: 640px){...}`
+
+```html
+<!-- Width of 16 by default, 32 on medium screens, and 48 on large screens -->
+<img class="w-16 md:w-32 lg:w-48" src="...">
+```
+
+### 限制范围
+
+md只限制了min范围
+
+想要限制max需要用max修饰符并堆叠
+
+```html
+<div class="md:max-xl:flex">
+  <!-- ... -->
+</div>
+```
+
+### 任意值端点
+
+适用于在主题中没有意义时
+
+```html
+<div class="min-[320px]:text-center max-[600px]:bg-sky-300">
+  <!-- ... -->
+</div>
+
+```
 
 ## dark mode
 
