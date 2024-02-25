@@ -1,3 +1,5 @@
+# 手撕
+
 ## js特性
 
 ### 7.自增运算符
@@ -93,6 +95,44 @@ curry.placeholder = Symbol()
 
 ## 补充
 
+### api实现篇
+
+#### 1.发布订阅模式
+
+```js
+class EventHub {
+  constructor(){
+    // 存放event和map，map为对象，每个key为数组
+    this.map = {}
+  }
+  on(event,fn){
+    this.map[event] = this.map[event]||[]
+   this.map[event].push(fn)
+  }
+  emit(event,data){
+    const fnList = this.map[event] || []
+    if (fnList.length === 0) return
+    // 遍历该event的缓存列表，依次执行fn
+    fnList.forEach(fn => fn.call(undefined,data))
+  }
+  off(event,fn) {
+    const fnList = this.map[event] || []
+    const index = fnList.indexOf(fn)
+    if(index < 0) return
+    fnList.splice(index, 1)
+  }
+  once(event, callback){
+    // data暂时没东西传进去，但是用了 emit就可以被使用
+    const f = (data) => {
+      callback(data)
+      this.off(event, f)
+   }
+    this.on(event,f)
+  }
+}
+
+```
+
 ### 1.快排
 
 ```js
@@ -173,6 +213,29 @@ function merge(left, right) {
 var arr = [3,5,7,1,4,56,12,78,25,0,9,8,42,37];
 var res = mergeSort(arr);
 console.log(arr, res) 
+
+```
+
+### 3. instanceof
+
+```js
+  const _instanceof = (target, Fn) => {
+      // 判断是不是基础数据类型
+      if(target === null || typeof target !== 'object'){
+          return false
+      }
+      let proto = Object.getPrototypeOf(target), // 获取对象的原型
+          prototype = Fn.prototype; // 获取构造函数的 prototype 对象
+    
+      // 判断构造函数的 prototype 对象是否在对象的原型链上
+      while (true) {
+        if (!proto) return false;
+        if (proto === prototype) return true;
+
+        // 重复看proto
+        proto = Object.getPrototypeOf(proto);
+      }
+  }
 
 ```
 

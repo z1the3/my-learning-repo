@@ -227,6 +227,14 @@ before:content-[``]
 
 ```
 
+### 原生dialog标签backdrop:bg-red
+
+### 喜好颜色主题
+
+prefers-color-scheme媒体查询
+
+在操作系统层面获取用户喜好
+
 ## 响应式
 
 https://tailwindcss.com/docs/responsive-design
