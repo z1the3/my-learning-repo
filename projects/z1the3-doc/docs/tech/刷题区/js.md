@@ -133,6 +133,60 @@ class EventHub {
 
 ```
 
+#### 2. instanceof
+
+```js
+  const _instanceof = (target, Fn) => {
+      // 判断是不是基础数据类型
+      if(target === null || typeof target !== 'object'){
+          return false
+      }
+      let proto = Object.getPrototypeOf(target), // 获取对象的原型
+          prototype = Fn.prototype; // 获取构造函数的 prototype 对象
+    
+      // 判断构造函数的 prototype 对象是否在对象的原型链上
+      while (true) {
+        if (!proto) return false;
+        if (proto === prototype) return true;
+
+        // 重复看proto
+        proto = Object.getPrototypeOf(proto);
+      }
+  }
+
+```
+
+#### 3.实现箭头函数
+
+babel就是这样转译的
+
+es6->es5
+
+```js
+// ES6 
+const obj = { 
+  getArrow() { 
+    return () => { 
+      console.log(this === obj); 
+    }; 
+  } 
+}
+```
+
+```js
+// ES5，由 Babel 转译
+var obj = { 
+   getArrow: function getArrow() { 
+    // 继承上一层作用域的this
+    // getArrow在使用时，作用域被推到window上，因此上一层作用域是window
+     var _this = this; 
+     return function () { 
+        console.log(_this === obj); 
+     }; 
+   } 
+};
+```
+
 ### 1.快排
 
 ```js
@@ -213,29 +267,6 @@ function merge(left, right) {
 var arr = [3,5,7,1,4,56,12,78,25,0,9,8,42,37];
 var res = mergeSort(arr);
 console.log(arr, res) 
-
-```
-
-### 3. instanceof
-
-```js
-  const _instanceof = (target, Fn) => {
-      // 判断是不是基础数据类型
-      if(target === null || typeof target !== 'object'){
-          return false
-      }
-      let proto = Object.getPrototypeOf(target), // 获取对象的原型
-          prototype = Fn.prototype; // 获取构造函数的 prototype 对象
-    
-      // 判断构造函数的 prototype 对象是否在对象的原型链上
-      while (true) {
-        if (!proto) return false;
-        if (proto === prototype) return true;
-
-        // 重复看proto
-        proto = Object.getPrototypeOf(proto);
-      }
-  }
 
 ```
 

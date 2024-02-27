@@ -25,3 +25,7 @@ https://verdaccio.org/
 ## caniuse特性兼容性
 
 https://caniuse.com/?search=focus-visible
+
+## clip-path多边形生成
+
+https://bennettfeely.com/clippy/

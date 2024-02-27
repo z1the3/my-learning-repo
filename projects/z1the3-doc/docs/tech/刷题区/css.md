@@ -1,0 +1,47 @@
+# css 效果
+
+## 1.实现三角形
+
+分别通过border 线性渐变 clip-path实现
+
+import Triangles from '@site/src/components/Triangle'
+
+<Triangles/>
+
+```css
+.container {
+  display: flex;
+  flex-direction: row;
+  width: 100%
+
+}
+
+
+.tri1 {
+ border-style: solid;
+  border-color: transparent;
+  border-width: 50px;
+  border-left-color: skyblue;
+  height: 50px;
+}
+
+
+.tri2 {
+  width: 160px;
+  height: 200px;
+  outline: 2px solid skyblue;
+  background-repeat: no-repeat;
+  background-image: linear-gradient(32deg, orangered 50%, rgba(255, 255, 255, 0) 50%), linear-gradient(148deg, orangered 50%, rgba(255, 255, 255, 0) 50%);
+  background-size: 100% 50%;
+  background-position: top left, bottom left;
+}
+
+
+.tri3 {
+  width: 160px;
+  height: 200px;
+  background-color: skyblue;
+  clip-path: polygon(0 0, 0% 100%, 100% 50%);
+}
+
+```
