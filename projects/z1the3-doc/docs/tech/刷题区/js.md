@@ -1,54 +1,52 @@
 # 手撕
 
-## js特性
+## js 特性
 
 ### 7.自增运算符
 
 ```js
 // 1
-let a = 1
+let a = 1;
 // 2 2
-const b = ++a
+const b = ++a;
 // 3 2 2
-const c = a++
-console.log(a)
-console.log(b)
-console.log(c)
-
+const c = a++;
+console.log(a);
+console.log(b);
+console.log(c);
 ```
 
 ### 8.隐式转化 I
 
 ```js
-console.log(Boolean('false')) // true
-console.log(Boolean(false)) // false
-console.log('3' + 1) // "31" 字符串类型，打印出来还是数字
-console.log('3' - 1) //  2
-console.log('3' - ' 02 ') // 1
-console.log('3' * ' 02 ') // 6
-console.log(Number('1')) // 1
-console.log(Number('number')) //NaN
-console.log(Number(null)) // 0
-console.log(Number(false)) // 0
-
+console.log(Boolean("false")); // true
+console.log(Boolean(false)); // false
+console.log("3" + 1); // "31" 字符串类型，打印出来还是数字
+console.log("3" - 1); //  2
+console.log("3" - " 02 "); // 1
+console.log("3" * " 02 "); // 6
+console.log(Number("1")); // 1
+console.log(Number("number")); //NaN
+console.log(Number(null)); // 0
+console.log(Number(false)); // 0
 ```
 
-## js实现
+## js 实现
 
 ### 1.实现柯里化
 
 ```js
 const join = (a, b, c) => {
-   return `${a}_${b}_${c}`
-}
+  return `${a}_${b}_${c}`;
+};
 
-const curriedJoin = curry(join)
+const curriedJoin = curry(join);
 
-curriedJoin(1, 2, 3) // '1_2_3'
+curriedJoin(1, 2, 3); // '1_2_3'
 
-curriedJoin(1)(2, 3) // '1_2_3'
+curriedJoin(1)(2, 3); // '1_2_3'
 
-curriedJoin(1, 2)(3) // '1_2_3'
+curriedJoin(1, 2)(3); // '1_2_3'
 ```
 
 ```js
@@ -56,184 +54,247 @@ function curry(fn) {
   return function curried(...args) {
     // if number of arguments match
     if (args.length >= fn.length) {
-      return fn.call(this, ...args)
-    } 
-    return function(...missingArgs) {
-      return curried.call(this, ...args, ...missingArgs)
+      return fn.call(this, ...args);
     }
-  }
+    return function (...missingArgs) {
+      return curried.call(this, ...args, ...missingArgs);
+    };
+  };
 }
-
 ```
 
 ### 2.带占位符的柯里化
 
 ```js
-curriedJoin(_, 2)(1, 3) // '1_2_3'
+curriedJoin(_, 2)(1, 3); // '1_2_3'
 ```
 
 ```js
 function curry(func) {
   return function curried(...args) {
-    const complete = args.length >= func.length && !args.slice(0, func.length).includes(curry.placeholder);
-    if(complete) return func.call(this, ...args)
+    const complete =
+      args.length >= func.length &&
+      !args.slice(0, func.length).includes(curry.placeholder);
+    if (complete) return func.call(this, ...args);
 
-
-    return function(...newArgs) {
+    return function (...newArgs) {
       // replace placeholders in args with values from newArgs
-      // _,_,_  + _,a -> _,_,_ + a -> a,_,_ 
-      const res = args.map(arg => arg === curry.placeholder && newArgs.length ? newArgs.shift() : arg);
+      // _,_,_  + _,a -> _,_,_ + a -> a,_,_
+      const res = args.map((arg) =>
+        arg === curry.placeholder && newArgs.length ? newArgs.shift() : arg
+      );
       return curried(...res, ...newArgs);
-    }
-  }
+    };
+  };
 }
 
-curry.placeholder = Symbol()
-
-
+curry.placeholder = Symbol();
 ```
 
 ## 补充
 
-### api实现篇
+### api 实现篇
 
 #### 1.发布订阅模式
 
 ```js
 class EventHub {
-  constructor(){
+  constructor() {
     // 存放event和map，map为对象，每个key为数组
-    this.map = {}
+    this.map = {};
   }
-  on(event,fn){
-    this.map[event] = this.map[event]||[]
-   this.map[event].push(fn)
+  on(event, fn) {
+    this.map[event] = this.map[event] || [];
+    this.map[event].push(fn);
   }
-  emit(event,data){
-    const fnList = this.map[event] || []
-    if (fnList.length === 0) return
+  emit(event, data) {
+    const fnList = this.map[event] || [];
+    if (fnList.length === 0) return;
     // 遍历该event的缓存列表，依次执行fn
-    fnList.forEach(fn => fn.call(undefined,data))
+    fnList.forEach((fn) => fn.call(undefined, data));
   }
-  off(event,fn) {
-    const fnList = this.map[event] || []
-    const index = fnList.indexOf(fn)
-    if(index < 0) return
-    fnList.splice(index, 1)
+  off(event, fn) {
+    const fnList = this.map[event] || [];
+    const index = fnList.indexOf(fn);
+    if (index < 0) return;
+    fnList.splice(index, 1);
   }
-  once(event, callback){
+  once(event, callback) {
     // data暂时没东西传进去，但是用了 emit就可以被使用
     const f = (data) => {
-      callback(data)
-      this.off(event, f)
-   }
-    this.on(event,f)
+      callback(data);
+      this.off(event, f);
+    };
+    this.on(event, f);
   }
 }
-
 ```
 
 #### 2. instanceof
 
 ```js
-  const _instanceof = (target, Fn) => {
-      // 判断是不是基础数据类型
-      if(target === null || typeof target !== 'object'){
-          return false
-      }
-      let proto = Object.getPrototypeOf(target), // 获取对象的原型
-          prototype = Fn.prototype; // 获取构造函数的 prototype 对象
-    
-      // 判断构造函数的 prototype 对象是否在对象的原型链上
-      while (true) {
-        if (!proto) return false;
-        if (proto === prototype) return true;
-
-        // 重复看proto
-        proto = Object.getPrototypeOf(proto);
-      }
+const _instanceof = (target, Fn) => {
+  // 判断是不是基础数据类型
+  if (target === null || typeof target !== "object") {
+    return false;
   }
+  let proto = Object.getPrototypeOf(target), // 获取对象的原型
+    prototype = Fn.prototype; // 获取构造函数的 prototype 对象
 
+  // 判断构造函数的 prototype 对象是否在对象的原型链上
+  while (true) {
+    if (!proto) return false;
+    if (proto === prototype) return true;
+
+    // 重复看proto
+    proto = Object.getPrototypeOf(proto);
+  }
+};
 ```
 
 #### 3.实现箭头函数
 
-babel就是这样转译的
+babel 就是这样转译的
 
 es6->es5
 
 ```js
-// ES6 
-const obj = { 
-  getArrow() { 
-    return () => { 
-      console.log(this === obj); 
-    }; 
-  } 
-}
+// ES6
+const obj = {
+  getArrow() {
+    return () => {
+      console.log(this === obj);
+    };
+  },
+};
 ```
 
 ```js
 // ES5，由 Babel 转译
-var obj = { 
-   getArrow: function getArrow() { 
+var obj = {
+  getArrow: function getArrow() {
     // 继承上一层作用域的this
     // getArrow在使用时，作用域被推到window上，因此上一层作用域是window
-     var _this = this; 
-     return function () { 
-        console.log(_this === obj); 
-     }; 
-   } 
+    var _this = this;
+    return function () {
+      console.log(_this === obj);
+    };
+  },
 };
+```
+
+#### 4.实现私有属性
+
+```js
+class E {
+  constructor() {
+    this.map = new Map();
+    this.map.set(this, { a: 1 });
+  }
+  getA() {
+    return this.map.get(this)["a"];
+  }
+}
+
+let e = new E();
+console.log(e.getA());
+```
+
+用 this 做 map 上的 Key
+
+这样在外界无法**直接**找到 map 上存有数据的那个键
+
+利用 map 的键可以是对象
+
+#### 5.洋葱模型中间件+compose
+
+```js
+// function middleWare({ getState, dispatch }) {
+//     return next => action => {
+//         ...
+//         next(action);
+//     }
+// }
+const middlewareAPI = {
+  getState: store.getState,
+  dispatch: (action, ...args) => dispatch(action, ...args),
+};
+// 向chain中每个高阶函数注入API
+const chain = middlewares.map((middleware) => middleware(middlewareAPI));
+
+// 接下来执行的是compose聚合函数，把chain中的中间件聚合成一个新的dispatch函数：
+//第一个中间件是store.dispatch
+const dispatch = compose(...chain)(store.dispatch);
+
+return { ...store, dispatch };
+```
+
+```js
+function compose(...functions) {
+  if (functions.length === 0) {
+    return (...args) => args;
+  } else if (functions.length === 1) {
+    return functions[0];
+  } else {
+    return functions.reducer(
+      (pre, current) =>
+        (...args) =>
+          pre(current(args))
+    );
+    // [a,b,c]
+    // (...args)=>a(b(args))
+    // (...args)=>a(b(c))
+  }
+}
 ```
 
 ### 1.快排
 
 ```js
-const _quickSort = array => {
-    // 补全代码
-    myQuickSort(array, 0, array.length - 1)
-    return array
-}
+const _quickSort = (array) => {
+  // 补全代码
+  myQuickSort(array, 0, array.length - 1);
+  return array;
+};
 // 启动函数
 
 // 重点
 function myQuickSort(array, l, r) {
-    if(l < r) {
-        let index = partition(array, l, r) //进行一轮快排
-        myQuickSort(array, l, index - 1)
-        myQuickSort(array, index + 1, r)
-    }
+  if (l < r) {
+    let index = partition(array, l, r); //进行一轮快排
+    myQuickSort(array, l, index - 1);
+    myQuickSort(array, index + 1, r);
+  }
 }
 function partition(array, l, r) {
-    // 随机l-r取值
-    let pivot = array[Math.floor(Math.random() * (r - l + 1)) + l]
+  // 随机l-r取值
+  let pivot = array[Math.floor(Math.random() * (r - l + 1)) + l];
   // *****这里是双重循环
-    while(l < r) {
-        while(array[l] < pivot) l++
-        while(array[r] > pivot) r--
-      // 此时其实都等于pivot
-        if(l < r && array[l] == array[r]) l++
-        else if(l < r) { //此时array[l]>pivot,array[r]<pivot (=的情况已经排除)
-            let t = array[l]
-            array[l] = array[r]
-            array[r] = t
-        }
+  while (l < r) {
+    while (array[l] < pivot) l++;
+    while (array[r] > pivot) r--;
+    // 此时其实都等于pivot
+    if (l < r && array[l] == array[r]) l++;
+    else if (l < r) {
+      //此时array[l]>pivot,array[r]<pivot (=的情况已经排除)
+      let t = array[l];
+      array[l] = array[r];
+      array[r] = t;
     }
-    //此时l==r
-    return l
+  }
+  //此时l==r
+  return l;
 }
-
 ```
 
 ### 2.归并
 
 ```js
 // mergeSort(一个数组）
-function mergeSort (nums) {
-  if(nums.length < 2) return nums;
+function mergeSort(nums) {
+  if (nums.length < 2) return nums;
   const mid = parseInt(nums.length / 2);
-  let left = nums.slice(0,mid);
+  let left = nums.slice(0, mid);
   let right = nums.slice(mid);
   return merge(mergeSort(left), mergeSort(right));
 }
@@ -244,30 +305,29 @@ function merge(left, right) {
   let leftLen = left.length;
   let rightLen = right.length;
   let len = leftLen + rightLen;
-  for(let index = 0, i = 0, j = 0; index < len; index ++) {
-    if(i >= leftLen){ 
-      res[index] = right[j ++];
-      continue
+  for (let index = 0, i = 0, j = 0; index < len; index++) {
+    if (i >= leftLen) {
+      res[index] = right[j++];
+      continue;
     }
-    if (j >= rightLen){
-      res[index] = left[i ++];
-      continue
-    } 
-    res[index++] = left[i]<=right[j]?left[i++]:right[j++]
+    if (j >= rightLen) {
+      res[index] = left[i++];
+      continue;
+    }
+    res[index++] = left[i] <= right[j] ? left[i++] : right[j++];
     // if (left[i] <= right[j]) res[index] = left[i ++];
     // else {
     //   res[index] = right[j ++];
     //   sum += leftLen - i;//求逆序对时在归并排序中唯一加的一行代码
-   // 因为i后面的数肯定都满足大于右边的那一位，能组成逆序对
+    // 因为i后面的数肯定都满足大于右边的那一位，能组成逆序对
     // }
   }
   return res;
 }
- 
-var arr = [3,5,7,1,4,56,12,78,25,0,9,8,42,37];
-var res = mergeSort(arr);
-console.log(arr, res) 
 
+var arr = [3, 5, 7, 1, 4, 56, 12, 78, 25, 0, 9, 8, 42, 37];
+var res = mergeSort(arr);
+console.log(arr, res);
 ```
 
 ## react
@@ -277,7 +337,7 @@ console.log(arr, res)
 ```js
 function App() {
   const [value, setValue] = useState(...)
-  // this value changes frequently, 
+  // this value changes frequently,
   const debouncedValue = useDebounce(value, 1000)
   // now it is debounced
 }
@@ -285,31 +345,29 @@ function App() {
 ```
 
 ```js
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState(value)
+  const [debouncedValue, setDebouncedValue] = useState(value);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedValue(value)
+      setDebouncedValue(value);
     }, delay);
 
     return () => {
-      clearTimeout(timer)
-    }
-  }, [value, delay])
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
 
-  return debouncedValue
+  return debouncedValue;
 }
-
 ```
 
 ### 9.useEffectOnce()
 
 ```js
-import { useRef, useEffect, EffectCallback } from 'react'
+import { useRef, useEffect, EffectCallback } from "react";
 
 // 因为依赖数组必须useEffect第一个参数里的包括所有状态，否则会报错，所以用useRef可以解决这个
 export function useEffectOnce(effect: EffectCallback) {
@@ -320,16 +378,16 @@ export function useEffectOnce(effect: EffectCallback) {
 
 ### 15.useClickOutside()
 
-使用的时候给固定的标签绑定导出的ref
+使用的时候给固定的标签绑定导出的 ref
 
 ```js
 function Component() {
   // 定义回调函数
   const ref = useClickOutside(() => {
-    alert('clicked outside')
+    alert("clicked outside");
   });
   // 把ref和标签绑定
-  return <div ref={ref}>..</div>
+  return <div ref={ref}>..</div>;
 }
 ```
 
@@ -368,8 +426,7 @@ useRef + useEffect
 Implement useUpdateEffect() that it works the same as useEffect() except that it skips running the callback on first render.
 
 ```js
-
-import {EffectCallback, DependencyList} from 'react';
+import { EffectCallback, DependencyList } from "react";
 
 // 来自react的类型
 export function useUpdateEffect(effect: EffectCallback, deps?: DependencyList) {
@@ -377,7 +434,7 @@ export function useUpdateEffect(effect: EffectCallback, deps?: DependencyList) {
   const ref = useRef(false);
 
   useEffect(() => {
-    if(!ref.current) {
+    if (!ref.current) {
       ref.current = true;
       return;
     }
@@ -388,8 +445,7 @@ export function useUpdateEffect(effect: EffectCallback, deps?: DependencyList) {
 
     return () => {
       cleanup && cleanup();
-    }
-  }, deps)
+    };
+  }, deps);
 }
-
 ```
