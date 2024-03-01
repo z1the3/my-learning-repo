@@ -4,7 +4,7 @@
 
 查找向项目添加新的开发依赖项的成本
 
-Package Phobia 会在安装npm 包之前报告其大小
+Package Phobia 会在安装 npm 包之前报告其大小
 
 https://packagephobia.com/
 
@@ -12,20 +12,24 @@ https://packagephobia.com/
 
 Vercel 的前端云为开发人员提供了构建、扩展和保护更快、更个性化 Web 的体验和基础设施。
 
-官网挺好看，用了svg
+官网挺好看，用了 svg
 
 https://vercel.com/
 
 ## verdaccio
 
-私有化部署npm包
+私有化部署 npm 包
 
 https://verdaccio.org/
 
-## caniuse特性兼容性
+## caniuse 特性兼容性
 
 https://caniuse.com/?search=focus-visible
 
-## clip-path多边形生成
+## clip-path 多边形生成
 
 https://bennettfeely.com/clippy/
+
+## npm 包下载趋势比较
+
+https://npm-compare.com/@reduxjs/toolkit,zustand,recoil,jotai,valtio/#timeRange=THREE_YEARS
