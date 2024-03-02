@@ -8,9 +8,12 @@
 
 ● flex-flow 属性是 flex-direction 属性和 flex-wrap 属性的简写形式，默认值为 row nowrap。
 
-● justify-content 属性定义了项目在主轴上的对齐方式。
+- justify-content 属性定义了项目在主轴上的对齐方式。
 
-● align-items 属性定义项目在交叉轴上如何对齐。
+  - 有以下属性值： start,center,space-between,space-around,space-evenly
+
+- align-items 属性定义项目在交叉轴上如何对齐。
+  - 有以下属性值：stretch,center,start,end
 
 ● align-content 属性定义了多根轴线的对齐方式。如果项目只有一根轴线，该属性不起作用。
 
@@ -28,7 +31,7 @@
 
 ● flex 属性是 flex-grow，flex-shrink 和 flex-basis 的简写，默认值为 0 1 auto。
 
-● align-self 属性允许单个项目有与其他项目不一样的对齐方式，可覆盖 align-items 属性。默认值为 auto，表示继承父元素的 align-items 属性，如果没有父元素，则等同于 stretch。
+● align-self 属性允许单个项目有与其他项目不一样的对齐方式，可覆盖(override) align-items 属性。默认值为 auto，表示继承父元素的 align-items 属性，如果没有父元素，则等同于 stretch。
 
 ## flex
 

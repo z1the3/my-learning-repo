@@ -1,0 +1,25 @@
+# 隐式转化
+
+## ==比较
+
+首先 null==undefined
+
+其余情况遇到 null 或 undefined 转化为"null" "undefined"
+
+string 和 number 比较 string 转 number（可能变成 NaN，空字符串为 0
+
+遇到 boolean 转为 number
+
+遇到 object 先用 valueOf 转为基本类型，没有 valueOf 就用 toString 转
+
+如果转后得到非数字再强制转为数字
+
+等到类型相同后再比较值（一般这时是 number 比 number
+
+---
+
+`[]==false, ![]==false` 都是返回 true
+
+对象 => 字符串 => 数值 0 false 转换为数字 0,
+
+第二个前边多了个!，则直接转换为布尔值再取反，转换为布尔值时，空字符串(''),NaN,0，null,undefined 这几个外返回的都是 true, 所以! []这个[] => true 取反为 false,所以![] == false 为 true

@@ -1,4 +1,4 @@
-# css
+# css 进阶
 
 ## 函数
 
@@ -73,6 +73,24 @@ ol > li::marker {
 }
 ```
 
+#### 利用 couter 与 var 进行颜色渐变
+
+```css
+:root {
+  --item-count: 3;
+}
+
+ul li {
+  --hue: calc(var(--item-index) * 360 / var(--item-count));
+  background-color: hsl(var(--hue), 70%, 60%);
+}
+
+ul li::before {
+  counter-increment: item-index;
+  content: counter(item-index);
+}
+```
+
 ### url('xxx.jpg')
 
 可以是绝对路径（指向完整的互联网地址），也可以是相对路径（相对于当前 CSS 文件或 HTML 文件的位置
@@ -118,5 +136,21 @@ body {
 ```css
 #someOtherElement {
   background-image: element(#myElement);
+}
+```
+
+### nth-child()
+
+```css
+:nth-child(-n + 3) {
+  // 选择第一个到第三个
+}
+
+:nth-child(n + 3) {
+  // 从第三个开始
+}
+
+:nth-child(-n + 9):nth-child(n + 6) {
+  // 从第六个到第九个，取交集
 }
 ```

@@ -162,3 +162,37 @@ toRefs：
  objList.value = {...}
 
 ```
+
+## name 属性的作用
+
+组件中的 name 属性为组件的**声明名称**
+
+```html
+<script>
+  export default {
+    name: main, //组件声明时设置的name属性，即：声明名称
+  };
+</script>
+
+// 当组件被引入时，设置的名称即是注册名称
+<script>
+  import Hello from @/...
+  export default{
+       components:{
+            Hello, //此为注册名称
+        }
+   }
+</script>
+```
+
+实际工作中，应保证注册名称与声明名称一致
+
+当名称不同时，部分标签的属性可能无法识别组件
+
+如：若未设置声明名称，
+
+keep-alive 的 include 和 exclude 属性将识别注册名称
+
+若同时设置了不同的声明名称和注册名称
+
+此时使用注册名称将无法识别
