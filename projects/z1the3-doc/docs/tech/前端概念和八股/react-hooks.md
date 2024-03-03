@@ -70,7 +70,7 @@ hook 中的 memoizedState 则指的是当前 hook 缓存的 state 值
 官方文档一直强调 React Hooks 的调用只能放在函数组件/自定义 Hooks 函数体的顶层，所以我们能通过 Hooks 调用的顺序来与实际保存的数据结构来关联：
 
 ```js
-// hooks基本结构---react-reconciler的ReactFiberHooks.old.js下
+// hooks基本结构---react-reconciler的 ReactFiberHooks.old.js下
 
 export type Hook = {
   memorizedState: any,
@@ -164,3 +164,35 @@ update 阶段：updateEffect
 > https://juejin.cn/post/6891577820821061646#heading-6
 
 > https://juejin.cn/post/6844904205371588615
+
+## useImperativeHandle
+
+是 useLayoutEffect 的一个特例，依赖数组有默认的逻辑，如果没有传入依赖会自动将当前的 ref 对象作为一个依赖传入
+
+useImperativeHandle 可以让你在使用 ref 时自定义暴露给父组件的实例值（典型的应用是向上传递 func）。应当尽量避免使用这样的命令式代码。useImperativeHandle 需要与 forwardRef 配合使用：
+
+```js
+// *
+function FancyInput(props, ref) {
+  const inputRef = useRef();
+  // *
+  useImperativeHandle(ref, () => ({
+    //最终还是暴露原生标签上的api
+    focus: () => inputRef.current.focus(),
+  }));
+  return <input ref={inputRef} />;
+}
+// * 传递
+FancyInput = forwardRef(FancyInput);
+
+function Foo() {
+  const fancyInputRef = useRef(null);
+  return (
+    <>
+      <span onClick={() => fancyInputRef.current.focus()}></span>
+      // fancyInputRef 拿到了被传递出来的原生标签上的api
+      <FancyInput ref={fancyInputRef} />
+    </>
+  );
+}
+```

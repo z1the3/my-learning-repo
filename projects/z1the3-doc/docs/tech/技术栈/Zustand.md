@@ -68,16 +68,13 @@ const count = useSelector((state) => state.count);
 
 `（新值）=》set(()=>({原 key: 新对象}))`
 
-```js
-const usePersonStore =
-  (create < State) &
-  (Action >
-    ((set) => ({
-      firstName: "",
-      lastName: "",
-      updateFirstName: (firstName) => set(() => ({ firstName: firstName })),
-      updateLastName: (lastName) => set(() => ({ lastName: lastName })),
-    })));
+```ts
+const usePersonStore = create<State & Action>((set) => ({
+  firstName: "",
+  lastName: "",
+  updateFirstName: (firstName) => set(() => ({ firstName: firstName })),
+  updateLastName: (lastName) => set(() => ({ lastName: lastName })),
+}));
 ```
 
 ### 深层对象修改
@@ -201,3 +198,27 @@ const bears = useBearStore.use.bears()
 // get the action
 const increment = useBearStore.use.increment()
 ```
+
+### actions 与 store 分离的实践
+
+```js
+export const useBoundStore = create(() => ({
+  count: 0,
+  text: "hello",
+}));
+
+export const inc = () =>
+  useBoundStore.setState((state) => ({ count: state.count + 1 }));
+
+export const setText = (text) => useBoundStore.setState({ text });
+```
+
+在 module 层面定义 action(inc)
+
+与 store 分离
+
+#### 优点
+
+- 不需要通过 hook 调用 action
+  (但是其实也直接调用 updateXXX 方法即可)
+- 便于代码切割
