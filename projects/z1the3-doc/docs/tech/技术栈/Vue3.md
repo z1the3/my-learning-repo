@@ -196,3 +196,300 @@ keep-alive 的 include 和 exclude 属性将识别注册名称
 若同时设置了不同的声明名称和注册名称
 
 此时使用注册名称将无法识别
+
+## vue 组件通信方式
+
+整理 vue 中 8 种常规的通信方案
+
+-通过 props 传递
+
+-通过 $emit 触发自定义事件
+-使用 ref
+-EventBus
+-$parent 或$root
+-attrs 与 listeners
+-Provide 与 Inject
+-Vuex
+
+### emit
+
+```
+this.$emit('add', good)
+<Children @add="cartAdd($event)" />
+```
+
+### ref
+
+````
+<Children ref="foo" />
+
+this.$refs.foo  // 获取子组件实例，通过子组件实例我们就能拿到对应的数据 ```
+````
+
+## EventBus
+
+使用场景：兄弟组件传值
+创建一个中央事件总线 EventBus
+兄弟组件通过$emit触发自定义事件，$emit 第二个参数为传递的数值
+另一个兄弟组件通过$on 监听自定义事件
+
+```js
+// 创建一个中央时间总线类
+class Bus {
+  constructor() {
+    this.callbacks = {}; // 存放事件的名字
+  }
+  $on(name, fn) {
+    this.callbacks[name] = this.callbacks[name] || [];
+    this.callbacks[name].push(fn);
+  }
+  $emit(name, args) {
+    if (this.callbacks[name]) {
+      this.callbacks[name].forEach((cb) => cb(args));
+    }
+  }
+}
+
+// main.js
+Vue.prototype.$bus = new Bus(); // 将$bus挂载到vue实例的原型上
+// 另一种方式
+Vue.prototype.$bus = new Vue(); // Vue已经实现了Bus的功能
+Children1.vue;
+
+this.$bus.$emit("foo");
+Children2.vue;
+
+this.$bus.$on("foo", this.handle);
+```
+
+## $parent 或$ root
+
+通过共同祖辈$parent或者$root 搭建通信桥连
+兄弟组件
+
+this.$parent.on('add',this.add)
+
+另一个兄弟组件
+
+this.$parent.emit('add')
+
+## $attrs 与$ listeners
+
+适用场景：祖先传递数据给子孙
+设置批量向下传属性$attrs 和 $listeners
+
+```
+$attrs包含了父级作用域中不作为 prop 被识别 (且获取) 的特性绑定 ( class 和 style 除外)。
+可以通过 v-bind="$attrs" 传⼊内部组件
+
+
+// 给Grandson隔代传值，communication/index.vue
+<Child2 msg="lalala" @some-event="onSomeEvent"></Child2>
+
+// Child2做展开
+<Grandson v-bind="$attrs" v-on="$listeners"></Grandson>
+
+// Grandson使⽤
+<div @click="$emit('some-event', 'msg from grandson')">
+{{msg}}
+</div>
+```
+
+## provide 与 inject
+
+在祖先组件定义 provide 属性，返回传递的值
+在后代组件通过 inject 接收组件传递过来的值
+祖先组件
+
+```
+provide(){
+    return {
+        foo:'foo'
+    }
+}
+后代组件
+
+inject:['foo'] // 获取到祖先组件传递过来的值
+```
+
+# Vue 八股
+
+computed 和 watch
+
+从这个函数名, 就可以看明白 initComputed, 这是初始化计算属性的函数. 它的就是遍历下我们定义的 computed 对象, 然后从中给每一个值定义一个 watcher 实例.
+
+计算属性执行的时候会访问到, this.a 和 this.b. 这时候这两个值因为 Data 初始化的时候就被定义成响应式数据了. 它们内部会有一个 Dep 实例, Dep 实例就会把这个计算 watcher 放到自己的 sub 数组里. 待日后自己更新了, 就去通知数组内的 watcher 实例更新.
+
+```js
+const computedWatcherOptions = { lazy: true }
+
+// vm: 组件实例 computed 组件内的 计算属性对象
+function initComputed (vm: Component, computed: Object) {
+  // 遍历所有的计算属性
+  for (const key in computed) {
+    // 用户定义的 computed
+    const userDef = computed[key]
+    const getter = typeof userDef === 'function' ? userDef : userDef.get
+
+    watchers[key] = new Watcher( // 👈 这里
+      vm,
+      getter || noop,
+      noop,
+      computedWatcherOptions
+    )
+
+  defineComputed(vm, key, userDef) //对计算属性本身做响应式处理
+}
+
+
+
+
+```
+
+dirty 的作用.
+
+他就是用来记录我们依赖的值有没有变, 如果变了就重新计算一下值, 如果没变, 那就返回以前的值. 就像一个懒加载的理念. 这也是计算属性缓存的一种方式
+
+一开始 dirty 为 true, 一旦执行了一次计算,就会设置为 false. 然后当它定义的函数内部依赖的值比如: this.a 和 this.b 发声了变化. 这个值就会重新变为 true;
+
+即
+下一次执行计算属性时,就会去重新计算,(只在调用时决定是否重新计算，是同步的；而不是在依赖发生变化后，立即变动)
+
+● Computed 属性,watch 和组件一样, 本质上都是一个 watcher 实例.
+监听属性 watch 是异步触发的, 为什么这么说呢?
+
+● 实际上监听属性的执行逻辑和组件的渲染是一样的. 它们都会被放到一个 nextTick 函数中, 没错就是我们熟悉的 API.它可以让我们的同步逻辑, 放到下一个 Tick 在执行.
+
+● 计算属性和监听属性对于新值与旧值一样的赋值操作, 都不会做任何变化. 但这点的实现是由响应式系统完成的
+
+计算属性具有"懒计算"功能, 只有依赖的值变化了, 才允许重新计算. 称为"缓存", 个人觉得不准确
+
+在数据更新时, 计算属性的 dirty 状态会立即改变, 而监听属性与组件重新渲染, 至少都会在下一个"tick"执行.
+
+## 响应式原理
+
+### 数据劫持＋观察者模式
+
+1.初始化响应对象--------给 data 中对象的每个 key 创建 dep(放在**ob**里)
+observe(this.$data) defineReactive(obj,key,obj[key])
+
+2.编译模板并依赖收集---------对每个组件,生成一个 watcher,如果用到了某个 key,创建 watcher 时会触发该 key 的 getter, 进而将该 watcher 加入到 key 对应对象的 dep 里
+
+Dep.target 挂载当前 watcher
+
+3.以后触发 setter 时,会触发 Dep 上的 notify 使用 watcher 的 update 进而改变视图
+执行 this.updaterFn.call()
+
+4.在 update 中, 而在绑定响应式时，会同时将 a.b.c 以字符串形式储存起来作为 expression
+该 expression 会在搜索时提供参考，于是就可以在组件的 data 中找到对应的 a.b.c（而且类似组件属性上的 value，跟视图直接绑定），这时修改其值，再触发回调重新渲染
+
+## 生命周期
+
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/1709543249880.jpg" width="1000"/>
+
+## vue2 与 vue3 的区别
+
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/6f67a590-5088-11eb-85f6-6fac77c0c9b3.png" width="1200"/>
+
+### 全局 API
+
+createApp()
+defineProperty()
+defineAsyncComponent()
+nextTick()
+
+### 将 vue2 的全局 api 转移到应用对象实例上
+
+app.component
+app.config
+app.directive
+app.mount
+app.unmount
+app.use
+
+### 三个新组件
+
+fragment(就是 templament)
+teleport
+suspense(渲染后备内容)
+
+#### fragment
+
+```html
+<!-- Layout.vue -->
+<template>
+  <header>...</header>
+  <main v-bind="$attrs">...</main>
+  <footer>...</footer>
+</template>
+```
+
+framents
+在 Vue3.x 中，组件现在支持有多个根节点
+
+### teleport
+
+Teleport 是一种能够将我们的模板移动到 DOM 中 Vue app 之外的其他位置的技术，就有点像哆啦 A 梦的“任意门”
+
+```html
+<button @click="showToast" class="btn">打开 toast</button>
+<!-- to 属性就是目标位置 -->
+<teleport to="#teleport-target">
+  <div v-if="visible" class="toast-wrap">
+    <div class="toast-msg">我是一个 Toast 文案</div>
+  </div>
+</teleport>
+```
+
+在组件的逻辑位置写模板代码(v-if)，然后在 Vue 应用范围之外渲染它
+
+-setup 生命周期 →setup 语法糖
+ref reactive computed watch 生命周期
+provide inject
+-ref 内部: 通过给 value 属性添加 getter/setter 来实现对数据的劫持
+-reactive 内部: 通过使用 Proxy 来实现对对象内部所有数据的劫持, 并通过 Reflect 操作对象内部数据 -如果用 ref 对象/数组, 内部会自动将对象/数组转换为 reactive 的代理对象!!
+
+-watch 函数
+与 watch 配置功能一致
+监视指定的一个或多个响应式数据, 一旦数据变化, 就自动执行监视回调
+默认初始时不执行回调, 但可以通过配置 immediate 为 true, 来指定初始时立即执行第一次
+通过配置 deep 为 true, 来指定深度监视
+
+-watchEffect 函数
+不用直接指定要监视的数据, 回调函数中使用的哪些响应式数据就监视哪些响应式数据
+默认初始时就会执行第一次, 从而可以收集需要监视的数据
+
+-toRefs
+把一个响应式对象转换成普通对象，该普通对象的每个 property 都是一个 ref
+应用: 当从合成函数返回响应式对象时，toRefs 非常有用，这样消费组件就可以在不丢失响应式的情况下对返回的对象进行分解使用
+问题: reactive 对象取出的所有属性值都是非响应式的
+解决: 利用 toRefs 可以将一个响应式 reactive 对象的所有原始属性转换为响应式的 ref 属性
+
+### treeshaking
+
+体积更小
+通过 webpack 的 tree-shaking 功能，可以将无用模块“剪辑”，仅打包需要的
+
+能够 tree-shaking，有两大好处：
+
+对开发人员，能够对 vue 实现更多其他的功能，而不必担忧整体体积过大
+
+对使用者，打包出来的包体积变小了
+
+### compositon Api
+
+可与现有的 Options API 一起使用
+灵活的逻辑组合与复用
+Vue3 模块可以和其他框架搭配使用
+
+### 更好的 Typescript 支持
+
+VUE3 是基于 typescipt 编写的，可以享受到自动的类型定义提示
+
+## diff
+
+只比较两个节点的一层子节点，就是同层比较的意思
+在比较单一节点时如果 key 值不同，直接替换为新节点
+diff 算法最重要的内容是比较在 key 相同且两个节点都有子节点时子节点的差异
+
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/WeChatcc0c95b6a623b388bc8efc28742b14d1.jpg" width="1200"/>

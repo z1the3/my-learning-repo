@@ -9,6 +9,14 @@ v5
 
 通过约定式来保证 精简，灵活
 
+zustand 不关心你的 action 函数是否异步，只用在合适的时候调用 set。
+
+（虽然 setState 和 getState 两个 API 也可以达到相同效果，但是回调函数更符合单一责任原则
+
+```
+useCountStore.getState().count;
+```
+
 ### 创建 store
 
 ```js

@@ -283,3 +283,7 @@ text-align 一般运用在块级元素中，使其中的文本对齐。实际上
 place-content 属性是 align-content 和 justify-content 的简写，
 
 当该属性的值为 center 时，所有的子元素堆叠在父元素的中间对齐。
+
+## 透明
+
+rgba()和 opacity 都能实现透明效果，但最大的不同是 opacity 作用于元素，以及元素内的所有内容的透明度，而 rgba()只作用于元素的颜色或其背景色。 （设置 rgba 透明的元素的子元素不会继承透明效果！）

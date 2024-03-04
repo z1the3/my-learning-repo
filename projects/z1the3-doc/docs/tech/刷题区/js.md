@@ -198,6 +198,20 @@ class E {
 
 let e = new E();
 console.log(e.getA());
+
+var Person = (function () {
+  var privateData = new WeakMap();
+
+  function Person(name) {
+    privateData.set(this, { name: name });
+  }
+
+  Person.prototype.getName = function () {
+    return privateData.get(this).name;
+  };
+
+  return Person;
+})();
 ```
 
 用 this 做 map 上的 Key
@@ -244,6 +258,113 @@ function compose(...functions) {
     // [a,b,c]
     // (...args)=>a(b(args))
     // (...args)=>a(b(c))
+  }
+}
+```
+
+### 6.实现 new
+
+```js
+const _new = function (constructor, ...args) {
+  // new关键字做了4件事
+  // 1. 创建一个新对象
+  const obj = {};
+  // 2. 为新对象添加属性__proto__，将该属性链接至构造函数的原型对象
+  obj.__proto__ = constructor.prototype;
+  // 3. 执行构造函数，this被绑定在新对象上
+  const res = constructor.apply(obj, args);
+  // 4. 确保返回一个对象
+  return res instanceof Object ? res : obj;
+};
+```
+
+### 7.Function.prototype.call/apply
+
+```js
+Function.prototype._call = function (target = window) {
+  // fn可以随便起个名字，只要最后删除就行
+  target["fn"] = this;
+  //参数中去掉target
+  let arg = [...arguments].shift();
+  const result = target["fn"](...arg);
+  delete target["fn"];
+  return result;
+};
+Function.prototype._apply = function (target = window) {
+  target["fn"] = this;
+  let arg = [...arguments].shift();
+  // 其实和call是一样的，因为都先转为数组再展开
+  const result = target["fn"](...arg);
+  delete target["fn"];
+  return result;
+};
+```
+
+### 实现 Promise.all
+
+```js
+Promise.all = (promises) => {
+  return new Promise((resolve, reject) => {
+    let count = 0;
+    let result = [];
+    const len = promises.length;
+    if (len === 0) {
+      return resolve([]);
+    }
+
+    promises.forEach((promise, i) => {
+      // Promise.resolve用来包装一下，防止数组中不是promise而是基础类型
+      // 而且就算是promise，Promise.resolve会继承参数中promise的状态
+      Promise.resolve(promise)
+        .then((res) => {
+          count += 1;
+          // 保证按顺序返回
+          result[i] = res;
+          if (count === len) {
+            resolve(result);
+          }
+          // 一旦失败立即失败
+        })
+        .catch(reject);
+    });
+  });
+};
+
+// 写个使用例
+const promise1 = new Promise((resolve, reject) =>
+  setTimeout(() => resolve(1), 10)
+);
+const promise2 = new Promise((resolve, reject) =>
+  setTimeout(() => resolve(2), 10)
+);
+const promise3 = new Promise((resolve, reject) =>
+  setTimeout(() => resolve(3), 10)
+);
+const promise4 = promise.reject(1);
+
+const promises = [promise1, promise2, promise3, promise4];
+Promise.all(promises).then((res) => {
+  console.log(res);
+});
+```
+
+### 手写类型判断
+
+```js
+function getType(value) {
+  // 判断数据是 null 的情况
+  if (value === null) {
+    return value + "";
+  }
+  // 判断数据是引用类型的情况
+  if (typeof value === "object") {
+    let valueClass = Object.prototype.toString.call(value),
+      type = valueClass.split(" ")[1].split("");
+    type.pop();
+    return type.join("").toLowerCase();
+  } else {
+    // 判断数据是基本数据类型的情况和函数的情况
+    return typeof value;
   }
 }
 ```
@@ -328,6 +449,294 @@ function merge(left, right) {
 var arr = [3, 5, 7, 1, 4, 56, 12, 78, 25, 0, 9, 8, 42, 37];
 var res = mergeSort(arr);
 console.log(arr, res);
+```
+
+### 3.hardman
+
+```js
+HardMan(“jack”) 输出:
+I am jack
+
+HardMan(“jack”).rest(10).learn(“computer”) 输出
+I am jack
+//等待10秒
+Start learning after 10 seconds
+Learning computer
+
+HardMan(“jack”).restFirst(5).learn(“chinese”) 输出
+//等待5秒
+Start learning after 5 seconds
+I am jack
+Learning chinese
+
+
+class _HardMan {
+    constructor(name) {
+        this.tasks = []
+
+        setTimeout(async () => {
+            for (let task of this.tasks) {
+                await task()
+            }
+        })
+
+        this.tasks.push(() =>
+            new Promise(resolve => {
+                console.log(`I am ${name}`)
+                resolve()
+            })
+        )
+    }
+
+    wait(sec) {
+        return new Promise(resolve => {
+            console.log(`//等待${sec}秒..`)
+            setTimeout(() => {
+                console.log(`Start learning after ${sec} seconds`)
+                resolve()
+            }, sec * 1000);
+        })
+    }
+
+
+    rest(sec) {
+        this.tasks.push(() => this.wait(sec))
+        return this
+    }
+
+    restFirst(sec) {
+        this.tasks.unshift(() => this.wait(sec))
+        return this
+    }
+
+    learn(params) {
+        this.tasks.push(() =>
+            new Promise(resolve => {
+                console.log(`Learning ${params}`)
+                resolve()
+            })
+        )
+        return this
+    }
+}
+
+function HardMan(name) {
+    return new _HarnMan(name)
+}
+
+
+
+// 解答分析：
+// 1. 链式调用，每一个方法都返回this
+// 2. 并不直接执行代码，而是使用SetTimeout，这样就先把想要执行的任务先放进队列再执行
+// 3. wait 的使用，使用setTimeout，如果不用Promise把setTimeout包住，就无法堵塞后面代码的执行
+// 4. 除了用Promise，也可以在每个任务中指定的调用下一个任务，如：
+    next() {
+        let task = this.tasks.shift()
+        task && task()
+    }
+
+    wait(sec) {
+      setTimeout(() => {
+        //do something
+        this.next()
+      }, sec)
+    }
+
+
+```
+
+### 实现 promise
+
+```js
+function Promise(fn) {
+  this.cbs = [];
+
+  const resolve = (value) => {
+    setTimeout(() => {
+      this.data = value;
+      // 这个value，循环体现在 a.then();a.then();会增加cb;所以value值不变
+      // 而a.then().then()其实是创造一个新的promise (a.then())来管理新cb，value值需要更新
+      this.cbs.forEach((cb) => cb(value));
+    });
+  };
+  // 执行器，很关键，一切从这开始
+  fn(resolve);
+}
+
+Promise.prototype.then = function (onResolved) {
+  // 返回一个新promise从而可以链式调用，而这个promise会立即往自身的cb里加入一个函数
+  // 这个函数能保证then时，老promise resolve时会把新promise的onResolved执行了
+  // 在调用resolve会遍历cb，并异步执行里面的函数，那么就会进而执行onResolved
+  // 给完成结果加上then再resolve能再下一次异步执行res(promise)独享的cb2
+  // 如果完成结果不是promise,直接通过resolve派发这一次then的结果，更新this.data
+  return new Promise((resolve) => {
+    this.cbs.push(() => {
+      // 这一行则完成了.then((res)=>{})，并且将老promise的data传给新promise
+      const res = onResolved(this.data);
+      if (res instanceof Promise) {
+        res.then(resolve);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+};
+
+new Promise((resolve) => {
+  setTimeout(() => {
+    resolve(1);
+  }, 500);
+})
+  .then((res) => {
+    console.log(res);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(2);
+      }, 500);
+    });
+  })
+  .then(console.log);
+```
+
+### 数组去重
+
+```js
+const unique = (arr) => {
+  return Array.from(new Set(arr)); //先把arr转化成set类数组，然后再转化为数组
+};
+
+const unique = (arr) => {
+  return [...new Set(arr)];
+};
+
+const unique = (arr) => {
+  for (var i = 0; i < arr.length; i++) {
+    for (var j = i + 1; j < arr.length; j++) {
+      if (arr[i] == arr[j]) {
+        arr.splice(j, 1);
+        j--;
+      }
+    }
+  }
+  return arr;
+};
+```
+
+## 防抖节流
+
+```js
+function debounce(fn, wait) {
+  let timer = null;
+
+  return function () {
+    const args = [...arguments];
+
+    // 如果此时存在定时器的话，则取消之前的定时器重新记时
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+
+    // 设置定时器，使事件间隔指定事件后执行
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, wait);
+  };
+}
+
+// 时间戳版
+function throttle(fn, delay) {
+  var preTime = Date.now();
+
+  return function () {
+    (args = [...arguments]), (nowTime = Date.now());
+
+    // 如果两次时间间隔超过了指定时间，则执行函数。
+    if (nowTime - preTime >= delay) {
+      preTime = Date.now();
+      return fn.apply(this, args);
+    }
+  };
+}
+
+// 定时器版
+function throttle(fn, wait) {
+  let timer = null;
+  return function () {
+    // 此处的arguments为 throttle(fn(1,2,3),wait)的[1,2,3]
+    let args = [...arguments];
+    // 只有在未开启定时器时才会开启，并不会覆盖
+    if (!timer) {
+      timer = setTimeout(() => {
+        fn.apply(this, args);
+        // 回收定时器
+        timer = null;
+      }, wait);
+    }
+  };
+}
+```
+
+但是节流存在两种边界条件 1.如果使用定时器法，第一次执行，它也会延迟 wait 毫秒执行，我们希望第一次能立即执行；
+使用时间戳法可以实现
+
+2.如果使用时间戳法，最后一次是不执行的，因为判断之后发现没到 ddl，直接结束了
+使用定时器法可以解决，最后一次必然会在定时器结束后执行
+
+将两种方法结合可以解决这个问题
+
+```js
+function throttle(fn, delay) {
+  let timer = null;
+  let start = Date.now();
+  return function () {
+    let args = [...arguments];
+    let curTime = Date.now();
+    let remain = delay - (curTime - start);
+    clearTimeout(timer); //***
+    if (remain <= 0) {
+      fn(args);
+      start = Date.now();
+    } else {
+      timer = setTimeout(() => fn.apply(this, args), remain);
+    }
+  };
+}
+```
+
+## 深拷贝
+
+```js
+const _completeDeepClone = (target, map = new Map()) => {
+  // 排除null 和 基本数据类型（直接返回
+  if (target === null) return target;
+  if (typeof target !== "object") return target;
+
+  // 复制一份对象的构造函数名，如果是Function|RegExp|Date|Map|Set，则生成新的实例对象
+  // 这里是通过__proto__找到的constructor
+  const constructor = target.constructor;
+  if (/^(Function|RegExp|Date|Map|Set)$/i.test(constructor.name))
+    return new constructor(target);
+
+  // 在map中获取该对象，如果能获取到，说明该对象内部拥有外层的对象，为循环引用，返回map中该对象的值
+  //
+  if (map.get(target)) return map.get(target);
+
+  // 根据参数的数据类型（通过isArray）判断克隆出的类型，并设result
+  const cloneTarget = Array.isArray(target) ? [] : {};
+  // 如果获取不到，则先保存到map中,这里cloneTarget是引用类型，所以最后的操作能影响这里
+  map.set(target, cloneTarget);
+
+  for (prop in target) {
+    // 如果是target中非继承的属性, 每个对象上都能找到hasOwnProperty
+    if (target.hasOwnProperty(prop)) {
+      // 将map传下去
+      cloneTarget[prop] = _completeDeepClone(target[prop], map);
+    }
+  }
+  return cloneTarget;
+};
 ```
 
 ## react
