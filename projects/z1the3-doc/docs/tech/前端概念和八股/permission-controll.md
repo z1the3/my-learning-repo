@@ -1,0 +1,163 @@
+# 权限控制
+
+## 访问控制模型(access control)
+
+访问控制是给出一套方法，将系统中的所有功能标识出来，组织起来，托管起来，将所有的数据
+组织起来标识出来托管起来，然后提供一个简单的唯一的接口，这个接口的一端是应用系统一
+端是权限引擎。权限引擎所回答的只是：谁是否对某资源具有实施 某个动作（运动、计算）的
+权限。返回的结果只有：有、没有、权限引擎异常。
+
+### 访问控制模型要素
+
+-主体(Subject)：指主动对其它实体施加动作的实体，也可表示为访问者。
+
+-客体(Object)：指被动接受其他实体访问的实体，也可表示为访问目标。
+
+-控制策略(Policy)：为主体对客体的操作行为和约束条件。
+
+## 访问控制模型
+
+访问控制的实现，有以下几种成熟访问控制模型帮助我们解决问题:
+
+访问控制列表(Access Control List,ACL)
+
+自由访问控制(Discretionary Access Control,DAC)
+
+强制访问控制(Mandatory Access Control,MAC)
+
+基于角色的访问控制(Role-BasedAccess Control,RBAC)
+
+基于属性的访问控制(Attribute-Based Access Control,ABAC)
+
+## 基于角色的访问控制 RBAC
+
+限制资源可以被哪些角色进行哪些操作
+
+对主体进行角色配置,主体可以操作对应的资源
+
+例如，我们有用户 Alice 和 Bob，以及资源 Article，规则:
+Alice 允许点赞 article;
+Bob 允许删除以及点赞 article;
+我们通过基于角色的访问控制，实现对应的规则限制。
+
+1.权限配置的结构
+
+```yml
+Permissions:
+   Name: Like Article
+    Operations:
+       Resource: Article
+       Action: Like
+
+   Name: Delete Article
+    Operations:
+       Resource: Article
+       Action: Delete
+```
+
+2.角色配置
+
+```yml
+Roles:
+  Name: Reader
+   Permissions:
+  - Like Article
+```
+
+3.用户配置
+
+```yml
+
+Users:
+   Name: Alice
+    Roles:
+    - Reader
+
+
+   Name: Bob
+    Roles:
+    - Reader
+    - Admin
+
+```
+
+通过上面的例子，我们可以看到，其实 RBAC 很大程度上贴近现实生活，方便理解和使用。但是，当在复杂的场景下，其实 RBC 是不够用的，像上面的例子，其中的阅读限制，如果我们需要实现文章只允许作者本人阅读，那么需要创建很复杂的角色和权限，甚至会造成很多虚拟的角色。
+
+但是，不可否认的是 RBAC 非常适合一些**组织架构非常严谨**的系统，如学校试卷批改系统，学生查阅分数，而老师能创建、批改试卷等。
+
+## 基于属性的访问控制 ABAC
+
+基于属性的访问控制 Attribute-Based Access Control,ABAC
+
+ABAC 判断一个主体是否能操作某项资源是通过对其**不同属性的计算结果**进行判断
+
+### Attributes
+
+Attribute ->属性，可以放任何数据，通常使用 key-value 的形式来存储信息。其存储的数据，人们习惯分成以下 4 种不同的类型，分别是:
+Subject attributes，用户相关的属性，如:年龄、职位、角色等;
+Action attributes，操作相关的属性，如:增删查改等;
+Object attributes，资源相关的属性，如:文章、银行账号等;
+Contextual (environment) attributes，时间、位置或者一些和场景相关的上下文属性;
+
+### Policies
+
+Policies->策略，把属性组合在一起后，通过计算后进行访问控制结果判断。在基于属性的访问
+控制中，policy 可以是授权的策略也可以是拒绝的策略，同时可以是本地的策略也可以是全局的策略。例如:
+
+- 一个用户可以查看属于该用户部门下的文档;
+- 一个用户可以修改文档，如果他是该文档的作者同时文档非处于草稿模式;
+- 在 09:00am 前拒绝所有的查询访问
+
+例如，Alice 这个小伙子可以阅读(不可修改)属于开发部的文档，文档需要带有 Technoloy 或 Software 的标签，而且处于发布模式，阅读时间允许从 2021-05-01 到 2021-08-31，限制阅读的地点在中国。
+
+基于属性的访问控制其策略如下:
+
+一个用户可以查看属于该用户部门下的文档; -个用户可以修改文档，如果他是该文档的作者同时文档非处于草稿模式;
+在 09:00am 前拒绝所有的查询访问
+
+### Policies 如下
+
+```yml
+Subject:
+  Name: Alice
+  Department: Development
+  Role: Developer
+Action:
+  - Read
+Resource:
+  Type: Article
+  Tag:
+    - Technology
+    - Software
+  Node:
+    - Published
+Contextual:
+  Location: China
+  StartTime: 2021-05-01
+  EndTime: 2021-08-31
+```
+
+## 总结
+
+|模型|使用场景|
+|访问控制列表(ACL)|粗力度或相对静止的访问控制场景|
+|自主访问控制(DCL)|需要支持主体授权动作的场景|
+|强制访问控制(MAC)|很强安全要求|
+|基于角色的访问控制(RBAC)|组织架构非常严谨的系统，可避免 role 的过度配置|
+|基于属性的访问控制(ABAC)|访问控制需支持细粒度多维度的情况|
+
+## 落地
+
+CASL + react-router
+
+## CASL
+
+- 用户操作(主体对客体的一个访问操作)描述用户在应用程序中实际可以执行的操作。一般来说，这些操作来自 CRUD-如 create、read 和 update -个客体(页面配置)。
+
+- 主题(subject)注意区分 casl 中的 subject 应该对应访问控制模型中的 0bject 用户操作的目标对象，也就是客体。如平台中应用、页面、频道等。主题与主题类型之间的关系与对象实例与其类之间的关系相同。
+
+- 字段，限制用户仅允许操作部分字段(例如，允许版主更新 Article 的 status 字段并禁止更新 description 或 title)
+
+- 条件,限制用户操作能够作用在哪些客体上的限制条件，如用户仅能够编辑自己的应用。
+
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/WX20240307-162609@2x.png" width="1000"/>

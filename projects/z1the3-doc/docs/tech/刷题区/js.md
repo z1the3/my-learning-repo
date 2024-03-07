@@ -300,7 +300,21 @@ Function.prototype._apply = function (target = window) {
 };
 ```
 
-### 实现 Promise.all
+### Function.prototype.bind
+
+```js
+// 注意在Function原型上绑定
+Function.prototype.bind = function (context, ...args) {
+  // 拿到fn.bind()的fn
+  let fn = this;
+  //这里用...rest为了实现foo.bind(null,"a","b")("c","d","e");
+  return function (...rest) {
+    return fn.apply(context, [...args, ...rest]);
+  };
+};
+```
+
+### 8.实现 Promise.all
 
 ```js
 Promise.all = (promises) => {
@@ -346,6 +360,12 @@ const promises = [promise1, promise2, promise3, promise4];
 Promise.all(promises).then((res) => {
   console.log(res);
 });
+```
+
+### 9.20 行实现 promise
+
+```js
+
 ```
 
 ### 手写类型判断
@@ -464,7 +484,7 @@ Start learning after 10 seconds
 Learning computer
 
 HardMan(“jack”).restFirst(5).learn(“chinese”) 输出
-//等待5秒
+//等待5秒,但是优先级比I am jack还搞·
 Start learning after 5 seconds
 I am jack
 Learning chinese
@@ -610,11 +630,13 @@ const unique = (arr) => {
   return [...new Set(arr)];
 };
 
+//双指针
 const unique = (arr) => {
   for (var i = 0; i < arr.length; i++) {
     for (var j = i + 1; j < arr.length; j++) {
       if (arr[i] == arr[j]) {
         arr.splice(j, 1);
+        // *
         j--;
       }
     }
@@ -623,7 +645,7 @@ const unique = (arr) => {
 };
 ```
 
-## 防抖节流
+### 防抖节流
 
 ```js
 function debounce(fn, wait) {
@@ -655,6 +677,7 @@ function throttle(fn, delay) {
     // 如果两次时间间隔超过了指定时间，则执行函数。
     if (nowTime - preTime >= delay) {
       preTime = Date.now();
+      // 但是这个版本有return值
       return fn.apply(this, args);
     }
   };
@@ -678,7 +701,7 @@ function throttle(fn, wait) {
 }
 ```
 
-但是节流存在两种边界条件 1.如果使用定时器法，第一次执行，它也会延迟 wait 毫秒执行，我们希望第一次能立即执行；
+但是节流存在两种边界条件 1.如果使用定时器法，第一次执行，它**也会延迟 wait 毫秒执行**，我们希望第一次能立即执行；
 使用时间戳法可以实现
 
 2.如果使用时间戳法，最后一次是不执行的，因为判断之后发现没到 ddl，直接结束了
@@ -695,6 +718,7 @@ function throttle(fn, delay) {
     let curTime = Date.now();
     let remain = delay - (curTime - start);
     clearTimeout(timer); //***
+    timer = null;
     if (remain <= 0) {
       fn(args);
       start = Date.now();
@@ -705,7 +729,151 @@ function throttle(fn, delay) {
 }
 ```
 
-## 深拷贝
+### 合法的 URL
+
+```js
+const _isUrl = (url) => {
+  // 去空格
+  return /^((http|https):\/\/)?(( [A-Za-z0-9]+-[A-Za-z0-9]+ |[A-Za-z0-9]+)\.)+  ([A-Za-z]+)
+                                                                            // 最后一段不带数字不带点
+  (:\d+)?  (\/.*)?  (\?.*)?  (#.*)? $/.test(
+  //端口号d+
+    url
+  );
+};
+```
+
+### 全排列
+
+```js
+const _permute = (string) => {
+  let result = [],
+    arr = string.split("");
+  const arrange = (left, right) => {
+    if (left.length === arr.length) {
+      result.push(left.join(""));
+    } else {
+      right.map((item, i) => {
+        let temp = [...right];
+        temp.splice(i, 1);
+        arrange([...left, item], temp);
+      });
+    }
+  };
+  //启动
+  arrange([], arr);
+  return result;
+};
+```
+
+### \_map
+
+```js
+// this是数组实例
+
+Array.prototype._map = function (fn，outerThis=undefined){
+    // 'function'是字符串
+      if(typeof fn!=='function') return
+      let newArr = []
+      for(let i = 0;i<this.length;i++){
+        // map(array[index],index,array)
+        // 绑定外层传进来的this
+          newArr[i] = fn.call(outerThis,this[i],i,this)
+      }
+      return newArr
+  }
+```
+
+### filter
+
+```js
+Array.prototype._filter = function (fn) {
+  if (typeof fn !== "function") return this;
+  let res = [];
+  this.forEach((item) => {
+    if (fn(item)) {
+      res.push(item);
+    }
+  });
+  return res;
+};
+```
+
+### reduce
+
+```js
+// prev为初始值，可能为undefined
+Array.prototype._reduce = function (fn, prev) {
+  for (let i = 0; i < this.length; i++) {
+    if (prev === undefined) {
+      // 此时第一位和第二位为参数返回结果为初始值，当前应该在第二位所以i++
+      // 修改参数prev
+      prev = fn(this[i], this[i + 1], i + 1, this);
+      i++;
+    } else {
+      // prev不为undefined了，所以将上一次的prev传进去
+      prev = fn(prev, this[i], i, this);
+    }
+  }
+  return prev;
+};
+```
+
+### Object.create
+
+```js
+const _objectCreate = (proto) => {
+  // 补全代码
+  if (typeof proto !== "object") return;
+  const fn = function () {};
+  fn.prototype = proto;
+  // 如果proto为null, 返回的是一个干净的对象
+  return new fn();
+};
+```
+
+### new
+
+```js
+const _new = function (constructor, ...args) {
+  // new关键字做了4件事
+  // 1. 创建一个新对象
+  const obj = {};
+  // 2. 为新对象添加属性__proto__，将该属性链接至构造函数的原型对象
+  obj.__proto__ = constructor.prototype;
+  // 3. 执行构造函数，this被绑定在新对象上
+  const res = constructor.apply(obj, args);
+  // 4. 确保返回一个对象
+  return res instanceof Object ? res : obj;
+};
+```
+
+### 浅拷贝
+
+```js
+const _shallowClone = (target) => {
+  // 补全代码
+  // 基本数据类型
+  if (typeof target !== "object" || target === null) return target;
+  let ret = Array.isArray(target) ? [] : {};
+  // Object.assign(ret, target);
+  let str = Object.prototype.toString.call(target);
+  // 函数，日期正则，直接返回
+  if (
+    str == "[object Date]" ||
+    str == "[object RegExp]" ||
+    str == "[object Function]"
+  )
+    return target;
+
+  Object.keys(target).forEach((key) => {
+    ret[key] = target[key];
+  });
+  return ret;
+};
+```
+
+### 深拷贝
 
 ```js
 const _completeDeepClone = (target, map = new Map()) => {
@@ -714,7 +882,6 @@ const _completeDeepClone = (target, map = new Map()) => {
   if (typeof target !== "object") return target;
 
   // 复制一份对象的构造函数名，如果是Function|RegExp|Date|Map|Set，则生成新的实例对象
-  // 这里是通过__proto__找到的constructor
   const constructor = target.constructor;
   if (/^(Function|RegExp|Date|Map|Set)$/i.test(constructor.name))
     return new constructor(target);
@@ -729,7 +896,7 @@ const _completeDeepClone = (target, map = new Map()) => {
   map.set(target, cloneTarget);
 
   for (prop in target) {
-    // 如果是target中非继承的属性, 每个对象上都能找到hasOwnProperty
+    // 如果是target中非继承的属性
     if (target.hasOwnProperty(prop)) {
       // 将map传下去
       cloneTarget[prop] = _completeDeepClone(target[prop], map);
@@ -737,6 +904,56 @@ const _completeDeepClone = (target, map = new Map()) => {
   }
   return cloneTarget;
 };
+```
+
+### flat
+
+```js
+//拍到底
+let arr = [1, [2, [3, 4, 5]]];
+function flatten(arr) {
+  let result = [];
+  for (let i = 0; i < arr.length; i++) {
+    // 当前元素是一个数组，对其进行递归展平
+    if (Array.isArray(arr[i])) {
+      // 递归展平结果拼接到结果数组
+      result = result.concat(flatten(arr[i]));
+    }
+    // 否则直接加入结果数组
+    else {
+      result.push(arr[i]);
+    }
+  }
+  return result;
+}
+console.log(flatten(a));
+```
+
+```js
+// 递归拍n层
+function flatten(arr, level) {
+  function walk(arr, currLevel) {
+    let res = [];
+    for (let item of arr) {
+      // 判断有没有超过层数,放在for循环里面而不是外面,放在外面超过层数后
+      //后面的数就不会加到arr里了
+      if (Array.isArray(item) && currLevel < level) {
+        // 记得walk的是新的item**和现有的curlevel+1**
+        res = res.concat(walk(item, currLevel + 1));
+
+        // res.push(...walk(item,currLevel + 1))也行
+      } else {
+        res.push(item);
+      }
+    }
+    return res;
+  }
+
+  return walk(arr, 0);
+}
+
+var res = flatten(arr, 3);
+console.log(res);
 ```
 
 ## react
@@ -856,5 +1073,46 @@ export function useUpdateEffect(effect: EffectCallback, deps?: DependencyList) {
       cleanup && cleanup();
     };
   }, deps);
+}
+```
+
+### 17.useHover
+
+```tsx
+function App() {
+  const [ref, isHovered] = useHover();
+  return <div ref={ref}>{isHovered ? "hovered" : "not hovered"}</div>;
+}
+```
+
+```tsx
+import { Ref, useRef, useState, useEffect } from "react";
+
+// 第一个参数如果有一定要是dom
+export function useHover<T extends HTMLElement>(): [
+  Ref<T | undefined>,
+  boolean
+] {
+  const ref = useRef<T>();
+  const [isHovering, setHovering] = useState(false);
+  useEffect(() => {
+    // false by default if ref.current changes
+    setHovering(false);
+
+    const element = ref.current;
+    if (!element) return;
+
+    const setYes = () => setHovering(true);
+    const setNo = () => setHovering(false);
+
+    element.addEventListener("mouseenter", setYes);
+    element.addEventListener("mouseleave", setNo);
+
+    return () => {
+      element.removeEventListener("mouseenter", setYes);
+      element.removeEventListener("mouseleave", setNo);
+    };
+  }, [ref.current]); // 如果ref.current变了,也要重新执行
+  return [ref, isHovering];
 }
 ```

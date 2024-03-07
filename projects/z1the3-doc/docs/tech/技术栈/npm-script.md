@@ -6,7 +6,7 @@ tags: [npm]
 
 ## 全局安装包
 
-默认情况下，npm安装的全局包，会保存在`C:\Users\username\AppData\Roaming\npm\node_modules`，可以使用`npm root -g`查看全局包安装路径。
+默认情况下，npm 安装的全局包，会保存在`C:\Users\username\AppData\Roaming\npm\node_modules`，可以使用`npm root -g`查看全局包安装路径。
 
 `npm list -g --depth=0`
 
@@ -19,7 +19,7 @@ tags: [npm]
 
 npx 是 npm 5.2+ 版本之后自带的工具，能够帮助我们更高效的**执行 npm 软件仓库里的安装包**
 
-* 可以用来执行**当前项目中甚至当前项目依赖中**的可执行工具
+- 可以用来执行**当前项目中甚至当前项目依赖中**的可执行工具
 
 ```
 # npx 之前
@@ -30,7 +30,7 @@ $ npx mocha
 
 ```
 
-* 也可直接执行那些不在当前项目，也没在全局安装过的 npm 工具包，比如：create-react-app
+- 也可直接执行那些不在当前项目，也没在全局安装过的 npm 工具包，比如：create-react-app
 
 ```
 npx create-react-app my-app
@@ -44,14 +44,14 @@ npx create-react-app my-app
 
 ## npm install
 
---save 指安装为依赖（生产环境）；--save-dev指安装为dev依赖（开发环境）；--save-exact是使用精确版本安装；--force是指强制安装
+--save 指安装为依赖（生产环境）；--save-dev 指安装为 dev 依赖（开发环境）；--save-exact 是使用精确版本安装；--force 是指强制安装
 
 ## prepare
 
-关于husky install官网推荐的是在packgae.json中添加prepare脚本
-  ，prepare脚本会在npm install（不带参数）之后自动执行。
+关于 husky install 官网推荐的是在 packgae.json 中添加 prepare 脚本
+，prepare 脚本会在 npm install（不带参数）之后自动执行。
 
-这样少输一次命令，相当于把脚手架初始化命令放到npm install中
+这样少输一次命令，相当于把脚手架初始化命令放到 npm install 中
 
 ```
 {
@@ -61,8 +61,12 @@ npx create-react-app my-app
 }
 ```
 
+## 其他
+
+package-lock.json 的作用以及安装顺序: 如果与 package.json 冲突, 以 package.json 为准
+
 ## 引用
 
-原文作者：z__r
+原文作者：z\_\_r
 转自链接：https://learnku.com/articles/16798/quick-view-of-npm-and-yarn-global-installed-packages
 版权声明：著作权归作者所有。商业转载请联系作者获得授权，非商业转载请保留以上作者信息和原文链接。

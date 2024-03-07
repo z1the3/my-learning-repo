@@ -1,5 +1,11 @@
 # React
 
+## 类组件
+
+● 类组件：构造，getDSfromProps, cDidMount,shouldCUpdate,cDidUpdate,cWillUnmounted....
+
+● 函数组件：用 useEffect 代替 cDidMountcDidUpdatecWillUnmounted
+
 ## diff
 
 <img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/WeChat79b74639b63015e2b71c53c668c99c71.jpg" width="500"/>
@@ -134,3 +140,86 @@ function performWork(deadline) {
 ```
 
 workLoop**的工作会从更新队列(updateQueue)中弹出更新任务来执行，每执行完一个‘执行单元‘，就检查一下剩余时间是否充足，如果充足就进行执行下一个**执行单元，反之则停止执行，保存现场，等下一次有执行权时恢复
+
+## UseLayoutEffect
+
+其函数签名与 useEffect 相同，但它会在 所有的 DOM 变更之后，同步(即阻塞式)地 调用 effect。
+
+可以使用它来读取 DOM 布局并同步触发重渲染。
+
+在浏览器执行绘制之前，useLayoutEffect 内部的更新计划将被同步刷新。
+
+useLayoutEffect 与 componentDidMount、componentDidUpdate 的调用阶段是一样的。
+
+useLayoutEffect 会阻塞浏览器主线程，里面的所有修改都会在下次渲染时体现。而 useEffect 会先让出主线程，将任务添加到事件队列中等候执行。（具体看 DevTools / Performance / Main 的 Task 就好，放大看一眼就明白了）
+
+---
+
+useEffect 会在浏览器渲染新内容后异步执行，也就是说当组件更新后，它并不会立即执行。 而 useLayoutEffect 会在 DOM 更新之后，浏览器绘制之前同步执行。
+
+所以说，区别是一个为同步，一个为异步，你可以理解为 useLayoutEffect 与 useEffect 的执行时机都是在“DOM 更新之后和浏览器绘制之前”（它们会在 React 更新 DOM 完成之后立即执行，但在浏览器进行 DOM 重排和绘制之前）。这样可以确保在 React 更新 DOM 之后立即执行副作用代码，而不需要等到下一个渲染周期
+
+不过，虽然 useLayoutEffect 是同步执行的，但它也是在 React 更新 DOM 完成之后才执行的。因此，在 useLayoutEffect 中访问 DOM 元素时，可以确保它们已经被更新。而在 useEffect 中访问 DOM 元素时，则需要注意它们可能还没有被更新，因为 useEffect 是异步执行的。如果需要在更新 DOM 后立即执行一些操作，应该使用 useLayoutEffect。否则，应该使用 useEffect。
+
+---
+
+在 mount 阶段 useEffect 对应 mountEffect, useLayoutEffet 对应 mountLayouEffect
+两个函数都会直接返回 mountEffectImpl 函数，区别是参数有所不同
+
+```js
+mountEffectImpl(UpdateEffect | PassiveEffect, HookPassive, create, deps);
+
+mountLayoutEffectImpl(UpdateEffect, HookLayout, create, deps);
+```
+
+mountEffectImpl 函数会把第一参数 fiberFlag 合并到 fiber.flag 来标志 fiber 节点的副作用类型，随后调用 pushEffect 函数生成一个 effect 并加到 hook.memoziedState 属性和 fiber.updateQueue.lastEffect 环型链表上
+
+```js
+function mountEffectImpl(fiberFlags, hookFlags, create, deps):void {
+  const hook = mountWorkInProgressHook()
+  const nextDeps = deps ===undefined? null: deps
+  currentlyRenderingFiber.flags |= fiberFlag
+  hook.memoizedState = pushEffect(
+    HookHasEffect | hookFlags,
+    create,
+    undefined,
+    nextDeps
+  )
+}
+
+// lastEffect是环形链表
+function pushEffect(tag, create, destory, deps){
+  const effect: Effect = {
+    tag,
+    create,
+    destory,
+    deps,
+    next:(null:any)
+  }
+  let componentUpdateQueue = null | FunctionComponentUpdateQueue =
+    (currentlyRenderingFiber.updateQueue)
+  if(componentUpdateQueue === null){
+    componentUpdateQueue = createFunctionComponentUpdteQueue()
+    currentlyRenderingFiber.updateQueue = (componentUpdateQueue:any)
+    componentUpdateQueue.lastEffect = effect.next = effect
+  } else {
+    const firstEffect = lastEffect.next
+    lastEffect.next = effect
+    effect.next = firstEffect
+    componentUpdateQueue.lastEffect = effect
+  }
+  return effect
+
+}
+```
+
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/1709693030086.jpg" width="1000"/>
+
+## 缓存优化 memo
+
+pureComponent shouldComponentUpdate React.memo
+
+前两个供类组件使用，React.memo 供函数式组件使用，是一个高阶组件，通过包裹函数返回一个新组件
+浅比较 props 不改变则不重新渲染
+
+pureComponent 即将 shouldComponentUpdate 设定为浅比较 props 的父组件

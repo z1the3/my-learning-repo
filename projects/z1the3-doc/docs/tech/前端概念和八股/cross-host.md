@@ -10,7 +10,7 @@ JSONP 的实现原理是通过动态创建一个`<script>`标签，将请求的�
 <script>   function handleData(data) {     // 处理返回的数据   } </script>
 ```
 
-2.动态创建一个<script>标签，并将数据源的 URL 作为其 src 的属性值，并将回调函数名称以参数的形式传递给服务器，例如`http://example.com/data?callback=handleData`。
+`2.动态创建一个<script>标签，并将数据源的 URL 作为其 src 的属性值，并将回调函数名称以参数的形式传递给服务器，例如`http://example.com/data?callback=handleData`。`
 
 ```html
 <script>

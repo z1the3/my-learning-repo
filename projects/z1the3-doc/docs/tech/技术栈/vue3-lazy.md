@@ -359,7 +359,7 @@ private lazyHandler (e: Event): void {
     return rect.top < window.innerHeight && rect.left < window.innerWidth
     // 还有一种方法是 offsetTop, scrollTop, innnerHeight
     // img.offsetTop < window.innerHeight + document.body.scrollTop;
-
+// !一旦经过就下载，不是在视口内才下载
   }
 
 ```

@@ -1,0 +1,139 @@
+# 竞态
+
+https://juejin.cn/post/6970710521104302110
+
+1. 首先用户在描述输入框输入“快乐”，然后点击查询 , 这次我们称为第一次请求
+2. 紧接着用户在描述输入框输入“悲伤”，然后点击查询，这次我们称为第二次请求
+   网络波动时，如果第二次请求的结果比第一次请求先返回，页面上描述输入框展示的是 “悲伤”，但是页面展示的列表数据却是第一次请求查询出的“快乐”对应的结果。
+
+## 2.1 交互层面解决
+
+在发起请求后，我们添加全局的 loading 遮罩，或者 禁用查询按钮 ，这样的话，我们在一个请求未完成前不能发送新的请求，这样就能解决了。
+但是这个方法有几个缺点：
+
+1. 阻断交互
+2. 触发查询的动作很多样，如回车键等。这种情况下需要考虑的点会比较多
+3. 要说服产品、交互的同事（如果你特别能 Battle 需求，就忽略这一条）
+
+## 2.2 取消请求
+
+如果我们能够在每次请求时，都先取消上一次的请求就能确保最终的查询结果和查询的条件是一致的。
+
+### 2.2.1 axios
+
+我们以 axios 的 cancellation 举例：
+
+```js
+const CancelToken = axios.CancelToken;
+let source
+
+// 请求的函数
+funtion query (keyword) {
+  if (source) {
+    source.cancel('取消请求');
+  }
+  source = CancelToken.source();
+
+  return axios.post('/list', {
+    keyword
+  }, {
+    cancelToken: source.token
+  }).catch(function (thrown) {
+    // 区别处理取消请求和请求错误
+    if (axios.isCancel(thrown)) {
+      // 取消请求的逻辑
+    } else {
+      // 请求错误
+    }
+  });
+}
+```
+
+上面的代码中，在每次查询前都使用 source.cancel() 取消了上一次的请求。
+
+## 2.2.2 可取消的 Promise
+
+当然，不是每个人都会使用 axios 作为请求库，一个通用的做法是定制一个可取消的 Promise 来封装请求。（注意：Promise 是不能取消的，这里取消指的是手动把 Promise 设为 rejected 状态
+），这样不执行成功回调，代码如下：
+
+```js
+let doCancel
+
+// 请求的函数
+funtion query (keyword) {
+  if (doCancel) {
+    // 设置上一次的 Promise 设为 rejected 状态
+    doCancel('取消请求');
+  }
+  return new Promise(function(resolve, reject) {
+    // 挂载 reject 方法
+    doCancel = reject
+    const xhr = new XMLHttpRequest();
+    xhr.on("load", resolve);
+    xhr.on("error", reject);
+    xhr.open("POST", '/list', true);
+
+    // 发送请求条件，这里未作处理
+    xhr.send(null);
+  }).catch(function (thrown) {
+    // 区别处理取消请求和请求错误
+    if (axios.isCancel(thrown)) {
+      // 取消请求的逻辑
+    } else {
+      // 请求错误
+    }
+  });
+}
+
+```
+
+如果你不想折腾，这里推荐使用 bluebird 的 cancellation 功能
+
+## 2.2.3 rxjs switchMap 操作符
+
+switchMap
+switchMap 有点类似于 Promise。新的数据派发会取消上一次的数据
+对 rxjs 不熟悉的小伙伴可以点击这篇文章学习一下，这里放一下 swtchMap 处理竞态异步请求的简单示例代码
+
+```js
+var btn = document.querySelector(".js-query");
+var inputStream = Rx.Observable.fromEvent(btn, "click")
+  .debounceTime(250) // 防抖，防止请求过于频繁
+  .switchMap((url) => Http.get(url))
+  .subscribe((data) => render(data));
+```
+
+## 2.3 抛弃无用的请求
+
+最后一种处理方式最为比较容易理解：只处理当前查询条件对应请求结果，其它的查询条件的结果我们都认为是无用的请求，对于无用的请求我们在回调函数里不处理就可以了。
+
+```js
+// 请求标记
+let gobalReqID = 0
+
+// 请求的函数
+funtion query (keyword) {
+  gobalReqID++
+    let curReqID = gobalReqID
+    return axios.post('/list', {
+    keyword
+  }).then(res => {
+    // 对比闭包内的 curReqID 是否和 gobalReqID 一致
+    if (gobalReqID === curReqID) {
+        return res
+    } else {
+        return Promse.reject('无用的请求')
+    }
+  })
+}
+
+
+
+```
+
+上面的代码是使用一个自增的 reqID 和 闭包特性来判断是否是无用的请求的，对于比较简单的查询条件，我们可以直接判断查询条件的是否一致
+
+作者：有朝
+链接：https://juejin.cn/post/6970710521104302110
+来源：稀土掘金
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
