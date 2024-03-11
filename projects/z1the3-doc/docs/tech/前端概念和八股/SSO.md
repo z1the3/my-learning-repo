@@ -50,6 +50,19 @@ Oauth2 有四种模式，其中 code 模式是使用范围最广的，下面我�
 
 https://www.ruanyifeng.com/blog/2018/07/json_web_token-tutorial.html
 
+cookie session token 都是状态管理方案
+
+token 是由服务器签发的包含用户信息的字符串，好处是存储在客户端
+
+jwt 按照一定规则签发的 token,没有密钥无法以相同方式生成签名，所以防止伪造
+
+access token 短周期销毁，用于常用的接口，容易被盗取
+
+refresh token 长周期销毁，用于获取新的 access token，通过独立服务和严格请求方式增强其安全性
+
+cookie 主要用于 session 验证，数据存在服务器 session 里
+token 可以通过 cookie 发送，但是 cookie 在域中自动携带，CSRF，所以不存在请求头 cookie 中更好
+
 ## 区别
 
 ● 因为 JWT 并不依赖 Cookie 的，所以你可以使用任何域名提供你的 API 服务而不需要担心跨域资源共享问题（CORS），而 cookie-session 模式则不行。

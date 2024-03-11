@@ -33,3 +33,9 @@ https://bennettfeely.com/clippy/
 ## npm 包下载趋势比较
 
 https://npm-compare.com/@reduxjs/toolkit,zustand,recoil,jotai,valtio/#timeRange=THREE_YEARS
+
+## chokidar
+
+https://www.npmjs.com/package/chokidar
+
+Chokidar does still rely on the Node.js core fs module, but when using fs.watch and fs.watchFile for watching, it normalizes the events it receives, often checking for truth by getting file stats and/or dir contents.

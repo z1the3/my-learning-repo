@@ -4,38 +4,44 @@
 
 https://tailwindcss.com/docs/utility-first
 
-## css原子化
+## css 原子化
 
-最早的css原子化--bootstrap
-提前声明好可能会用到的css，开发者引用即可
+最早的 css 原子化--bootstrap
+提前声明好可能会用到的 css，开发者引用即可
 
-tailwindcss的原子化更精细灵活
+tailwindcss 的原子化更精细灵活
 
-支持按需加载，按照DSL规则书写class
+支持按需加载，按照 DSL 规则书写 class
 
 DSL:
-每一个class不再是单一的class对应着样式
+每一个 class 不再是单一的 class 对应着样式
 可以通过语法进行组合，传入参数
 
-class书写变成书写等价的less/sass
+class 书写变成书写等价的 less/sass
 
-**tailwindcss**只是postcss的一个插件
+**tailwindcss**只是 postcss 的一个插件
 
 ## 优点
 
 0. 不用在类名上花费精力
 
-0. css文件不会像传统方案不断膨胀
+1. css 文件不会像传统方案不断膨胀
 
-0. html中的类名是局部的，更改不会影响全局，进而造成意想不到的更改
+2. html 中的类名是局部的，更改不会影响全局，进而造成意想不到的更改
 
-0. 使用普通css很难判断当前css代码是否真的没用了而可以删除，tailwind css中组件与样式强绑定在一起，降低了冗余代码的可能性
+3. 使用普通 css 很难判断当前 css 代码是否真的没用了而可以删除，tailwind css 中组件与样式强绑定在一起，降低了冗余代码的可能性
+
+## 缺点
+
+遇到 Tailwind CSS 无法覆盖的场景，如一些复杂的伪类或覆盖第三方组件库的样式
+
+需要用 cssinjs 或预编译覆盖
 
 ## 为什么不直接使用行内样式
 
-* 行内样式任何值都是数字，而不是来自预定义的设计系统
-* 行内样式需要媒体查询，而不是直接使用tailwind的响应式工具
-* hover,focus难以实现，而不是使用tailwind的状态变量
+- 行内样式任何值都是数字，而不是来自预定义的设计系统
+- 行内样式需要媒体查询，而不是直接使用 tailwind 的响应式工具
+- hover,focus 难以实现，而不是使用 tailwind 的状态变量
 
 ## 状态
 
@@ -45,7 +51,7 @@ focus:...
 //对子元素起效
 first:...
 last:....
-odd:.... 
+odd:....
 even:....
 // 可以堆叠
 dark:md:hover:bg-fuchsia-600
@@ -62,34 +68,41 @@ disabled:
 ```html
 <a href="#" class="group">
   <div class="flex items-center space-x-3">
-    <svg class="group-hover:stroke-white" fill="none" viewBox="0 0 24 24"><!-- ... --></svg>
+    <svg class="group-hover:stroke-white" fill="none" viewBox="0 0 24 24">
+      <!-- ... -->
+    </svg>
     <h3 class="group-hover:text-white">New project</h3>
   </div>
-  <p class="group-hover:text-white">Create a new project from a variety of starting templates.</p>
+  <p class="group-hover:text-white">
+    Create a new project from a variety of starting templates.
+  </p>
 </a>
 ```
 
-group触发hover，透传到每个子元素上
+group 触发 hover，透传到每个子元素上
 
-如果group需要区分
+如果 group 需要区分
 `group/{name}`和`group-hover/{name}`配合使用
 
 ```html
 <a href="#" class="group/item">
   <div class="flex items-center space-x-3">
-    <svg class="group-hover/item:stroke-white" fill="none" viewBox="0 0 24 24"><!-- ... --></svg>
+    <svg class="group-hover/item:stroke-white" fill="none" viewBox="0 0 24 24">
+      <!-- ... -->
+    </svg>
     <h3 class="group-hover:text-white">New project</h3>
   </div>
-  <p class="group-hover:text-white">Create a new project from a variety of starting templates.</p>
+  <p class="group-hover:text-white">
+    Create a new project from a variety of starting templates.
+  </p>
 </a>
-
 ```
 
 #### 修饰符
 
-`group-[选择器]`不通过伪类拿到指定的group
+`group-[选择器]`不通过伪类拿到指定的 group
 
-`group-[选择器_&]`更精确的拿到指定的group
+`group-[选择器_&]`更精确的拿到指定的 group
 
 ```html
 <div class="group">
@@ -104,20 +117,20 @@ group触发hover，透传到每个子元素上
 
 同级直接联动
 
-不用使用js
+不用使用 js
 
 ```html
-    <input type="email" class="peer ..."/>
-    <p class="mt-2 invisible peer-invalid:visible text-pink-600 text-sm">
-      Please provide a valid email address.
-    </p>
+<input type="email" class="peer ..." />
+<p class="mt-2 invisible peer-invalid:visible text-pink-600 text-sm">
+  Please provide a valid email address.
+</p>
 ```
 
-`peer-[伪类]`如focus required disabled
+`peer-[伪类]`如 focus required disabled
 
-**同级peer必须要放在`peer-[伪类]`前面，否则会失效**
+**同级 peer 必须要放在`peer-[伪类]`前面，否则会失效**
 
-类似group
+类似 group
 
 可以通过`peer/{name}`和`peer-[伪类]/{name}`进行区分
 
@@ -133,11 +146,11 @@ group触发hover，透传到每个子元素上
 
 子代触发该伪类, 则父元素触发该效果
 
-### peer-has-*
+### peer-has-\*
 
-元素1标有peer
+元素 1 标有 peer
 
-元素2通过peer-has联动元素1的**子元素**的状态
+元素 2 通过 peer-has 联动元素 1 的**子元素**的状态
 
 ```html
 <fieldset>
@@ -148,20 +161,16 @@ group触发hover，透传到每个子元素上
       <input type="checkbox" name="todo[1]" checked />
       Create a to do list
     </label>
-    <svg class="peer-has-[:checked]:hidden ...">
-    </svg>
+    <svg class="peer-has-[:checked]:hidden ..."></svg>
   </div>
-
 </fieldset>
-
-
 ```
 
 ### before and after
 
 一旦使用一个`before:utility`
 
-tailwind会自动加上该utility，不用手动添加
+tailwind 会自动加上该 utility，不用手动添加
 
 ```
 before:content-[``]
@@ -170,26 +179,26 @@ before:content-[``]
 当然可以手动覆盖
 
 :::note
-考虑到preflight base styles，可能自动添加会失效
+考虑到 preflight base styles，可能自动添加会失效
 
 则需要手动加上
 :::
 
-### placeholder文本
+### placeholder 文本
 
 `placeholder:文本相关utility`来控制输入框中占位文本的样式
 
 ### marker
 
-控制list中counter或bullet的样式，
+控制 list 中 counter 或 bullet 的样式，
 
-可以用在ul上继承到li，或者直接用在li上
+可以用在 ul 上继承到 li，或者直接用在 li 上
 
 ### selection
 
 控制选中文本的样式
 
-在body标签上比较方便
+在 body 标签上比较方便
 
 ### first-line: first-letter
 
@@ -212,7 +221,7 @@ before:content-[``]
 }
 ```
 
-整个元素被hover时触发和元素为h1时被hover
+整个元素被 hover 时触发和元素为 h1 时被 hover
 
 ```css
 /* prose-headings:hover:underline */
@@ -224,14 +233,13 @@ before:content-[``]
 .hover\:prose-headings\:underline :is(:where(h1, h2, h3, h4, th)):hover {
   text-decoration: underline;
 }
-
 ```
 
-### 原生dialog标签backdrop:bg-red
+### 原生 dialog 标签 backdrop:bg-red
 
 ### 喜好颜色主题
 
-prefers-color-scheme媒体查询
+prefers-color-scheme 媒体查询
 
 在操作系统层面获取用户喜好
 
@@ -239,7 +247,7 @@ prefers-color-scheme媒体查询
 
 https://tailwindcss.com/docs/responsive-design
 
-tailwind提供响应式断点的前缀
+tailwind 提供响应式断点的前缀
 
 分别对应媒体查询在屏幕不同尺寸的情况
 
@@ -248,14 +256,14 @@ sm -> `@media (min-width: 640px){...}`
 
 ```html
 <!-- Width of 16 by default, 32 on medium screens, and 48 on large screens -->
-<img class="w-16 md:w-32 lg:w-48" src="...">
+<img class="w-16 md:w-32 lg:w-48" src="..." />
 ```
 
 ### 限制范围
 
-md只限制了min范围
+md 只限制了 min 范围
 
-想要限制max需要用max修饰符并堆叠
+想要限制 max 需要用 max 修饰符并堆叠
 
 ```html
 <div class="md:max-xl:flex">
@@ -271,7 +279,6 @@ md只限制了min范围
 <div class="min-[320px]:text-center max-[600px]:bg-sky-300">
   <!-- ... -->
 </div>
-
 ```
 
 ## dark mode
@@ -280,4 +287,4 @@ md只限制了min范围
 
 ## 自定义样式
 
-## 增加utilities
+## 增加 utilities

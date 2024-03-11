@@ -165,7 +165,7 @@ update 阶段：updateEffect
 
 > https://juejin.cn/post/6844904205371588615
 
-## useImperativeHandle
+### useImperativeHandle
 
 是 useLayoutEffect 的一个特例，依赖数组有默认的逻辑，如果没有传入依赖会自动将当前的 ref 对象作为一个依赖传入
 
@@ -196,3 +196,13 @@ function Foo() {
   );
 }
 ```
+
+### useMemo & useCallback
+
+useMemo & useCallback
+在 update 阶段 useCallback 会去比较 deps 依赖数组
+比较的规则也是使用 areHookInputsEqual 函数
+如果前后两个依赖数组一致就返回缓存的值
+没有则返回新的值，也就是参数的值
+
+useMemo 在 update 阶段也是一样的逻辑，只不过返回值为函数的返回值，而不是函数

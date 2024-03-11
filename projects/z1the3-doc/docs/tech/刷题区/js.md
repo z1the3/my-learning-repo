@@ -93,7 +93,31 @@ curry.placeholder = Symbol();
 
 ## 补充
 
-### api 实现篇
+#### async pool
+
+```js
+// asyncPool(3,[1,2,3,4],(i)=>new Promise(resolve,reject)
+// {setTimeout(()=>{console.log(i).resolve(i)},100}}
+
+async function asyncPool(poolLimit, iterable, iteratorFn) {
+  const ret = [];
+  const executing = new Set();
+  for (const item of iterable) {
+    const p = Promise.resolve().then(() => iteratorFn(item, iterable));
+    ret.push(p);
+    executing.add(p);
+    const clean = () => executing.delete(p);
+    // 无论成功还是失败，都在executing中去掉这个
+    p.then(clean).catch(clean);
+    if (executing.size >= poolLimit) {
+      // 卡住，但是一旦excuting中完成了一个，就会跳出
+      await Promise.race(executing);
+    }
+  }
+  // 确保返回的p不会最后一个没执行完
+  return Promise.all(ret);
+}
+```
 
 #### 1.发布订阅模式
 
@@ -126,6 +150,47 @@ class EventHub {
       this.off(event, f);
     };
     this.on(event, f);
+  }
+}
+```
+
+#### 观察者模式
+
+```js
+let watcher_ids = 0;
+let dep_ids = 0;
+// 观察者类
+class Watcher {
+  constructor() {
+    this.id = watcher_ids++;
+  }
+  // 观察到变化后的处理
+  update(ob) {
+    console.log("观察者" + this.id + `-检测到被观察者${ob.id}的${ob.state}`);
+  }
+}
+
+// 被观察者类
+class Dep {
+  constructor() {
+    this.watchers = [];
+    this.id = observed_ids++;
+    this.state = "默认状态";
+  }
+  // 添加观察者
+  addWatcher(watcher) {
+    this.watchers.push(Watcher);
+  }
+  // 删除观察者
+  removeWatcher(watcher) {
+    this.watchers = this.watchers.filter((w) => w.id != watcher.id);
+  }
+
+  // 通知自己所有的观察者，ob可以为被观察者自身
+  notify(ob) {
+    this.watchers.forEach((watcher) => {
+      watcher.update(ob);
+    });
   }
 }
 ```
@@ -283,6 +348,7 @@ const _new = function (constructor, ...args) {
 ```js
 Function.prototype._call = function (target = window) {
   // fn可以随便起个名字，只要最后删除就行
+  // 注意 this 是 fn
   target["fn"] = this;
   //参数中去掉target
   let arg = [...arguments].shift();
@@ -360,12 +426,6 @@ const promises = [promise1, promise2, promise3, promise4];
 Promise.all(promises).then((res) => {
   console.log(res);
 });
-```
-
-### 9.20 行实现 promise
-
-```js
-
 ```
 
 ### 手写类型判断
@@ -617,6 +677,60 @@ new Promise((resolve) => {
     });
   })
   .then(console.log);
+```
+
+### promise 实现每隔 1 秒输出 1，2，3
+
+```js
+let arr = [1, 2, 3];
+// 利用循环.then
+arr.reduce((p, x) => {
+  return p.then(() => {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(console.log(x)), 1000);
+    });
+  });
+  //初始值是Promise.resolve()
+}, Promise.resolve());
+```
+
+### promise 实现红绿灯交替重复亮
+
+```js
+function red() {
+  console.log("red");
+}
+function green() {
+  console.log("green");
+}
+function yellow() {
+  console.log("yellow");
+}
+//实现亮灯函数
+function light(db, color) {
+  return new Promise((res) => {
+    setTimeout(() => {
+      color();
+      resolve();
+    }, db);
+  });
+}
+function main() {
+  Promise.resolve()
+    .then(() => {
+      return light(3000, red);
+    })
+    .then(() => {
+      return light(2000, yellow);
+    })
+    .then(() => {
+      return light(1000, green);
+    })
+    .then(() => {
+      return main();
+    }); //执行完一轮再接上
+}
+main();
 ```
 
 ### 数组去重
@@ -908,6 +1022,8 @@ const _completeDeepClone = (target, map = new Map()) => {
 
 ### flat
 
+数组扁平化
+
 ```js
 //拍到底
 let arr = [1, [2, [3, 4, 5]]];
@@ -933,6 +1049,7 @@ console.log(flatten(a));
 // 递归拍n层
 function flatten(arr, level) {
   function walk(arr, currLevel) {
+    // 每次都准备好一个空数组
     let res = [];
     for (let item of arr) {
       // 判断有没有超过层数,放在for循环里面而不是外面,放在外面超过层数后
@@ -954,6 +1071,378 @@ function flatten(arr, level) {
 
 var res = flatten(arr, 3);
 console.log(res);
+```
+
+### 寄生组合式继承
+
+```js
+function inheritPrototype(subClass, superClass) {
+  // 复制一份父类的原型
+  var tem = Object.create(superClass.prototype);
+  // 修正构造函数
+  tem.constructor = subClass;
+  // 设置子类原型
+  subClass.prototype = tem;
+}
+
+function Parent(name, id) {
+  this.id = id;
+  this.name = name;
+  this.list = ["a"];
+  this.printName = function () {
+    console.log(this.name);
+  };
+}
+Parent.prototype.sayName = function () {
+  console.log(this.name);
+};
+
+function Child(name, id) {
+  Parent.call(this, name, id); //***用子的参数，执行一遍父类的构造过程
+  //相当于执行了this.name =id
+  // this.name = name
+  // .....节省了写多行赋值的时间
+  // Parent.apply(this, arguments);
+}
+inheritPrototype(Child, Parent); //注意这里会覆盖Child的prototype
+//所以对Child的prototype增加方法要放在这行语句后面,对parent的prototype增加方法要放在这行的前面
+Chinese.prototype.getAge = function () {
+  return this.age;
+};
+```
+
+### 插入排序
+
+```js
+function Insertion(arr) {
+  let len = arr.length;
+  let preIndex, current;
+  for (let i = 1; i < len; i++) {
+    preIndex = i - 1;
+    current = arr[i];
+    // [2,3,5,7]  4, i=4,preIndex=3,current=4,
+    while (preIndex >= 0 && current < arr[preIndex]) {
+      // 7往右移，第二次5往右移
+      arr[preIndex + 1] = arr[preIndex];
+      preIndex--;
+    }
+    arr[preIndex + 1] = current;
+  }
+  return arr;
+}
+```
+
+### 冒泡排序
+
+```js
+let arr = [3, 4, 1, 2];
+function bubbleSort(arr) {
+  let max = arr.length - 1;
+  for (let j = 0; j < max; j++) {
+    // 声明一个变量，作为标志位
+    let done = true;
+    for (let i = 0; i < max - j; i++) {
+      if (arr[i] > arr[i + 1]) {
+        [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+        done = false;
+      }
+    }
+    // 如果一次遍历，没换一个，说明后面的都是升序的，不用再继续了
+    if (done) {
+      break;
+    }
+  }
+  return arr;
+}
+bubbleSort(arr);
+```
+
+### 数组转树
+
+```js
+// 例如将 input 转成output的形式
+let input = [
+  {
+    id: 1,
+    val: "学校",
+    parentId: null,
+  },
+  {
+    id: 2,
+    val: "班级1",
+    parentId: 1,
+  },
+  {
+    id: 3,
+    val: "班级2",
+    parentId: 1,
+  },
+  {
+    id: 4,
+    val: "学生1",
+    parentId: 2,
+  },
+  {
+    id: 5,
+    val: "学生2",
+    parentId: 2,
+  },
+  {
+    id: 6,
+    val: "学生3",
+    parentId: 3,
+  },
+];
+
+let output = {
+  id: 1,
+  val: "学校",
+  children: [
+    {
+      id: 2,
+      val: "班级1",
+      children: [
+        {
+          id: 4,
+          val: "学生1",
+          children: [],
+        },
+        {
+          id: 5,
+          val: "学生2",
+          children: [],
+        },
+      ],
+    },
+    {
+      id: 3,
+      val: "班级2",
+      children: [
+        {
+          id: 6,
+          val: "学生3",
+          children: [],
+        },
+      ],
+    },
+  ],
+};
+
+// 代码实现
+function arrayToTree(array) {
+  // 假设数组第一项，为根数组
+  let root = array[0];
+  array.shift();
+  let tree = {
+    id: root.id,
+    val: root.val,
+    // 由于会把根元素shift出去，所以数组长度会减少,*只会减少一次
+    children: array.length > 0 ? toTree(root.id, array) : [],
+  };
+  return tree;
+}
+
+// 传入父节点id，和没有根元素的array
+function toTree(parenId, array) {
+  let children = [];
+  let len = array.length;
+  for (let i = 0; i < len; i++) {
+    let node = array[i];
+    if (node.parentId === parenId) {
+      children.push({
+        id: node.id,
+        val: node.val,
+        // 没有child，toTree会返回children初值[],所以不用担心
+        children: toTree(node.id, array),
+      });
+    }
+  }
+  return children;
+}
+
+console.log(arrayToTree(input));
+```
+
+---
+
+### 树转数组
+
+```js
+let node = {
+  id: 0,
+  parentId: null,
+  name: "生物",
+  children: [
+    {
+      id: 1,
+      parentId: 0,
+      name: "动物",
+      children: [
+        {
+          id: 4,
+          parentId: 1,
+          name: "哺乳动物",
+          children: [
+            {
+              id: 8,
+              parentId: 4,
+              name: "大象",
+            },
+            {
+              id: 9,
+              parentId: 4,
+              name: "海豚",
+            },
+            {
+              id: 10,
+              parentId: 4,
+              name: "猩猩",
+            },
+          ],
+        },
+        {
+          id: 5,
+          parentId: 1,
+          name: "卵生动物",
+          children: [
+            {
+              id: 11,
+              parentId: 5,
+              name: "蟒蛇",
+            },
+            {
+              id: 12,
+              parentId: 5,
+              name: "麻雀",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 2,
+      parentId: 0,
+      name: "植物",
+      children: [
+        {
+          id: 6,
+          parentId: 2,
+          name: "种子植物",
+        },
+        {
+          id: 7,
+          parentId: 2,
+          name: "蕨类植物",
+        },
+      ],
+    },
+    {
+      id: 3,
+      parentId: 0,
+      name: "微生物",
+    },
+  ],
+};
+
+function transArr(node) {
+  let queue = [node];
+  let data = []; //返回的数组结构
+  while (queue.length !== 0) {
+    //当队列为空时就跳出循环
+    let item = queue.shift(); //取出队列中第一个元素
+    data.push({
+      id: item.id,
+      parentId: item.parentId,
+      name: item.name,
+    });
+    let children = item.children; // 取出该节点的孩子
+    if (children) {
+      for (let i = 0; i < children.length; i++) {
+        queue.push(children[i]); //将子节点加入到队列尾部
+      }
+    }
+  }
+  return data;
+}
+console.log(transArr(node));
+```
+
+### proxy 实现响应式
+
+```js
+// 创建响应式
+function reactive(target = {}) {
+  if (typeof target !== "object" || target == null) {
+    // 不是对象或数组，则返回
+    return target;
+  }
+
+  // proxy的代理配置，单独拿出来写
+  const proxyConf = {
+    get(target, key, receiver) {
+      // 只处理本身（非原型的）属性
+      const ownKeys = Reflect.ownKeys(target);
+      if (ownKeys.includes(key)) {
+        console.log("get", key); // 监听
+      }
+
+      const result = Reflect.get(target, key, receiver);
+
+      // 深度监听，因为是触发了get，才会进行递归处理，所以性能会更好些
+      return reactive(result);
+    },
+    set(target, key, val, receiver) {
+      // 重复的数据，不处理
+      if (val === target[key]) {
+        return true;
+      }
+
+      const ownKeys = Reflect.ownKeys(target);
+      if (ownKeys.includes(key)) {
+        console.log("已有的 key", key);
+      } else {
+        console.log("新增的 key", key);
+      }
+
+      const result = Reflect.set(target, key, val, receiver);
+      console.log("set", key, val);
+      return result; // 是否设置成功
+    },
+    deleteProperty(target, key) {
+      const result = Reflect.deleteProperty(target, key);
+      console.log("delete property", key);
+      return result; // 是否删除成功
+    },
+  };
+
+  // 生成代理对象
+  const observed = new Proxy(target, proxyConf);
+  return observed;
+}
+
+// 测试数据
+const data = {
+  name: "xiaoming",
+  age: {
+    young: 18,
+    old: 26,
+  },
+};
+
+const proxyData = reactive(data);
+```
+
+### 打印质数
+
+```js
+for (let i = 2; i <= num; i++) {
+  for (let j = 1; j * j < i; j++) {
+    if (i % j === 0 && j !== 1) {
+      res.push(i);
+      break;
+    }
+  }
+}
 ```
 
 ## react
@@ -1115,4 +1604,37 @@ export function useHover<T extends HTMLElement>(): [
   }, [ref.current]); // 如果ref.current变了,也要重新执行
   return [ref, isHovering];
 }
+```
+
+### useParams
+
+利用 window.location.href
+
+```js
+function parseParam(url) {
+  const [href, params] = url.split("?");
+  const result = {};
+  params &&
+    params.split("&").map((item) => {
+      let [key, value = true] = item.split("=");
+      value = value === true ? value : decodeURIComponent(value); // 转译中文
+      if (!result[key]) {
+        result[key] = value;
+      } else {
+        // 如果不是数组，则只有一个数，要加上value的话则concat生成个数组
+        result[key] =
+          result[key] instanceof Array
+            ? [].concat(...result[key], value)
+            : [].concat(result[key], value);
+      }
+    });
+  return result;
+}
+
+// 执行
+parseParam(
+  "http://www.getui.com?user=superman&id=345&id=678&city=%E6%9D%AD%E5%B7%9E&enabled"
+);
+
+// {user: "superman", id:["345", "678"], city: "杭州", enabled: true}
 ```

@@ -29,6 +29,7 @@ HTTP 响应状态码
 403 Forbidden 禁止
 404 Not Found 资源不存在，但是经常用于代替 403
 405 Method Not Allowed 请求方法不支持
+416 (Requested Range not satisfiable)，是 HTTP 协议状态码的一种，表示“客户端发送的 HTTP 数据流包含一个“范围”请求，规定了一个无法满足的字节范围-因为被访问的资源不覆盖这个字节范围
 429 too many requests
 
 500 Internal Server Error 服务端不知道怎么处理，服务器内部出错了

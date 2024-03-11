@@ -1,5 +1,27 @@
 # Vue Router
 
+## 钩子函数
+
+全局路由钩子：
+beforeEach(to,from, next)、beforeResolve(to,from, next)、afterEach(to,from)；
+
+这个钩子和 beforeEach 类似，也是路由跳转前触发，参数也是 to,from,next 三个，和 beforeEach 区别官方解释为：
+区别是在导航被确认之前，同时在所有组件内守卫和异步路由组件被解析之后，解析守卫就被调用。
+即在 beforeEach 和 组件内 beforeRouteEnter 之后，afterEach 之前调用。
+
+独享路由钩子：
+beforeEnter(to,from, next)；
+
+组件内路由钩子：
+beforeRouteEnter(to,from, next)、beforeRouteUpdate(to,from, next)、beforeRouteLeave(to,from, next)
+
+to：目标路由对象；
+from：即将要离开的路由对象；
+
+```
+next：他是最重要的一个参数，他相当于佛珠的线，把一个一个珠子逐个串起来。以下注意点务必牢记： 1.但凡涉及到有 next 参数的钩子，必须调用 next() 才能继续往下执行下一个钩子，否则路由跳转等会停止。 2.如果要中断当前的导航要调用 next(false)。如果浏览器的 URL 改变了 (可能是用户手动或者浏览器后退按钮)，那么 URL 地址会重置到 from 路由对应的地址。（主要用于登录验证不通过的处理） 3.当然 next 可以这样使用，next('/') 或者 next({ path: '/' }): 跳转到一个不同的地址。意思是当前的导航被中断，然后进行一个新的导航。可传递的参数与 router.push 中选项一致。
+```
+
 ## 进阶
 
 ### RouterView 插槽

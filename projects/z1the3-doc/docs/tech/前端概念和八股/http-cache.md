@@ -2,6 +2,13 @@
 
 ## 说一下 http 缓存
 
+字段优先级(如果有)
+
+- Cache-Control: max-age
+- Expires
+- Etag
+- Last-Modified
+
 ### 强缓存
 
 服务器开启强缓存，客户端会将第一次请求响应的资源、响应头中的 expires 字段保存在本地，其中 expires 字
@@ -14,7 +21,7 @@
 
 举个栗子，服务器开启协商缓存，客户端会将第一次请求响应的资源保存在本地，并将资源版本信息（E-Tag
 
-= 111、Last-Modified-Since = 2018.6.3 ）保存在浏览器缓存表中，客户端第二次请求时会先请求浏览器缓存表
+= 111、Last-Modified = 2018.6.3 ）保存在浏览器缓存表中，客户端第二次请求时会先请求浏览器缓存表
 
 中的缓存信息，在请求头中加入字段（If-None-Match = 111、If-Modified-Since = 2018.6.3），服务器获取
 
@@ -39,3 +46,34 @@
 ```
 Cache-Control: max-age=0, must-revalidate
 ```
+
+## 缓存优先级
+
+请求一个资源时，会按照优先级（Service Worker -> Memory Cache -> Disk Cache -> Push Cache）依次查找缓存，如果命中则使用缓存，否则发起请求
+
+按优先级从高到底，浏览器的资源会被缓存在以下位置：
+
+- Service Worker
+
+Service Worker 是浏览器独立于网页在后台运行的脚本，它有着独立的 js 运行环境，协助前端页面完成需要在后台悄悄执行的任务，它的缓存是永久性的。除非手动调用 api 或者容量超过限制才会被浏览器清除。
+经过 Service Worker 的 fetch() 方法获取的资源，即便它并没有命中 Service Worker 缓存，甚至实际走了网络请求，在 Chrome 的 Network 面板也会被标注为 from ServiceWorker。
+
+- memory cache
+
+几乎所有的网络请求资源都会被浏览器自动加入 memory cache，即缓存在内存中。一般情况下，浏览器 tab 关闭，该页面相关的 memory cache 就会失效。虽然 memory cache 是无视 HTTP 请求头的，但是 no-store 除外。在设置了 Cache-Control: no-store 的情况下，该资源不进行任何缓存。
+
+- disk cache(HTTP cache)
+
+HTTP 协议头的缓存相关字段，限定的都是 disk cache 相关的缓存策略，它是持久存储，实际存在于文件系统中的，而且它允许相同的资源跨会话，甚至跨站点的情况下使用。浏览器会根据自己的算法自动清理最老的和最可能过时的。
+
+- push cache
+
+Push Cache 是 HTTP2 中的内容，当以上三种缓存都没命中的时候，才会被使用。它只在会话（Session）中存在，一旦会话结束就被释放，并且缓存时间也很短暂，在 Chrome 浏览器中只有 5 分钟左右，同时它也并非严格执行 HTTP 头中的缓存指令
+
+## etag 和 last modified
+
+Last-Modified 以秒为单位，如果不超过一秒内不会检测到资源发生的改变
+
+资源走完一个生命周期循环回到原来的状态
+
+其实没发生变化，但也会被判断为发生改变
