@@ -1,5 +1,13 @@
 # SSO 单点登录
 
+## 登陆
+
+常见的登录登出设计方案有下面两种
+
+1. 传统表单提交方式。后端接收到请求后先根据提交上来的信息做鉴权。成功后，响应一个 302 重定向，同时添加一个响应头部 Set-Cookie，将该次登录状态写入客户端 cookie。
+
+2. 单页应用的 token 方案。客户端携带鉴权信息，向某个公开 API 请求 token。得到 token 后，客户端存储在 localStorage 或 sessionStorage 中。之后的异步请求，将这个 token 设置在一个约定好的请求头部中。服务端在执行业务逻辑前，会统一校验 token 是否合法。
+
 <img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/1709703547880.jpg" width="1500"/>
 
 ## CAS 中央认证服务
@@ -40,6 +48,8 @@ Oauth2 有四种模式，其中 code 模式是使用范围最广的，下面我�
 就这是经典的 cookie-session 模型。
 
 ## JWT（Json Web Token）
+
+jwt 按照一定规则签发的 token,没有密钥无法以相同方式生成签名，所以防止伪造
 
 ● 接入方使用从 sso 拿到的用户信息，生成用密钥加密的字符串 token
 ● 请求时在（请求头/POST 请求的数据体/url 的 query）里上带上 token，用来验证用户信息

@@ -110,3 +110,43 @@ li:nth-of-type(3n)的margin-right设为0   (3,6,9)
 li:nth-of-type(n+7)的margin-bottom设为0 (7,8,9)
 
 ```
+
+## 自适应正方形
+
+```js
+<!-- 第一种方案,利用vw  -->
+<style>
+  .container{
+    width: 50%;
+    background: #ccc;
+    height: 50vw;
+  }
+</style>
+
+<body>
+  <div class="container"></div>
+</body>
+
+
+<!-- 第二种方案,利用padding-top  -->
+<style>
+  .container {
+    width: 50%;
+    /* 该元素真实高度为0，我们看到的只是它往下偏移而露出的padding背景色 */
+    /* padding-top后的百分比以父容器**宽度**为准 */
+    padding-top: 50%;
+    height: 0;
+
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    background-color: antiquewhite;
+  }
+</style>
+
+<body>
+  <div class="container">
+  </div>
+</body>
+```

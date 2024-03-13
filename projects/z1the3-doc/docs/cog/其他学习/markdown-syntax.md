@@ -30,11 +30,11 @@ tags: [Markdown]
 1. 有序2
 ```
 
-* 无序1
-* 无序2
+- 无序 1
+- 无序 2
 
-1. 有序1
-1. 有序2
+1. 有序 1
+1. 有序 2
 
 ## 4.超链接
 
@@ -65,20 +65,20 @@ tags: [Markdown]
 ## 6.代码
 
 ```js title="docusaurus.config.js"
-  const a = 1
+const a = 1;
 ```
 
 三个反引号加 `title="docusaurus.config.js"`
 
 ## 7.粗体和斜体
 
-在MarkDown语法中，使用不同数量的*内容*号即可设定文字是粗体、斜体、或者两者都是。
+在 MarkDown 语法中，使用不同数量的*内容*号即可设定文字是粗体、斜体、或者两者都是。
 
-*1个星号代表斜体*
+*1 个星号代表斜体*
 
-**2个星号代表粗体**
+**2 个星号代表粗体**
 
-***3个星号代表斜体+粗体***
+***3 个星号代表斜体+粗体***
 
 ```
 *1个*号代表斜体*
@@ -127,10 +127,10 @@ MarkDown中插入图片的语法是![描述](图片地址 "图片替代文本")�
 |aaaa<br/>aaa多行｜bbb|
 ```
 
-|title1|title2|title3|title4|
-|---|:---:|:---|---:|
-|left|center|left|right|
-|aaaa<br/>aaa多行|bbb|
+| title1            | title2 | title3 | title4 |
+| ----------------- | :----: | :----- | -----: |
+| left              | center | left   |  right |
+| aaaa<br/>aaa 多行 |  bbb   |
 
 ## 10.caution
 

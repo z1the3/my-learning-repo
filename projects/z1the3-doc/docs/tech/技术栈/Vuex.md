@@ -1,5 +1,9 @@
 # Vuex
 
+状态存储是响应式的
+
+五个核心概念：state、getters、actions、mutations、modules
+
 所有数据的变更都需要经过全局的 Store 来进行，形成一个单向数据流，使数据变化变得“可预测”。
 store 以一个单例存放，同时利用 Vue.js 的响应式机制来进行高效的状态管理与更新
 
@@ -10,6 +14,94 @@ Vuex 实现了一个单向数据流，在全局拥有一个 State 存放数据�
 Mutation 的同时提供了订阅者模式供外部插件调用获取 State 数据的更新。所有异步接口需要走 Action，常见于调用后端接口异步获取更新数据，而 Action 也是无法直接修改 State 的，还是需要通过 Mutation 来修改 State 的数据。最后，根据 State 的变化，渲染到视图上。Vuex 运行依赖 Vue 内部数据双向绑定机制，需要 new 一个 Vue 对象来实现“响应式化”，
 
 所以 Vuex 是一个专门为 Vue.js 设计的状态管理库
+
+## mapState 辅助函数
+
+当一个组件需要获取多个状态时候，将这些状态都声明为计算属性会有些重复和冗余。为了解决这个问题，我们可以使用 mapState 辅助函数帮助我们生成计算属性，让你少按几次键。
+
+```js
+// 在单独构建的版本中辅助函数为 Vuex.mapState
+import { mapState } from "vuex";
+
+export default {
+  // ...
+  computed: mapState({
+    // 箭头函数可使代码更简练
+    count: (state) => state.count,
+
+    // 传字符串参数 'count' 等同于 `state => state.count`
+    countAlias: "count",
+
+    // 为了能够使用 `this` 获取局部状态，必须使用常规函数
+    countPlusLocalState(state) {
+      return state.count + this.localCount;
+    },
+  }),
+};
+```
+
+## mapGetters 辅助函数
+
+```js
+import { mapGetters } from "vuex";
+
+export default {
+  // ...
+  computed: {
+    // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      "doneTodosCount",
+      "anotherGetter",
+      // ...
+    ]),
+  },
+};
+
+mapGetters({
+  // 把 `this.doneCount` 映射为 `this.$store.getters.doneTodosCount`
+  doneCount: "doneTodosCount",
+});
+```
+
+## mapMutations 辅助函数
+
+```js
+import { mapMutations } from "vuex";
+export default {
+  //..
+  methods: {
+    ...mapMutations([
+      "increment", // 映射 this.increment() 为 this.$store.commit('increment')
+    ]),
+    ...mapMutations({
+      add: "increment", // 映射 this.add() 为 this.$store.commit('increment')
+    }),
+  },
+};
+```
+
+## Module
+
+使用单一状态树，导致应用的所有状态集中到一个很大的对象。但是，当应用变得很大时，store 对象会变得臃肿不堪。
+为了解决以上问题，Vuex 允许我们将 store 分割到模块（module）。每个模块拥有自己的 state、mutation、action、getters、甚至是嵌套子模块——从上至下进行类似的分割：
+
+```js
+import Vuex from "vuex";
+import topNav_store from "./topNav/store.js";
+import member_store from "./member/store.js";
+import game_store from "./coupon/game.js";
+import approval from "./approval/store.js";
+import setRentInfo from "./contract/store.js";
+export default new Vuex.Store({
+  modules: {
+    topNav: topNav_store,
+    memberStore: member_store,
+    game_store: game_store,
+    approval: approval,
+    setRentInfo,
+  },
+});
+```
 
 ## Vuex 是怎样把 store 注入到 Vue 实例中去的呢？
 
@@ -83,3 +175,5 @@ resetStoreVM 首先会遍历 wrappedGetters，使用 Object.defineProperty 方�
 进而操作 store 也能操作原响应式数据，不丢失响应式数据
 
 相当于一道桥梁
+
+> 引用 https://juejin.cn/post/7002051814153519118#heading-0

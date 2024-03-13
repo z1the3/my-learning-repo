@@ -2,15 +2,9 @@
 sidebar_position: 1
 ---
 
-# intro
+# 介绍
 
-## 持之以恒
-
-## 好记性不如烂笔头
-
-## 灵魂多问
-
-* 写通用方法前，调查一下lodash
+- 写通用方法前，调查一下 lodash
 
 https://www.lodashjs.com/
 

@@ -1,6 +1,6 @@
 # vscode
 
-## vscode折叠代码块
+## vscode 折叠代码块
 
 `Command + K + 0` 最高层
 `Command + K + 1` 次高层

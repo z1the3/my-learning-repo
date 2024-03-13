@@ -1,8 +1,8 @@
 {
-  "label": "前端",
+  "label": "工具使用",
   "position": 1,
   "link": {
     "type": "generated-index",
-    "description": "前端知识"
+    "description": "工具使用"
   }
 }

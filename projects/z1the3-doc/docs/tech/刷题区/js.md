@@ -119,7 +119,7 @@ async function asyncPool(poolLimit, iterable, iteratorFn) {
 }
 ```
 
-#### 1.发布订阅模式
+#### 发布订阅模式
 
 ```js
 class EventHub {
@@ -145,6 +145,7 @@ class EventHub {
   }
   once(event, callback) {
     // data暂时没东西传进去，但是用了 emit就可以被使用
+    // 箭头函数
     const f = (data) => {
       callback(data);
       this.off(event, f);
@@ -248,6 +249,20 @@ var obj = {
 };
 ```
 
+注意是
+
+```js
+() => {
+      console.log(this === obj);
+    };
+----
+var _this = this;
+function () {
+  console.log(_this === obj);
+};
+
+```
+
 #### 4.实现私有属性
 
 ```js
@@ -315,7 +330,7 @@ function compose(...functions) {
   } else if (functions.length === 1) {
     return functions[0];
   } else {
-    return functions.reducer(
+    return functions.reduce(
       (pre, current) =>
         (...args) =>
           pre(current(args))
@@ -428,6 +443,24 @@ Promise.all(promises).then((res) => {
 });
 ```
 
+### 实现 Promise.race
+
+```js
+Promise.race = function (promises) {
+  return new Promise((resolve, reject) => {
+    for (let i = 0; i < promises.length; i++) {
+      Promise.resolve(promises[i]).then(
+        (data) => {
+          resolve(data);
+          return;
+        },
+        (err) => reject(err)
+      );
+    }
+  });
+};
+```
+
 ### 手写类型判断
 
 ```js
@@ -478,9 +511,7 @@ function partition(array, l, r) {
     if (l < r && array[l] == array[r]) l++;
     else if (l < r) {
       //此时array[l]>pivot,array[r]<pivot (=的情况已经排除)
-      let t = array[l];
-      array[l] = array[r];
-      array[r] = t;
+      [array[l], array[r]] = [array[r], array[l]];
     }
   }
   //此时l==r
@@ -1443,6 +1474,176 @@ for (let i = 2; i <= num; i++) {
     }
   }
 }
+```
+
+### 洗牌算法
+
+```js
+function FYShuffle(arr) {
+  let len = arr.length;
+
+  while (len > 1) {
+    let rand = Math.floor(Math.random() * len);
+    len--;
+    [arr[len], arr[ran]] = [arr[ran], arr[len]];
+  }
+
+  return arr;
+}
+```
+
+### promise 化 ajax
+
+```js
+// promise 封装实现：
+function getJSON(url) {
+  // 创建一个 promise 对象
+  let promise = new Promise(function (resolve, reject) {
+    let xhr = new XMLHttpRequest();
+    // 新建一个 http 请求, 注意open三参数
+    xhr.open("GET", url, true);
+    // 设置状态的监听函数
+    xhr.onreadystatechange = function () {
+      // xhr回调函数内部访问xhr用this！！！！！！
+      if (this.readyState !== 4) return;
+      // 当请求成功或失败时，改变 promise 的状态
+      if (this.status === 200) {
+        resolve(this.response);
+      } else {
+        reject(new Error(this.statusText));
+      }
+    };
+    // 设置错误监听函数
+    xhr.onerror = function () {
+      reject(new Error(this.statusText));
+    };
+    // 设置响应的数据类型
+    xhr.responseType = "json";
+    // 设置请求头信息
+    xhr.setRequestHeader("Accept", "application/json");
+    // 发送 http 请求
+    xhr.send(null);
+  });
+  return promise;
+}
+```
+
+### Object.defineProperty
+
+```js
+const obj = { name: "xxx" };
+
+// 添加具有数据描述符的属性，相当于 obj.age = 18
+Object.defineProperty(obj, "age", {
+  configurable: true, // 可删除
+  enumerable: true, // 可枚举
+  value: 18,
+  writable: true, // 可重写
+});
+
+// 添加具有存取描述符的属性
+let age = 18;
+Object.defineProperty(obj, "age", {
+  configurable: true,
+  enumerable: true,
+  get() {
+    return age;
+  },
+  set(newVal) {
+    age = newVal;
+  },
+});
+```
+
+### 封装带有超时（重试）机制的异步请求工具函数
+
+```js
+const defaultOptions = {
+  timeout: 5000,
+  retry: 3,
+};
+
+const timeout = (timeout = defaultOptions.timeout) =>
+  new Promise((_, reject) =>
+    // timeout的时间
+    setTimeout(() => reject(new Error("timeout")), timeout)
+  );
+
+const request = async (url, fetchOption, options = defaultOptions) => {
+  let times = 0;
+  // 新promise,race
+  const _request = () =>
+    Promise.race([fetch(url, fetchOption), timeout(options.timeout)]);
+  while (times < (options.retry || defaultOptions.retry)) {
+    try {
+      return await _request();
+    } catch (err) {
+      ++times;
+      continue;
+    }
+  }
+  // 这里抛出错误了，所以可以被catch到
+  throw new Error("fetch failed");
+};
+```
+
+### 堆排序
+
+```js
+function swap(arr, i, j) {
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+}
+// 创建堆，其实是对data数组做一个结构调整，使其具有堆的特性
+function buildHeap(data) {
+  let len = data.length;
+  for (let i = Math.floor(len / 2); i >= 0; i--) {
+    heapAdjust(data, i, len);
+  }
+}
+// 堆调整函数，即调整当前data为大根堆
+function heapAdjust(data, i, len) {
+  let child = 2 * i + 1;
+  // 如果有孩子结点，默认情况是左孩子
+  while (child <= len) {
+    let temp = data[i];
+    // 如果右孩子存在且其值大于左孩子的值，则将child指向右孩子
+    if (child + 1 <= len && data[child] < data[child + 1]) {
+      child = child + 1;
+    }
+    // 如果当前结点的值小于其孩子结点的值，则交换，直至循环结束
+    if (data[i] < data[child]) {
+      data[i] = data[child];
+      data[child] = temp;
+      i = child;
+      child = 2 * i + 1;
+    } else {
+      break;
+    }
+  }
+}
+// 排序
+function heapSort(data) {
+  var data = data.slice(0);
+  if (!(data instanceof Array)) {
+    return null;
+  }
+  if (data instanceof Array && data.length == 1) {
+    return data;
+  }
+  // 将data数组改造为“堆”的结构
+  buildHeap(data);
+
+  var len = data.length;
+  // 下面需要注意的时候参数的边界，参考文档里面程序中i的值是不对的
+  for (var i = len - 1; i >= 0; i--) {
+    // 将第一位（最大值）移到数组最后一位，然后对前i-1位继续生成大根堆，如此往复
+    swap(data, i, 0);
+    heapAdjust(data, 0, i - 1);
+  }
+  return data;
+}
+const arr = [62, 88, 58, 47, 35, 73, 51, 99, 37, 93];
+var newArr = heapSort(arr);
 ```
 
 ## react

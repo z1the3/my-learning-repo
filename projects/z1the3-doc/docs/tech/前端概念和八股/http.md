@@ -92,6 +92,15 @@ close: 每次请求结束会断开连接, 下一次重新建立
 值: Content-Type = Text/XML; charset=gb2312;
 POST 请求使用
 
+例如
+`application/json,text/plain,*/*`
+
+在 accept 中服务端能约定可接收的类型
+
+POST/PATCH/PUT 一般接受表单类型
+
+`application/x-www-form-urlencoded`
+
 ### 7. Cookie
 
 值: lang=zh-cn;\_session=Cm4ikBOx-D8g==;a=b;c=d

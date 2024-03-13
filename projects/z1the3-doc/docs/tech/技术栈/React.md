@@ -6,6 +6,12 @@
 
 ● 函数组件：用 useEffect 代替 cDidMountcDidUpdatecWillUnmounted
 
+## hooks
+
+当我们点击更改按钮，去进行页面更新时，react 还是会遍历初始化阶段构建的 hook 链表，然后按照顺序去取出对应的值，然而这时候 useState(name)的这个由于我们设置了一个 if 判断所以没有调用，这时取值顺序已经发生了变化。
+总结
+React 初始化阶段会构建一个 hook 链表，更新阶段会**根据 useState 的执行顺序去遍历链表取值**，如果前后执行顺序不一致，就会导致取出的值不对应，所以我们再写 hooks 的时候要确保 Hooks 在每次渲染的时候都保持同样的执行顺序
+
 ## 受控组件和非受控组件
 
 受控组件基本概念
@@ -23,6 +29,50 @@
 ### 受控组件
 
 在 HTML 的表单元素中，它们通常自己维护一套 state，并随着用户的输入自己进行 UI 上的更新，这种行为是不被我们程序所管控的。而如果将 React 里的 state 属性和表单元素的值建立依赖关系，再通过 onChange 事件与 setState()结合更新 state 属性，就能达到控制用户输入过程中表单发生的操作。被 React 以这种方式控制取值的表单输入元素就叫做受控组件
+
+## forwardRef
+
+React.forwardRef 会创建一个 React 组件，这个组件能够将其接受的 ref 属性转发到其组件树下的另一个组件中。这种技术并不常见，但在以下两种场景中特别有用：
+
+一、转发 refs 到 DOM 组件
+二、在高阶组件中转发 refs
+
+默认情况下，每个组件的 DOM 节点都是私有的。然而，有时候将 DOM 节点公开给父组件是很有用的，比如允许对它进行聚焦。将组件定义包装在 forwardRef() 中便可以公开 DOM 节点：
+
+```js
+import { forwardRef } from "react";
+
+const MyInput = forwardRef(function MyInput(props, ref) {
+  const { label, ...otherProps } = props;
+  return (
+    <label>
+      {label}
+      <input {...otherProps} ref={ref} />
+    </label>
+  );
+});
+```
+
+这样，父级的 Form 组件就能够访问 MyInput 暴露的 `<input>` DOM 节点：
+
+```js
+function Form() {
+  const ref = useRef(null);
+
+  function handleClick() {
+    ref.current.focus();
+  }
+
+  return (
+    <form>
+      <MyInput label="Enter your name:" ref={ref} />
+      <button type="button" onClick={handleClick}>
+        编辑
+      </button>
+    </form>
+  );
+}
+```
 
 ## diff
 
@@ -43,13 +93,13 @@
 -指针遍历 ACEBG
 -lastPlacedIndex = 0
 -A 在 map 里面存在，而且位置相同，复用节点更新属性
--C 对比 lastPlacedIndex(0) < oldIndex(2)，lastPlacedIndex = 2，位置不动，只更新属性
+-C 对比 lastPlacedIndex(0) < oldIndex(2)，lastPlacedIndex = 2，**位置不动，只更新属性**
 -E 对比 lastPlacedIndex (2)< oldIndex(4)，lastPlacedIndex = 4，位置不动，只更新属性 -（以上 ACE 的相对次序一致，所以不用改变位置
 -B 对比 lastPlacedIndex(4) > oldIndex(2)，需要移动位置并更新属性
 -G 在 map 里找不到，需要创建并插入  
 -将 map 中剩余的元素 D F 标记为删除
 
--修改 dom 的顺序: 先删除，然后更新与移动，最后做插入操作
+-修改 dom 的顺序: 遍历完先删除，然后更新与移动，最后做插入操作
 
 ## React 更新流程
 
@@ -75,6 +125,62 @@ renderer(渲染器）（renderDOM, renderSSR)
   如果想不用合成事件处理，可以用 e.nativeEvent 拿到被包装前的原生事件
 
 Fiber 的两个重要点 1.中断再恢复 2.优先级，高优先级的尽量优先，其他的符合空闲时渲染的特征
+
+## Fiber
+
+React 的组件更新是 CPU 密集的操作，因为它要做对比新旧虚拟 DOM 树的操作（diff，React 中 Reconcilation 负责），找出需要更新的内容（patch），通过打补丁的方式更新真实 DOM 树（React 中 Renderer 负责）。当要对比的组件树非常多时，就会发生大量的新旧节点对比，CPU 花费时间庞大，当耗时大大超过 16.6ms（一秒 60 帧的基准） 时，用户会感觉到明显的卡顿。
+
+这一系列操作是通过递归的方式实现的，是 同步且不可中断 的。因为一旦中断，调用栈就会被销毁，中间的状态就丢失了。这种基于调用栈的实现，我们称为 Stack Reconcilation。
+
+React 16 的一个重点工作就是优化更新组件时大量的 CPU 计算，最后选择了使用 “时间分片” 的方案，就是将原本要一次性做的工作，拆分成一个个异步任务，在浏览器空闲的时间时执行。这种新的架构称为 Fiber Reconcilation。
+
+在 React 中，**Fiber 模拟之前的递归调用，具体通过链表的方式去模拟函数的调用栈**，这样就可以做到中断调用，将一个大的更新任务，拆分成小的任务，并**设置优先级**，在浏览器空闲的时异步执行。
+
+前面我们说到使用了链表的遍历来模拟递归栈调用，其中链表的节点 React 用 FiberNode 表示。
+
+FiberNode 其实就是虚拟 DOM，它记录了：
+
+节点相关类型，比如 tag 表示组件类型、type 表示元素类型等。
+节点的指向。
+副作用相关的属性。
+lanes 是关于调度优先级的。
+
+### lanes
+
+不同优先级的任务间，会存在一种现象：当执行低优先级任务时，突然插入一个高优先级任务，那么会中断低优先级的任务，先执行高优先级的任务，我们可以将这种现象称为任务插队。当高优先级任务执行完，准备执行低优先级任务时，又插入一个高优先级任务，那么又会执行高优先级任务，如果不断有高优先级任务插队执行，那么低优先级任务便一直得不到执行，我们称这种现象为任务饥饿问题。
+
+react 事件优先级会转为 lanes 优先级再转为调度器优先级
+
+```js
+事件优先级;
+// 离散事件优先级，例如：点击事件，input输入等触发的更新任务，优先级最高
+export const DiscreteEventPriority: EventPriority = SyncLane;
+// 连续事件优先级，例如：滚动事件，拖动事件等，连续触发的事件
+export const ContinuousEventPriority: EventPriority = InputContinuousLane;
+// 默认事件优先级，例如：setTimeout触发的更新任务
+export const DefaultEventPriority: EventPriority = DefaultLane;
+// 闲置事件优先级，优先级最低
+export const IdleEventPriority: EventPriority = IdleLane;
+
+调度优先级;
+export const NoPriority = 0; //没有优先级
+export const ImmediatePriority = 1; // 立即执行任务的优先级，级别最高
+export const UserBlockingPriority = 2; // 用户阻塞的优先级
+export const NormalPriority = 3; // 正常优先级
+export const LowPriority = 4; // 较低的优先级
+export const IdlePriority = 5; // 优先级最低，闲表示任务可以闲置
+```
+
+有任务过期， 过期则立即同步执行 不在时间切片
+
+#### 为什么不用 generator 或 async/await？
+
+generator 和 async/await 也可以做到在函数中间暂停函数执行的逻辑，将执行让出去，能做到将同步变成异步。
+
+但 React 没有选择它们，这是因为：
+
+具有传染性，比如一个函数用了 async，调用它的函数就要加上 async，有语法开销，此外也会有性能上的额外开销。
+无法在 generator 和 async/await 中恢复一些中间状态。
 
 ## Fiber 双缓冲技术
 
@@ -159,6 +265,118 @@ function performWork(deadline) {
 ```
 
 workLoop**的工作会从更新队列(updateQueue)中弹出更新任务来执行，每执行完一个‘执行单元‘，就检查一下剩余时间是否充足，如果充足就进行执行下一个**执行单元，反之则停止执行，保存现场，等下一次有执行权时恢复
+
+## useState
+
+其实是 useReducer 的简化版，包装了了一层
+
+```js
+function useState(initState) {
+  return useReducer(
+    basicStateReducer,
+    initState,
+    (initialState) => initialState
+  );
+}
+```
+
+使用 useState 后第一次渲染——执行 mountState
+// mountState 会创建一个新的 hook 并给 hook 的 baseState 和 queue 进行初始化，
+// 返回初始的值 value 和 dispatch 函数 setValue, [value, setValue] 为一个 reducer
+
+```js
+function mountState<S>(
+  initialState: (()=>S) | S)
+): [S, Dispatch<BasicStateAction<S>>] {
+  // 获取当前新创建fiber的memorizedState上的最新hook
+  const hook = mountWorkInProgressHook()
+  if(typeof initialState === 'function'){
+    initialState = inititalState()
+  }
+  // 给state-hook绑定初始值
+  hook.memorizedState = hook.baseState = initialState
+  // stateHook上的后续维护在queue中,初始化queue
+  const queue = (hook.queue={
+    pending: null,
+    dispatch: null,
+    // 此处在useReducer中不同
+    lastRenderedReducer: basicStateReducer,
+    lastRenderedState: (initialState: any)
+  )
+
+  // 基于dispatchAction
+  const dispatch: Dispatch<BasicStateAction<S>> =
+    (queue.dispatch
+     = (dispatchAction.bind(null,currentlyRenderingFiber,queue):any)
+     )
+
+
+
+  return [hook.memorizedState,dispatch]
+
+}
+
+```
+
+### 使用 useState 后续渲染——调用 updateState
+
+直接返回 reducer, 相当于直接继承第一次渲染已经创建过的 reducer
+
+```js
+function updateState<S>(
+  initialState: () => S | S
+): [S, Dispatch<BasicStateAction<S>>] {
+  return updateReducer(basicStateReducer, (initialState: any));
+}
+
+function basicStateReducer<S>(state: S, action: BasicStateAction<S>): S {
+  return typeof action === "function" ? action(state) : action;
+}
+```
+
+```js
+// 因此以下两种写法是等价的
+const [num1, setNum1] = useState({ count: 0 });
+const [num2, setNum2] = useReducer(
+  (state, action) => {
+    return typeof action === "function" ? action(state) : action;
+  },
+  { count: 0 }
+);
+```
+
+FiberNode 中创建 HookNode
+
+```js
+HookNode:{
+  ...
+  index: ; //链表中的索引
+  memoizedSate: ; // 当前状态
+}
+
+FiberNode:{
+  ...
+}
+
+function getCurrentHookValue() {
+  const hook = resolveCurrentlyRenderingFiberWithHooks().memoizedState as Hook
+  return hook.memoizedState
+}
+
+function resolveCurrentlyRenderingFiberWithHooks() {
+  const currentlyRenderingFiber = resolveCurrentlyRenderingFiber()
+  invariant(
+  currentlyRenderingFiber !== null && currentlyRenderingFiber.memoizedState !== null,
+   'Hooks can only be called inside the body of a function component.'
+  )
+  return currentlyRenderingFiber
+}
+
+function resolveCurrentlyRenderingFiber() {
+ const fiber = workInProgress ?? currentlyRenderingFiber
+ return fiber
+}
+```
 
 ## UseLayoutEffect
 

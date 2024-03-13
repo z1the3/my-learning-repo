@@ -167,9 +167,9 @@ update 阶段：updateEffect
 
 ### useImperativeHandle
 
-是 useLayoutEffect 的一个特例，依赖数组有默认的逻辑，如果没有传入依赖会自动将当前的 ref 对象作为一个依赖传入
-
 useImperativeHandle 可以让你在使用 ref 时自定义暴露给父组件的实例值（典型的应用是向上传递 func）。应当尽量避免使用这样的命令式代码。useImperativeHandle 需要与 forwardRef 配合使用：
+
+forwardRef 负责提供组件参数的 ref 以及 useImperativeHandle 对 ref 引用的回调！
 
 ```js
 // *

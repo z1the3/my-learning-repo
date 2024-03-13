@@ -1,12 +1,24 @@
 # 安全
 
+## token
+
+使用 token 的缺点有哪些？答案：以 jwt 为例，token 一旦签发是无法撤回的，在时效内如果 token 泄露了，服务端有可能收到恶意请求。如何处理 token 过期问题？答案：在约定的过期时间之前，向服务器交换一个新的 token；并且在网页应用中维护一个统一的逻辑，比如当有异步请求响应类似 401 之类的状态码时，网页自动重定向到登录页之类的
+
+## cookie
+
+服务端在设置客户端 cookie 时，添加 http-only 属性，能否避免 CSRF 攻击？回答：不能。http-only 只能防止浏览器脚本读取这个 cookie 值。CSRF 攻击并不需要获取 cookie 信息。采用 token 方案才能避免 CSRF。
+
 ## CSRF
+
+CSRF，跨站请求伪造（英文全称是 Cross-site request forgery），是一种挟制用户在当前已登录的 Web 应用程序上执行非本意的操作的攻击方法。
 
 ### 防御手段
 
-同源检测 根据请求头 origin 或 referer, referer 可伪造,而且会屏蔽搜索引擎
+同源检测
 
-随机 token 在 url 请求参数中携带随机 TOKEN,繁琐,而且由于服务器负载均衡,可能服务器 session 没有存 token 的钥匙不能比较
+检查请求头 origin 或 referer, referer 可伪造,而且会屏蔽搜索引擎
+
+随机 token 在 url 请求参数中携带随机 TOKEN,繁琐
 
 cookie 双重验证,url 中参数也加上 cookie,因为攻击者只能利用 cookie 不能使用 cookie.有 XSS 漏洞会失效,且不能子域名隔离
 

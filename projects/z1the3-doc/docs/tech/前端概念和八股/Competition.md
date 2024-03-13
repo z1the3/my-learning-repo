@@ -29,6 +29,8 @@ let source
 
 // 请求的函数
 funtion query (keyword) {
+
+  // 上一次请求
   if (source) {
     source.cancel('取消请求');
   }

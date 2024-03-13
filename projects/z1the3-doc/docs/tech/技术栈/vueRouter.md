@@ -1,5 +1,13 @@
 # Vue Router
 
+## 原理
+
+### history 模式
+
+提供不刷新跳转、前进后退
+
+利用浏览器原生的**window.history**提供的 pushState 、 replaceState 实现，但浏览器提供的事件 popstate， 只能在用户点击浏览器前进后退或者 window.history.go() 、 .back() 时被触发，不能完全实现路由库监听 location 变化触发重渲染。因此，可以先对 window.history 做一层增强封装
+
 ## 钩子函数
 
 全局路由钩子：

@@ -1,4 +1,4 @@
-# Vue3
+# Vue
 
 ## MVVM
 
@@ -427,7 +427,7 @@ v-for 的默认方式是尝试就地更新元素而不移动它们。要强制�
 .prevent - 调用 event.preventDefault()。
 .capture - 在捕获模式添加事件监听器。
 .self - 只有事件从元素本身发出才触发处理函数。
-.{keyAlias} - 只在某些按键下触发处理函数。
+`.{keyAlias} - 只在某些按键下触发处理函数。`
 .once - 最多触发一次处理函数。
 .left - 只在鼠标左键事件触发处理函数。
 .right - 只在鼠标右键事件触发处理函数。
@@ -799,6 +799,10 @@ Dep.target 挂载当前 watcher
 
 4.在 update 中, 而在绑定响应式时，会同时将 a.b.c 以字符串形式储存起来作为 expression
 该 expression 会在搜索时提供参考，于是就可以在组件的 data 中找到对应的 a.b.c（而且类似组件属性上的 value，跟视图直接绑定），这时修改其值，再触发回调重新渲染
+
+## 生命周期
+
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/1709543249880.jpg" width="1000"/>
 
 ## vue2 与 vue3 的区别
 
