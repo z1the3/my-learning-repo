@@ -93,109 +93,6 @@ curry.placeholder = Symbol();
 
 ## 补充
 
-#### async pool
-
-```js
-// asyncPool(3,[1,2,3,4],(i)=>new Promise(resolve,reject)
-// {setTimeout(()=>{console.log(i).resolve(i)},100}}
-
-async function asyncPool(poolLimit, iterable, iteratorFn) {
-  const ret = [];
-  const executing = new Set();
-  for (const item of iterable) {
-    const p = Promise.resolve().then(() => iteratorFn(item, iterable));
-    ret.push(p);
-    executing.add(p);
-    const clean = () => executing.delete(p);
-    // 无论成功还是失败，都在executing中去掉这个
-    p.then(clean).catch(clean);
-    if (executing.size >= poolLimit) {
-      // 卡住，但是一旦excuting中完成了一个，就会跳出
-      await Promise.race(executing);
-    }
-  }
-  // 确保返回的p不会最后一个没执行完
-  return Promise.all(ret);
-}
-```
-
-#### 发布订阅模式
-
-```js
-class EventHub {
-  constructor() {
-    // 存放event和map，map为对象，每个key为数组
-    this.map = {};
-  }
-  on(event, fn) {
-    this.map[event] = this.map[event] || [];
-    this.map[event].push(fn);
-  }
-  emit(event, data) {
-    const fnList = this.map[event] || [];
-    if (fnList.length === 0) return;
-    // 遍历该event的缓存列表，依次执行fn
-    fnList.forEach((fn) => fn.call(undefined, data));
-  }
-  off(event, fn) {
-    const fnList = this.map[event] || [];
-    const index = fnList.indexOf(fn);
-    if (index < 0) return;
-    fnList.splice(index, 1);
-  }
-  once(event, callback) {
-    // data暂时没东西传进去，但是用了 emit就可以被使用
-    // 箭头函数
-    const f = (data) => {
-      callback(data);
-      this.off(event, f);
-    };
-    this.on(event, f);
-  }
-}
-```
-
-#### 观察者模式
-
-```js
-let watcher_ids = 0;
-let dep_ids = 0;
-// 观察者类
-class Watcher {
-  constructor() {
-    this.id = watcher_ids++;
-  }
-  // 观察到变化后的处理
-  update(ob) {
-    console.log("观察者" + this.id + `-检测到被观察者${ob.id}的${ob.state}`);
-  }
-}
-
-// 被观察者类
-class Dep {
-  constructor() {
-    this.watchers = [];
-    this.id = observed_ids++;
-    this.state = "默认状态";
-  }
-  // 添加观察者
-  addWatcher(watcher) {
-    this.watchers.push(Watcher);
-  }
-  // 删除观察者
-  removeWatcher(watcher) {
-    this.watchers = this.watchers.filter((w) => w.id != watcher.id);
-  }
-
-  // 通知自己所有的观察者，ob可以为被观察者自身
-  notify(ob) {
-    this.watchers.forEach((watcher) => {
-      watcher.update(ob);
-    });
-  }
-}
-```
-
 #### 2. instanceof
 
 ```js
@@ -344,13 +241,16 @@ function compose(...functions) {
 
 ### 6.实现 new
 
+！！！prototype 不允许直接修改
+不可直接被外界访问和修改
+
 ```js
 const _new = function (constructor, ...args) {
   // new关键字做了4件事
   // 1. 创建一个新对象
   const obj = {};
   // 2. 为新对象添加属性__proto__，将该属性链接至构造函数的原型对象
-  obj.__proto__ = constructor.prototype;
+  obj.__proto__ = Object.create(constructor.prototype);
   // 3. 执行构造函数，this被绑定在新对象上
   const res = constructor.apply(obj, args);
   // 4. 确保返回一个对象
@@ -508,7 +408,9 @@ function partition(array, l, r) {
     while (array[l] < pivot) l++;
     while (array[r] > pivot) r--;
     // 此时其实都等于pivot
-    if (l < r && array[l] == array[r]) l++;
+    // 当数组中存在重复数据时，即都为pivot，但位置不同
+    // 继续递增i，防止死循环
+    if (l !== r && array[l] === array[r]) l++;
     else if (l < r) {
       //此时array[l]>pivot,array[r]<pivot (=的情况已经排除)
       [array[l], array[r]] = [array[r], array[l]];
@@ -944,55 +846,6 @@ Array.prototype._filter = function (fn) {
 };
 ```
 
-### reduce
-
-```js
-// prev为初始值，可能为undefined
-Array.prototype._reduce = function (fn, prev) {
-  for (let i = 0; i < this.length; i++) {
-    if (prev === undefined) {
-      // 此时第一位和第二位为参数返回结果为初始值，当前应该在第二位所以i++
-      // 修改参数prev
-      prev = fn(this[i], this[i + 1], i + 1, this);
-      i++;
-    } else {
-      // prev不为undefined了，所以将上一次的prev传进去
-      prev = fn(prev, this[i], i, this);
-    }
-  }
-  return prev;
-};
-```
-
-### Object.create
-
-```js
-const _objectCreate = (proto) => {
-  // 补全代码
-  if (typeof proto !== "object") return;
-  const fn = function () {};
-  fn.prototype = proto;
-  // 如果proto为null, 返回的是一个干净的对象
-  return new fn();
-};
-```
-
-### new
-
-```js
-const _new = function (constructor, ...args) {
-  // new关键字做了4件事
-  // 1. 创建一个新对象
-  const obj = {};
-  // 2. 为新对象添加属性__proto__，将该属性链接至构造函数的原型对象
-  obj.__proto__ = constructor.prototype;
-  // 3. 执行构造函数，this被绑定在新对象上
-  const res = constructor.apply(obj, args);
-  // 4. 确保返回一个对象
-  return res instanceof Object ? res : obj;
-};
-```
-
 ### 浅拷贝
 
 ```js
@@ -1049,59 +902,6 @@ const _completeDeepClone = (target, map = new Map()) => {
   }
   return cloneTarget;
 };
-```
-
-### flat
-
-数组扁平化
-
-```js
-//拍到底
-let arr = [1, [2, [3, 4, 5]]];
-function flatten(arr) {
-  let result = [];
-  for (let i = 0; i < arr.length; i++) {
-    // 当前元素是一个数组，对其进行递归展平
-    if (Array.isArray(arr[i])) {
-      // 递归展平结果拼接到结果数组
-      result = result.concat(flatten(arr[i]));
-    }
-    // 否则直接加入结果数组
-    else {
-      result.push(arr[i]);
-    }
-  }
-  return result;
-}
-console.log(flatten(a));
-```
-
-```js
-// 递归拍n层
-function flatten(arr, level) {
-  function walk(arr, currLevel) {
-    // 每次都准备好一个空数组
-    let res = [];
-    for (let item of arr) {
-      // 判断有没有超过层数,放在for循环里面而不是外面,放在外面超过层数后
-      //后面的数就不会加到arr里了
-      if (Array.isArray(item) && currLevel < level) {
-        // 记得walk的是新的item**和现有的curlevel+1**
-        res = res.concat(walk(item, currLevel + 1));
-
-        // res.push(...walk(item,currLevel + 1))也行
-      } else {
-        res.push(item);
-      }
-    }
-    return res;
-  }
-
-  return walk(arr, 0);
-}
-
-var res = flatten(arr, 3);
-console.log(res);
 ```
 
 ### 寄生组合式继承
@@ -1645,6 +1445,8 @@ function heapSort(data) {
 const arr = [62, 88, 58, 47, 35, 73, 51, 99, 37, 93];
 var newArr = heapSort(arr);
 ```
+
+### 手写 reduce
 
 ## react
 

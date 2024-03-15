@@ -1,12 +1,6 @@
 # js 输出题
 
-## 1
-
-经过 new 操作，obj.a()的 this 被绑定为了新返回的实例
-
-因此找不到 this.id
-
-而 obj.b()为箭头函数，无法被 new
+## 对象+箭头函数
 
 ```js
 var id = "GLOBAL";
@@ -20,12 +14,20 @@ var obj = {
   },
 };
 obj.a(); // 'OBJ'
+
 obj.b(); // 'GLOBAL'
+//对象字面量加箭头函数，绑定不了对象this
+//因为this绑定被放在对象外，作为全局语句执行
+
 new obj.a(); // undefined
+// 经过 new 操作，obj.a()的 this 被绑定为了新返回的实例
+// 因此找不到 this.id
+
 new obj.b(); // Uncaught TypeError: obj.b is not a constructor
+// 而 obj.b()为箭头函数，无法被 new
 ```
 
-## 2.作用域-obj 内部不能引用 obj
+## 作用域-obj 内部不能引用 obj
 
 ```js
 var obj = {
