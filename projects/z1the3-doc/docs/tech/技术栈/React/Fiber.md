@@ -18,8 +18,8 @@ renderer(渲染器）（renderDOM, renderSSR)
 
 ### 事件处理
 
-- 原生 dom 上提供事件处理 @onclick="foo()" 传入字符串并执行函数（用的很少）
-- react 上提供事件处理 @onClick={foo} 小驼峰
+- 原生 dom 上提供事件处理 `@onclick="foo()"` 传入字符串并执行函数（用的很少）
+- react 上提供事件处理 `@onClick={foo}` 小驼峰
   react 必须显式调用 event 对象上的 preventDefault 方法来阻止事件的默认行为
   如果想不用合成事件处理，可以用 e.nativeEvent 拿到被包装前的原生事件
 

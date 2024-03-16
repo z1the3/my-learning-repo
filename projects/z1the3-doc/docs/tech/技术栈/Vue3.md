@@ -374,7 +374,7 @@ vue 是通过基于发布订阅模式（观察者）的数据劫持来实现双�
 
 - Observer 观察者函数：监听所有数据的变化，当数据变动时获取最新的值并通知给订阅者（数据劫持）
 - Watcher 订阅者函数：当接受到观察者的通知和提供的数据后同步更新视图
-- Compile 解析器函数：解析 DOM 元素上的 v-model 指令和 {{}} 语法
+- Compile 解析器函数：解析 DOM 元素上的 v-model 指令和 `{{}}` 语法
 
   vue.2 是基于 Object.defineProperty，vue.3 是基于 Proxy
 
