@@ -31,11 +31,6 @@ https://blog-ssg.touchczy.top/zh-cn/JavaScript/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC
 ● 类组件使用 setState 定义字节的内部状态
 ● 函数式组件一开始没有自己的状态，只能通过 props 传递外部的数据，有 hooks 后使用 useState
 
-### 生命周期
-
-● 类组件：构造，getDSfromProps, cDidMount,shouldCUpdate,cDidUpdate,cWillUnmounted....
-● 函数组件：用 useEffect 代替 cDidMountcDidUpdatecWillUnmounted
-
 ### 使用方式
 
 ● 类组件：实例化后调用 render

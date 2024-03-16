@@ -1,31 +1,5 @@
 # 非原生 utils
 
-## async pool
-
-```js
-// asyncPool(3,[1,2,3,4],(i,arr)=>new Promise(resolve,reject)
-// {setTimeout(()=>{console.log(i).resolve(i)},100}}
-
-async function asyncPool(poolLimit, iterable, iteratorFn) {
-  const ret = [];
-  const executing = new Set();
-  for (const item of iterable) {
-    const p = Promise.resolve().then(() => iteratorFn(item, iterable));
-    ret.push(p);
-    executing.add(p);
-    const clean = () => executing.delete(p);
-    // 无论成功还是失败，都在executing中去掉这个
-    p.then(clean).catch(clean);
-    if (executing.size >= poolLimit) {
-      // 卡住，但是一旦excuting中完成了一个，就会跳出
-      await Promise.race(executing);
-    }
-  }
-  // 确保返回的p全都执行完了
-  return Promise.all(ret);
-}
-```
-
 ## 统计当前网页出现过多少个 html 标签
 
 ```js
@@ -203,4 +177,39 @@ parseParam(
 );
 
 // {user: "superman", id:["345", "678"], city: "杭州", enabled: true}
+```
+
+## 找到出现次数最多的单词
+
+先对字符串做处理
+
+```js
+function findMostWord(article) {
+  // 合法性判断
+  if (!article) return;
+  // 参数处理
+  article = article.trim().toLowerCase(); //"i want to"
+  // 该步为了给左右加两个空格，并且将所有的word做成表
+  let wordList = article.match(/[a-z]+/g), //["i","want","to"]
+    visited = [],
+    maxNum = 0,
+    maxWord = "";
+  article = " " + wordList.join("  ") + " "; // " i want to "
+  // 遍历判断单词出现次数
+  wordList.forEach(function (item) {
+    // 数组也能用indexof
+    if (visited.indexOf(item) < 0) {
+      // 加入 visited
+      visited.push(item);
+      // 创建正则表达式，匹配" word ",生成的数组长度就是单词个数
+      let word = new RegExp(" " + item + " ", "g"),
+        num = article.match(word).length;
+      if (num > maxNum) {
+        maxNum = num;
+        maxWord = item;
+      }
+    }
+  });
+  return maxWord + "  " + maxNum;
+}
 ```
