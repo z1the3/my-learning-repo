@@ -1,4 +1,17 @@
-## XSS 攻击
+# XSS 攻击
+
+## 原理
+
+相当于把脚本通过 post 上传服务器，服务器把数据错误渲染
+通过 encoudeURI 可避免
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/WX20240317-165603@2x.png" width="500"/>
+
+黑客诱导用户点击带有恶意代码为参数的 url，浏览器收到参数，误以为是正确参数，需在 script 标签中执行
+
+使用转义避免
+过滤有安全风险的属性
+
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/WX20240317-170037@2x.png" width="500"/>
 
 ### 防御手段
 
@@ -36,7 +49,7 @@ Vue.directive("filter", {
 });
 ```
 
-#### 输出转义
+#### 框架输出转义
 
 在 Vue.js 中可以使用 v-html 指令来将数据渲染为 HTML 代码，并自动转义其中的特殊字符和 HTML 标签。例如，可以使用以下代码来渲染一个带有特殊字符和 HTML 标签的字符串：
 
@@ -45,6 +58,13 @@ Vue.directive("filter", {
   <div v-html="htmlString"></div>
 </template>
 ```
+
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/WX20240317-170037@2x.png" width="500"/>
+
+一些场景中已经默认支持防止 xss
+
+但是还有一些需要手动用 api 防止
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/1710666283457.jpg" width="500"/>
 
 #### CSP
 
@@ -73,6 +93,10 @@ Vue.use(VueMeta, {
 ```
 
 在 contentSecurityPolicy 选项中，可以设置不同的源策略（如 defaultSrc、scriptSrc、styleSrc 等）来限制不同类型的资源的加载。例如，上述代码设置了只允许加载本地资源和内联的 JavaScript 脚本，同时禁止加载其他域名的脚本和资源。
+
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/WX20240317-170717@2x.png" width="500"/>
+
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/1710666504818.jpg" width="500"/>
 
 #### Sanitize HTML
 

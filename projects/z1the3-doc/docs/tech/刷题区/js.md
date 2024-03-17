@@ -33,36 +33,6 @@ console.log(Number(false)); // 0
 
 ## js 实现
 
-### 1.实现柯里化
-
-```js
-const join = (a, b, c) => {
-  return `${a}_${b}_${c}`;
-};
-
-const curriedJoin = curry(join);
-
-curriedJoin(1, 2, 3); // '1_2_3'
-
-curriedJoin(1)(2, 3); // '1_2_3'
-
-curriedJoin(1, 2)(3); // '1_2_3'
-```
-
-```js
-function curry(fn) {
-  return function curried(...args) {
-    // if number of arguments match
-    if (args.length >= fn.length) {
-      return fn.call(this, ...args);
-    }
-    return function (...missingArgs) {
-      return curried.call(this, ...args, ...missingArgs);
-    };
-  };
-}
-```
-
 ### 2.带占位符的柯里化
 
 ```js
@@ -961,31 +931,6 @@ function Insertion(arr) {
   }
   return arr;
 }
-```
-
-### 冒泡排序
-
-```js
-let arr = [3, 4, 1, 2];
-function bubbleSort(arr) {
-  let max = arr.length - 1;
-  for (let j = 0; j < max; j++) {
-    // 声明一个变量，作为标志位
-    let done = true;
-    for (let i = 0; i < max - j; i++) {
-      if (arr[i] > arr[i + 1]) {
-        [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
-        done = false;
-      }
-    }
-    // 如果一次遍历，没换一个，说明后面的都是升序的，不用再继续了
-    if (done) {
-      break;
-    }
-  }
-  return arr;
-}
-bubbleSort(arr);
 ```
 
 ### 数组转树

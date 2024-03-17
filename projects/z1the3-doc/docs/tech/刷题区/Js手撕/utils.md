@@ -213,3 +213,35 @@ function findMostWord(article) {
   return maxWord + "  " + maxNum;
 }
 ```
+
+## 柯里化
+
+### 1.实现柯里化
+
+```js
+const join = (a, b, c) => {
+  return `${a}_${b}_${c}`;
+};
+
+const curriedJoin = curry(join);
+
+curriedJoin(1, 2, 3); // '1_2_3'
+
+curriedJoin(1)(2, 3); // '1_2_3'
+
+curriedJoin(1, 2)(3); // '1_2_3'
+```
+
+```js
+function curry(fn) {
+  return function curried(...args) {
+    // if number of arguments match
+    if (args.length >= fn.length) {
+      return fn.call(this, ...args);
+    }
+    return function (...missingArgs) {
+      return curried.call(this, ...args, ...missingArgs);
+    };
+  };
+}
+```

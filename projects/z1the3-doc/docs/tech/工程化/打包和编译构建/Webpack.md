@@ -6,7 +6,7 @@ bundle 文件 = 运行时代码（很小一部分，常规 js 逻辑） + 第三
 
 ## chunk 和 bundle 的区别是什么
 
-1. chunk 是打包过程中 modules 模块的集合，是打包过程中的概念‘
+1. chunk 是打包过程中 modules 模块的集合，是打包过程中的概念
    一个入口模块，通过引用关系找到别的 module, 这些 module 就形成了一个 chunk
    如果有多个入口模块，可能会产生多条引用关系路径，每条路径都会形成一个 chunk
 
@@ -232,18 +232,6 @@ function bundle(graph) {
     `;
 }
 ```
-
-## HMR
-
-关于 webpack 热模块更新的总结如下：
-
-- 通过 webpack-dev-server 创建两个服务器：提供静态资源的服务（express）和 Socket 服务
-- express server 负责直接提供静态资源的服务（打包后的资源直接被浏览器请求和解析）
-- socket server 是一个 websocket 的连接，双方可以通信
-- 当 socket server 监听到对应的模块发生变化时，会生成两个文件.json（manifest 文件 mainfest 文件包含重新 build 生成的 hash 值，以及变化的模块，）和.js 文件（update chunk）
-- express 服务端向客户端发一条消息,包含 文件改动后生成的 hash 值
-- 浏览器接受消息后跟上次 hash 值相比,通过 ajax 去请求变化了的 manifest 文件 , ws 是用来检测，ajax 是用来更新
-- 浏览器拿到两个新的文件后，通过 HMR runtime 机制，加载这两个文件，并且针对修改的模块进行更新
 
 ## 配置
 
