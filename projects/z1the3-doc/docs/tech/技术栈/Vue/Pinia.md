@@ -1,0 +1,80 @@
+# Pinia
+
+当前版本已实现时间旅行！
+
+## 为什么你应该使用 Pinia？
+
+Pinia 是 Vue 的专属状态管理库，它允许你跨组件或页面共享状态。如果你熟悉组合式 API 的话，你可能会认为可以通过一行简单的 export const state = reactive({}) 来共享一个全局状态。对于单页应用来说确实可以，但如果应用在服务器端渲染，这可能会使你的应用暴露出一些安全漏洞。（所以其实官网也认为优势在于服务端渲染） 而如果使用 Pinia，即使在小型单页应用中，你也可以获得如下功能：
+
+- Devtools 支持
+- 追踪 actions、mutations 的时间线
+- 在组件中展示它们所用到的 Store
+- 让调试更容易的 Time travel
+- 热更新
+- 不必重载页面即可修改 Store
+- 开发时可保持当前的 State
+- 插件：可通过插件扩展 Pinia 功能
+- 为 JS 开发者提供适当的 TypeScript 支持以及自动补全功能。
+- 支持服务端渲染
+
+## Pinia API 与 Vuex(<=4) 也有很多不同，即
+
+mutation 已被弃用。它们经常被认为是极其冗余的。它们初衷是带来 devtools 的集成方案，但这已不再是一个问题了。
+无需要创建自定义的复杂包装器来支持 TypeScript，一切都可标注类型，API 的设计方式是尽可能地利用 TS 类型推理。
+无过多的魔法字符串注入，只需要导入函数并调用它们，然后享受自动补全的乐趣就好。
+无需要动态添加 Store，它们默认都是动态的，甚至你可能都不会注意到这点。注意，你仍然可以在任何时候手动使用一个 Store 来注册它，但因为它是自动的，所以你不需要担心它。
+不再有嵌套结构的模块。你仍然可以通过导入和使用另一个 Store 来隐含地嵌套 stores 空间。虽然 Pinia 从设计上提供的是一个扁平的结构，但仍然能够在 Store 之间进行交叉组合。你甚至可以让 Stores 有循环依赖关系。
+
+不再有可命名的模块。考虑到 Store 的扁平架构，Store 的命名取决于它们的定义方式，你甚至可以说所有 Store 都应该命名。
+
+融合 setup() 函数和组合式 API，别担心，Pinia 也提供了一组类似 Vuex 的 映射 state 的辅助函数。你可以用和之前一样的方式来定义 Store，然后通过 mapStores()、mapState() 或 mapActions() 访问：
+
+## Store
+
+Store 是用 defineStore() 定义的，它的第一个参数要求是一个独一无二的名字：
+
+```js
+import { defineStore } from "pinia";
+
+// 你可以任意命名 `defineStore()` 的返回值，但最好使用 store 的名字，同时以 `use` 开头且以 `Store` 结尾。
+// (比如 `useUserStore`，`useCartStore`，`useProductStore`)
+// 第一个参数是你的应用中 Store 的唯一 ID。
+export const useAlertsStore = defineStore("alerts", {
+  // 其他配置...
+});
+```
+
+```html
+// 使用
+
+<script setup>
+  import {useCounterStore} from '@/stores/counter' // 可以在组件中的任意位置访问
+  `store` 变量 ✨ const store = useCounterStore()
+</script>
+;
+```
+
+这个名字 ，也被用作 id ，是必须传入的， Pinia 将用它来连接 store 和 devtools。为了养成习惯性的用法，将返回的函数命名为 use... 是一个符合组合式函数风格的约定
+
+### 从 Store 解构
+
+为了从 store 中提取属性时保持其响应性，你需要使用 storeToRefs()。它将为每一个响应式属性创建引用。当你只使用 store 的状态而不调用任何 action 时，它会非常有用。请注意，你可以直接从 store 中解构 action，因为它们也被绑定到 store 上：
+
+```html
+<script setup>
+  import { storeToRefs } from "pinia";
+  const store = useCounterStore();
+  // `name` 和 `doubleCount` 是响应式的 ref
+  // 同时通过插件添加的属性也会被提取为 ref
+  // 并且会跳过所有的 action 或非响应式 (不是 ref 或 reactive) 的属性
+  const { name, doubleCount } = storeToRefs(store);
+  // 作为 action 的 increment 可以直接解构
+  const { increment } = store;
+</script>
+```
+
+## 原理
+
+在 Pinia 中，状态存储是指一个包含状态和修改状态的方法的对象。使用 defineStore 函数创建状态存储，每个状态存储都有一个唯一的 id 属性用于区分不同的状态存储。在状态存储中，状态使用 state 属性定义，修改状态的方法使用 actions 属性定义。
+
+Pinia 的工作原理主要是利用了 Vue 3 提供的 reactive 函数和 watch 函数。当状态存储中的状态发生变化时，Pinia 会自动更新依赖于该状态的组件。在组件中，可以使用 computed 和 watch 函数来监听状态存储中的状态，当状态发生变化时，组件会自动更新。

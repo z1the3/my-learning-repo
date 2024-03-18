@@ -1,5 +1,7 @@
 # Vuex
 
+https://vuex.vuejs.org/zh/
+
 状态存储是响应式的
 
 五个核心概念：state、getters、actions、mutations、modules
@@ -14,6 +16,123 @@ Vuex 实现了一个单向数据流，在全局拥有一个 State 存放数据�
 Mutation 的同时提供了订阅者模式供外部插件调用获取 State 数据的更新。所有异步接口需要走 Action，常见于调用后端接口异步获取更新数据，而 Action 也是无法直接修改 State 的，还是需要通过 Mutation 来修改 State 的数据。最后，根据 State 的变化，渲染到视图上。Vuex 运行依赖 Vue 内部数据双向绑定机制，需要 new 一个 Vue 对象来实现“响应式化”，
 
 所以 Vuex 是一个专门为 Vue.js 设计的状态管理库
+
+## mutation
+
+更改 Vuex 的 **store 中的状态的唯一方法是提交 mutation**。Vuex 中的 mutation 非常类似于事件：每个 mutation 都有一个字符串的事件类型 (type)和一个回调函数 (handler)。这个回调函数就是我们实际进行状态更改的地方，并且它会接受 state 作为第一个参数
+
+```js
+const store = createStore({
+  state: {
+    count: 1,
+  },
+  mutations: {
+    increment(state) {
+      // 变更状态, 直接访问state
+      state.count++;
+    },
+  },
+});
+```
+
+你不能直接调用一个 mutation 处理函数。这个选项更像是事件注册：“当触发一个类型为 increment 的 mutation 时，调用此函数。”要唤醒一个 mutation 处理函数，你需要以相应的 type 调用 store.commit 方法
+
+```js
+store.commit("increment");
+```
+
+## action
+
+```js
+const store = createStore({
+  state: {
+    count: 0,
+  },
+  mutations: {
+    increment(state) {
+      state.count++;
+    },
+  },
+
+  Action 类似于 mutation，不同在于：
+
+Action 提交的是 mutation，而不是直接变更状态。
+Action 可以包含任意异步操作。
+让我们来注册一个简单的 action：
+  actions: {
+    increment(context) {
+      context.commit("increment");
+    },
+  },
+});
+```
+
+Action 函数接受一个与 store 实例具有相同方法和属性的 context 对象，因此你可以调用 context.commit 提交一个 mutation，或者通过 context.state 和 context.getters 来获取 state 和 getters。当我们在之后介绍到 Modules 时，你就知道 context 对象为什么不是 store 实例本身了。
+
+实践中，我们会经常用到 ES2015 的参数解构来简化代码（特别是我们需要调用 commit 很多次的时候）：
+
+```js
+actions: {
+  increment ({ commit }) {
+    commit('increment')
+  }
+}
+```
+
+使用 action
+
+```js
+actions: {
+  a ({ commit }) {
+    commit('increment')
+  }
+}
+
+store.dispatch('a')
+```
+
+乍一眼看上去感觉多此一举，我们直接分发 mutation 岂不更方便？实际上并非如此，还记得 mutation 必须同步执行这个限制么？Action 就不受约束！我们可以在 action 内部执行异步操作：
+
+```js
+actions: {
+  a ({ commit }) {
+    setTimeout(() => {
+      commit('increment')
+    }, 1000)
+  }
+}
+```
+
+### 组合 Action
+
+Action 通常是异步的，那么如何知道 action 什么时候结束呢？更重要的是，我们如何才能组合多个 action，以处理更加复杂的异步流程？
+
+首先，你需要明白 store.dispatch 可以处理被触发的 action 的处理函数返回的 Promise，并且 store.dispatch 仍旧返回 Promise：
+
+```js
+actions: {
+  // ...
+  actionB ({ dispatch, commit }) {
+    return dispatch('actionA').then(() => {
+      commit('someOtherMutation')
+    })
+  }
+}
+```
+
+```js
+// 假设 getData() 和 getOtherData() 返回的是 Promise
+
+actions: {
+  async actionA ({ commit }) {
+    commit('gotData', await getData())
+  },
+  async actionB ({ dispatch, commit }) {
+    await dispatch('actionA') // 等待 actionA 完成
+    commit('gotOtherData', await getOtherData())
+  }
+}
+```
 
 ## mapState 辅助函数
 

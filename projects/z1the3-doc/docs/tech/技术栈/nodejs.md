@@ -2,9 +2,10 @@
 
 ## 有用链接
 
-* NodeJs中文文档 https://nodejs.cn/api/
+- NodeJs 中文文档 https://nodejs.cn/api/
+- 平滑版 https://doc.cherrychat.org/node/
 
-## fs模块
+## fs 模块
 
 ### 监听文件变动
 
@@ -18,7 +19,7 @@
 
 在大多数平台上，只要目录中文件名出现或消失，就会触发 'rename'。
 
-新增和删除文件触发的是rename事件
+新增和删除文件触发的是 rename 事件
 
 ## util
 
@@ -27,15 +28,15 @@
 `util.format(format[, ...args])`
 
 ```js
-util.format('%s:%s', 'foo');
+util.format("%s:%s", "foo");
 // Returns: 'foo:%s'
 
-util.formatWithOptions({ colors: true }, 'See object %O', { foo: 42 });
+util.formatWithOptions({ colors: true }, "See object %O", { foo: 42 });
 // Returns 'See object { foo: 42 }', where `42` is colored as a number
 // when printed to a terminal.
 ```
 
-option配置对象https://nodejs.org/docs/latest/api/util.html#utilinspectobject-options
+option 配置对象https://nodejs.org/docs/latest/api/util.html#utilinspectobject-options
 
 返回：格式化字符串
 

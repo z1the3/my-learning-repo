@@ -27,3 +27,7 @@ https://commerce.nearform.com/open-source/react-live/
 https://casl.js.org/v6/en/
 
 CASL 是一个同构授权 JavaScript 库，它限制允许给定用户访问的资源
+
+## 平滑版 node 文档
+
+https://doc.cherrychat.org/node/
