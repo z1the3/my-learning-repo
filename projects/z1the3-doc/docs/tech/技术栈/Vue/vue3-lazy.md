@@ -1,4 +1,4 @@
-# vue3 图片懒加载插件源码
+# vue-lazy
 
 ## ImageManager
 

@@ -107,7 +107,7 @@ const obj = {
 var obj = {
   getArrow: function getArrow() {
     // 继承上一层作用域的this
-    // getArrow在使用时，作用域被推到window上，因此上一层作用域是window
+    // 如果！getArrow在使用时，作用域被推到window上，因此上一层作用域是window
     var _this = this;
     return function () {
       console.log(_this === obj);
@@ -352,45 +352,6 @@ function getType(value) {
 }
 ```
 
-### 1.快排
-
-```js
-const _quickSort = (array) => {
-  // 补全代码
-  myQuickSort(array, 0, array.length - 1);
-  return array;
-};
-// 启动函数
-
-// 重点
-function myQuickSort(array, l, r) {
-  if (l < r) {
-    let index = partition(array, l, r); //进行一轮快排
-    myQuickSort(array, l, index - 1);
-    myQuickSort(array, index + 1, r);
-  }
-}
-function partition(array, l, r) {
-  // 随机l-r取值
-  let pivot = array[Math.floor(Math.random() * (r - l + 1)) + l];
-  // *****这里是双重循环
-  while (l < r) {
-    while (array[l] < pivot) l++;
-    while (array[r] > pivot) r--;
-    // 此时其实都等于pivot
-    // 当数组中存在重复数据时，即都为pivot，但位置不同
-    // 继续递增i，防止死循环
-    if (l !== r && array[l] === array[r]) l++;
-    else if (l < r) {
-      //此时array[l]>pivot,array[r]<pivot (=的情况已经排除)
-      [array[l], array[r]] = [array[r], array[l]];
-    }
-  }
-  //此时l==r
-  return l;
-}
-```
-
 ### 2.归并
 
 ```js
@@ -527,59 +488,6 @@ function HardMan(name) {
     }
 
 
-```
-
-### 实现 promise
-
-```js
-function Promise(fn) {
-  this.cbs = [];
-
-  const resolve = (value) => {
-    setTimeout(() => {
-      this.data = value;
-      // 这个value，循环体现在 a.then();a.then();会增加cb;所以value值不变
-      // 而a.then().then()其实是创造一个新的promise (a.then())来管理新cb，value值需要更新
-      this.cbs.forEach((cb) => cb(value));
-    });
-  };
-  // 执行器，很关键，一切从这开始
-  fn(resolve);
-}
-
-Promise.prototype.then = function (onResolved) {
-  // 返回一个新promise从而可以链式调用，而这个promise会立即往自身的cb里加入一个函数
-  // 这个函数能保证then时，老promise resolve时会把新promise的onResolved执行了
-  // 在调用resolve会遍历cb，并异步执行里面的函数，那么就会进而执行onResolved
-  // 给完成结果加上then再resolve能再下一次异步执行res(promise)独享的cb2
-  // 如果完成结果不是promise,直接通过resolve派发这一次then的结果，更新this.data
-  return new Promise((resolve) => {
-    this.cbs.push(() => {
-      // 这一行则完成了.then((res)=>{})，并且将老promise的data传给新promise
-      const res = onResolved(this.data);
-      if (res instanceof Promise) {
-        res.then(resolve);
-      } else {
-        resolve(res);
-      }
-    });
-  });
-};
-
-new Promise((resolve) => {
-  setTimeout(() => {
-    resolve(1);
-  }, 500);
-})
-  .then((res) => {
-    console.log(res);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(2);
-      }, 500);
-    });
-  })
-  .then(console.log);
 ```
 
 ### promise 实现每隔 1 秒输出 1，2，3
