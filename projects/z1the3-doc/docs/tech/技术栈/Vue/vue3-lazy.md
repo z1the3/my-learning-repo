@@ -355,11 +355,12 @@ private lazyHandler (e: Event): void {
   isInView (): boolean {
     const rect = this.el.getBoundingClientRect()
 
-    // 利用clientRect
+    // 利用clientRect，rect.top是到视口顶部的距离
     return rect.top < window.innerHeight && rect.left < window.innerWidth
     // 还有一种方法是 offsetTop, scrollTop, innnerHeight
+    //                     注意这是一条线，代表屏幕最下部分
     // img.offsetTop < window.innerHeight + document.body.scrollTop;
-// !一旦经过就下载，不是在视口内才下载
+// !一旦图片经过这条线就下载，不是一定在视口内才下载
   }
 
 ```

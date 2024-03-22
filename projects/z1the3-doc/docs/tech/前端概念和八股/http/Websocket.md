@@ -33,3 +33,30 @@ reconnect 会通过 socket.readyState 来判断这个 websocket 连接是否正�
 1002 协议错误
 1003 数据类型错误
 1011 服务器错误
+
+## 建立通信过程-ws 三次握手
+
+蕴含 http
+
+1）首先客户端会发送一个握手包。这里就体现出了 WebSocket 与 Http 协议的联系，握手包的报文格式必须符合 HTTP 报文格式的规范。其中：
+
+- 方法必须位 GET 方法
+- HTTP 版本不能低于 1.1
+- 必须包含 Upgrade 头部，值必须为 websocket
+- 必须包含 Sec-WebSocket-Key 头部，值是一个 Base64 编码的 16 字节随机字符串。
+- 必须包含 Sec-WebSocket-Version 头部，值必须为 13
+  其他可选首部可以参考：https://tools.ietf.org/html/rfc6455#section-4.1
+
+2）服务端验证客户端的握手包符合规范之后也会发送一个握手包给客户端。格式如下：
+
+- 必须包含 Connection 头部，值必须为 Upgrade
+
+- 必须包含一个 Upgrade 头部，值必须为 websocket
+
+- 必须包含一个 Sec-Websocket-Accept 头部，值是根据如下规则计算的：
+
+- 首先将一个固定的字符串 258EAFA5-E914-47DA-95CA-C5AB0DC85B11 拼接到 Sec-WebSocket-Key 对应值的后面。
+  对拼接后的字符串进行一次 SHA-1 计算
+  将计算结果进行 Base-64 编码
+
+3）客户端收到服务端的握手包之后，验证报文格式时候符合规范，以 2）中同样的方式计算 Sec-WebSocket-Accept 并与服务端握手包里的值进行比对。

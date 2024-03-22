@@ -1,4 +1,4 @@
-# 非原生 utils
+# utils
 
 ## 统计当前网页出现过多少个 html 标签
 
@@ -68,42 +68,6 @@ function _render(vnode) {
   // 子数组进行递归操作，先序遍历
   vnode.children.forEach((child) => dom.appendChild(_render(child)));
   return dom;
-}
-```
-
-## 发布订阅模式
-
-```js
-class EventHub {
-  constructor() {
-    // 存放event和map，map为对象，每个key为数组
-    this.map = {};
-  }
-  on(event, fn) {
-    this.map[event] = this.map[event] || [];
-    this.map[event].push(fn);
-  }
-  emit(event, data) {
-    const fnList = this.map[event] || [];
-    if (fnList.length === 0) return;
-    // 遍历该event的缓存列表，依次执行fn
-    fnList.forEach((fn) => fn.call(undefined, data));
-  }
-  off(event, fn) {
-    const fnList = this.map[event] || [];
-    const index = fnList.indexOf(fn);
-    if (index < 0) return;
-    fnList.splice(index, 1);
-  }
-  once(event, callback) {
-    // data暂时没东西传进去，但是用了 emit就可以被使用
-    // 箭头函数
-    const f = (data) => {
-      callback(data);
-      this.off(event, f);
-    };
-    this.on(event, f);
-  }
 }
 ```
 
@@ -327,5 +291,74 @@ function throttle(fn, delay) {
       timer = setTimeout(() => fn.apply(this, args), remain);
     }
   };
+}
+```
+
+## lodash.get
+
+```js
+function _get(obj, path, defaultValue = "undefined") {
+  //先将path处理成统一格式
+  let newPath = [];
+  if (Array.isArray(path)) {
+    newPath = path;
+  } else {
+    // 字符串类型 obj[a] obj.a  这里把'[' 替换成'.' ']' 替换成''
+    newPath = path.replace(/\[/g, ".").replace(/\]/g, "").split("."); //最后转成数组
+    console.log(newPath);
+  }
+  //obj 替换成 obj.a 逐步调用
+  return (
+    newPath.reduce((o, k) => {
+      return (o || {})[k];
+    }, obj) || defaultValue
+  );
+}
+
+var object = { a: [{ b: { c: 3 } }] };
+
+console.log(_get(object, "a[0].b.c"));
+// => 3
+
+console.log(_get(object, ["a", "0", "b", "c"]));
+// => 3
+
+console.log(_get(object, "a.b.c", "default"));
+// => 'default'
+```
+
+## RGB/RGBA 颜色转十六进制
+
+```js
+function rgbToHex(val) {
+  //RGB(A)颜色转换为HEX十六进制的颜色值
+  let r, g, b, a;
+  let regRgba = /rgba?\((\d{1,3}),(\d{1,3}),(\d{1,3})(,([.\d]+))?\)/, //判断rgb颜色值格式的正则表达式，如rgba(255,20,10,.54)
+    // replace过滤掉字符串中多余的空格
+    // match返回一个数组或null，匹配成功返回regRgba对val的匹配结果数组，匹配失败返回null
+    // 比如字符串rgba(255,20,10,.54)，如果匹配成功，返回：['rgba(255,20,10,.54)','255','20','10',',.54','.54',index:0,input:'rgba(255,20,10,.54)',groups:undefined]
+    rsa = val.replace(/\s+/g, "").match(regRgba);
+
+  // 如果匹配成功
+  if (!!rsa) {
+    r = parseInt(rsa[1]).toString(16);
+    // 长度是1则前面补0，将长度补全为2位
+    r = r.length == 1 ? "0" + r : r;
+    g = parseInt(rsa[2]).toString(16);
+    g = g.length == 1 ? "0" + g : g;
+    b = parseInt(rsa[3]).toString(16);
+    b = b.length == 1 ? "0" + b : b;
+    // +作用可以理解为：Number(value)，将括号内的变量转换为Number类型
+    a = +(rsa[5] ? rsa[5] : 1) * 100;
+    return {
+      hex: "#" + r + g + b,
+      r: parseInt(r, 16),
+      g: parseInt(g, 16),
+      b: parseInt(b, 16),
+      alpha: Math.ceil(a),
+    };
+  } else {
+    return { hex: "无效", alpha: 100 };
+  }
 }
 ```

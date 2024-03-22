@@ -361,18 +361,6 @@ Dep.target 挂载当前 watcher
 4.在 update 中, 而在绑定响应式时，会同时将 a.b.c 以字符串形式储存起来作为 expression
 该 expression 会在搜索时提供参考，于是就可以在组件的 data 中找到对应的 a.b.c（而且类似组件属性上的 value，跟视图直接绑定），这时修改其值，再触发回调重新渲染
 
-## diff
-
-只比较两个节点的一层子节点，就是同层比较的意思
-在比较单一节点时如果 key 值不同，直接替换为新节点
-diff 算法最重要的内容是比较在 key 相同且两个节点都有子节点时子节点的差异
-
-<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/WeChatcc0c95b6a623b388bc8efc28742b14d1.jpg" width="1200"/>
-
-vue2 使用双端头尾比较
-
-vue3 使用最长递增序列 + 静态标记
-
 ## keep-alive
 
 内存占用： 被缓存的组件会一直占用内存，如果页面中包含大量需要缓存的组件，可能会导致内存占用过大。

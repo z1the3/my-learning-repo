@@ -10,6 +10,8 @@
 
 ## 钩子函数
 
+除了 after 钩子，参数都是 to from next
+
 全局路由钩子：
 beforeEach(to,from, next)、beforeResolve(to,from, next)、afterEach(to,from)；
 
@@ -23,7 +25,7 @@ beforeEnter(to,from, next)；
 组件内路由钩子：
 beforeRouteEnter(to,from, next)、beforeRouteUpdate(to,from, next)、beforeRouteLeave(to,from, next)
 
-to：目标路由对象；
+to：目标路由对象 router；
 from：即将要离开的路由对象；
 
 ```
@@ -69,3 +71,40 @@ RotuerView 组件暴露了一个插槽，可以用来渲染路由组件：
   <component :is="Component" ref="mainContent" />
 </router-view>
 ```
+
+## $route和$router
+
+1.$router为VueRouter实例，想要导航到不同URL，则使用$router.push 方法,上面还有各种路由守卫
+2.$route 为当前 router 跳转对象，里面可以获取 name、path、query、params 等
+
+## query 参数和 params 参数
+
+### query 参数
+
+push 方法传对象就行
+
+```js
+传参: this.$router.push({
+  path: "/xxx",
+  query: {
+    id: id,
+  },
+});
+
+接收参数: this.$route.query.id;
+```
+
+### params 参数
+
+```js
+传参: this.$router.push({
+  name: "xxx",
+  params: {
+    id: id,
+  },
+});
+
+接收参数: this.$route.params.id;
+```
+
+注意:params 传参，push 里面只能是 name:'xxxx',不能是 path:'/xxx',因为 params 只能用 name 来引入路由，如果这里写成了 path，接收参数页面会是 undefined！！！

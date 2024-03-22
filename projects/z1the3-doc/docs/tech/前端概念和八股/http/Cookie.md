@@ -40,7 +40,7 @@
 - SameSite
   限制第三方 cookie,有三个值 Strict Lax None
 
-  Strict 完全禁止第三方 cookie
+  Strict 完全禁止发送第三方 cookie
   Lax 只有顶级导航和导航到第三方的 get 请求会发送
   None Secure 为 true 才能设置，同站和跨站都可以发送
 

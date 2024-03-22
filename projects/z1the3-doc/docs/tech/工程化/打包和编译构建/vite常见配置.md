@@ -19,7 +19,7 @@ export default defineConfig({
 
 ## build
 
-### build.assetsInlineLimit
+### build.assetsInlineLimit(性能优化可用)
 
 图片转 base64 编码的阈值。为防止过多的 http 请求，Vite 会将小于此阈值的图片转为 base64 格式，可根据实际需求进行调整。
 也是为了防止转 base64 过多的性能消耗

@@ -1,4 +1,37 @@
-# ts 相关
+# esm/cjs 相关
+
+## 打包成两种格式
+
+打包成两种格式就是为了让自己的库有更好的兼容性，使用者可以根据情况来选择使用 esm 还是 cjs。那么如何配置发包配置呢？
+在 package.json 文件中，"exports"、"module" 和 "main" 字段有着不同的作用。
+
+"exports" 字段是在 Node.js 版本 12 及以上引入的，它用于指定模块的导出方式。导入模块时应该使用 cjs 还是 esm 取决于使用时的导入语法。
+"module" 字段是在 Node.js 版本 8 及以上引入的，它用于指定 ES 模块的入口文件路径。在使用支持 ES 模块的环境中，例如现代浏览器或 Node.js 版本 13 及以上，这个字段可以用来指定默认的模块入口。
+"main" 字段是 Node.js 中常用的字段，它用于指定 CommonJS 模块的入口文件路径。在使用 CommonJS 模块的环境中，例如 Node.js 版本 12 及以下，这个字段可以用来指定默认的模块入口。
+
+```json title="package.json"
+{
+    "main": "lib/cjs/index.js",
+    "module": "lib/esm/index.mjs"
+    "typings": "lib/cjs/types/index.d.ts",
+    "exports": {
+      ".": {
+        // 使用import语句，则types的入口在 /lib/esm/types/index.d.mts
+        // default 为项目入口文件
+        "import": {
+          "types": "./lib/esm/types/index.d.mts",
+          "default": "./lib/esm/index.mjs"
+        },
+        "require": {
+          "types": "./lib/cjs/types/index.d.ts",
+          "default": "./lib/cjs/index.js"
+        }
+      }
+    }
+}
+
+
+```
 
 ## Error ERR_REQUIRE_ESM: require() of ES Module
 
@@ -89,35 +122,6 @@ how to fix it ？
 上述方法是我们使用 .mts 的方式去使用 es module。如果我们使用"type": "module"，在定义文件和导入的时候使用的是 .ts/.js 后缀，那我们编译之后是不是就不需要修改了？
 
 打包出来的结果确实是不含 mjs 后缀的，但是因为 package.json 中指定了"type": "module"导致在解析的时候，默认认为 .js 后缀是使用 es module 的方式运行。你同样需要将 .js 修改成 .cjs 才能正常运行。
-
-打包成两种格式就是为了让自己的库有更好的兼容性，使用者可以根据情况来选择使用 esm 还是 cjs。那么如何配置发包配置呢？
-在 package.json 文件中，"exports"、"module" 和 "main" 字段有着不同的作用。
-
-"exports" 字段是在 Node.js 版本 12 及以上引入的，它用于指定模块的导出方式。导入模块时应该使用 cjs 还是 esm 取决于使用时的导入语法。
-"module" 字段是在 Node.js 版本 8 及以上引入的，它用于指定 ES 模块的入口文件路径。在使用支持 ES 模块的环境中，例如现代浏览器或 Node.js 版本 13 及以上，这个字段可以用来指定默认的模块入口。
-"main" 字段是 Node.js 中常用的字段，它用于指定 CommonJS 模块的入口文件路径。在使用 CommonJS 模块的环境中，例如 Node.js 版本 12 及以下，这个字段可以用来指定默认的模块入口。
-
-```json title="package.json"
-{
-    "main": "lib/cjs/index.js",
-    "module": "lib/esm/index.mjs"
-    "typings": "lib/cjs/types/index.d.ts",
-    "exports": {
-      ".": {
-        "import": {
-          "types": "./lib/esm/types/index.d.mts",
-          "default": "./lib/esm/index.mjs"
-        },
-        "require": {
-          "types": "./lib/cjs/types/index.d.ts",
-          "default": "./lib/cjs/index.js"
-        }
-      }
-    }
-}
-
-
-```
 
 作者：七钥
 链接：https://juejin.cn/post/7282758586108526592

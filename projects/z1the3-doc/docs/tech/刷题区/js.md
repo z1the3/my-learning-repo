@@ -63,28 +63,6 @@ curry.placeholder = Symbol();
 
 ## 补充
 
-#### 2. instanceof
-
-```js
-const _instanceof = (target, Fn) => {
-  // 判断是不是基础数据类型
-  if (target === null || typeof target !== "object") {
-    return false;
-  }
-  let proto = Object.getPrototypeOf(target), // 获取对象的原型
-    prototype = Fn.prototype; // 获取构造函数的 prototype 对象
-
-  // 判断构造函数的 prototype 对象是否在对象的原型链上
-  while (true) {
-    if (!proto) return false;
-    if (proto === prototype) return true;
-
-    // 重复看proto
-    proto = Object.getPrototypeOf(proto);
-  }
-};
-```
-
 #### 3.实现箭头函数
 
 babel 就是这样转译的
@@ -395,101 +373,6 @@ var res = mergeSort(arr);
 console.log(arr, res);
 ```
 
-### 3.hardman
-
-```js
-HardMan(“jack”) 输出:
-I am jack
-
-HardMan(“jack”).rest(10).learn(“computer”) 输出
-I am jack
-//等待10秒
-Start learning after 10 seconds
-Learning computer
-
-HardMan(“jack”).restFirst(5).learn(“chinese”) 输出
-//等待5秒,但是优先级比I am jack还搞·
-Start learning after 5 seconds
-I am jack
-Learning chinese
-
-
-class _HardMan {
-    constructor(name) {
-        this.tasks = []
-
-        setTimeout(async () => {
-            for (let task of this.tasks) {
-                await task()
-            }
-        })
-
-        this.tasks.push(() =>
-            new Promise(resolve => {
-                console.log(`I am ${name}`)
-                resolve()
-            })
-        )
-    }
-
-    wait(sec) {
-        return new Promise(resolve => {
-            console.log(`//等待${sec}秒..`)
-            setTimeout(() => {
-                console.log(`Start learning after ${sec} seconds`)
-                resolve()
-            }, sec * 1000);
-        })
-    }
-
-
-    rest(sec) {
-        this.tasks.push(() => this.wait(sec))
-        return this
-    }
-
-    restFirst(sec) {
-        this.tasks.unshift(() => this.wait(sec))
-        return this
-    }
-
-    learn(params) {
-        this.tasks.push(() =>
-            new Promise(resolve => {
-                console.log(`Learning ${params}`)
-                resolve()
-            })
-        )
-        return this
-    }
-}
-
-function HardMan(name) {
-    return new _HarnMan(name)
-}
-
-
-
-// 解答分析：
-// 1. 链式调用，每一个方法都返回this
-// 2. 并不直接执行代码，而是使用SetTimeout，这样就先把想要执行的任务先放进队列再执行
-// 3. wait 的使用，使用setTimeout，如果不用Promise把setTimeout包住，就无法堵塞后面代码的执行
-// 4. 除了用Promise，也可以在每个任务中指定的调用下一个任务，如：
-    next() {
-        let task = this.tasks.shift()
-        task && task()
-    }
-
-    wait(sec) {
-      setTimeout(() => {
-        //do something
-        this.next()
-      }, sec)
-    }
-
-
-```
-
 ### promise 实现每隔 1 秒输出 1，2，3
 
 ```js
@@ -662,39 +545,6 @@ const _shallowClone = (target) => {
     ret[key] = target[key];
   });
   return ret;
-};
-```
-
-### 深拷贝
-
-```js
-const _completeDeepClone = (target, map = new Map()) => {
-  // 排除null 和 基本数据类型（直接返回
-  if (target === null) return target;
-  if (typeof target !== "object") return target;
-
-  // 复制一份对象的构造函数名，如果是Function|RegExp|Date|Map|Set，则生成新的实例对象
-  const constructor = target.constructor;
-  if (/^(Function|RegExp|Date|Map|Set)$/i.test(constructor.name))
-    return new constructor(target);
-
-  // 在map中获取该对象，如果能获取到，说明该对象内部拥有外层的对象，为循环引用，返回map中该对象的值
-  //
-  if (map.get(target)) return map.get(target);
-
-  // 根据参数的数据类型（通过isArray）判断克隆出的类型，并设result
-  const cloneTarget = Array.isArray(target) ? [] : {};
-  // 如果获取不到，则先保存到map中,这里cloneTarget是引用类型，所以最后的操作能影响这里
-  map.set(target, cloneTarget);
-
-  for (prop in target) {
-    // 如果是target中非继承的属性
-    if (target.hasOwnProperty(prop)) {
-      // 将map传下去
-      cloneTarget[prop] = _completeDeepClone(target[prop], map);
-    }
-  }
-  return cloneTarget;
 };
 ```
 

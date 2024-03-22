@@ -1,11 +1,12 @@
 # Vite 相关
 
 vite 可以类比成 webpack+webpack-dev-server，特点是：
-● 快速的冷启动
-● 即时的模块热更新（HMR）
-● 按需编译
-vite 会直接启动开发服务器，而 webpack 需要构建依赖图等等，将所有代码打包到一起，再放到开发服务器上运行。
-主要区别在开发阶段，生产阶段的区别主要是 Rollup 和 Webpack 的区别
+
+- 快速的冷启动
+- 即时的模块热更新（HMR）
+- 按需编译
+  vite 会直接启动开发服务器，而 webpack 需要构建依赖图等等，将所有代码打包到一起，再放到开发服务器上运行。
+  主要区别在开发阶段，生产阶段的区别主要是 Rollup 和 Webpack 的区别
 
 ### 开发阶段
 
@@ -33,27 +34,27 @@ vite 会直接启动开发服务器，而 webpack 需要构建依赖图等等，
 
 什么是依赖预构建 （类似于打包构建，但是没有组合
 
-● 首次启动的时候 Vite 默认情况下，Vite 会抓取你的 index.html 来检测需要预构建的依赖项，将 HTML 文件作为应用入口（也可以通过 optimizeDeps.entries 属性自定义入口）
+- 首次启动的时候 Vite 默认情况下，Vite 会抓取你的 index.html 来检测需要预构建的依赖项，将 HTML 文件作为应用入口（也可以通过 optimizeDeps.entries 属性自定义入口）
 
-● 然后根据入口文件扫描出(由 scanImports 函数完成，/packages/vite/src/node/optimizer/scan.ts)项目中用到的第三方依赖
+- 然后根据入口文件扫描出(由 scanImports 函数完成，/packages/vite/src/node/optimizer/scan.ts)项目中用到的第三方依赖
 
-● 最后对这些依赖逐个进行编译，最后将编译后的文件缓存在内存中（node_modules/.vite 文件下），在启动 DevServer 时（启动时而不是打开页面时）直接请求该缓存内容。
+- 最后对这些依赖逐个进行编译，最后将编译后的文件缓存在内存中（node_modules/.vite 文件下），在启动 DevServer 时（启动时而不是打开页面时）直接请求该缓存内容。
 
 <img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/image (11).png" width="500"/>
 
-● 但是，vite 的扫描并不是百分之百准确的，比如在某些动态 import 的场景下，由于 Vite 天然按需加载的特性，经常会导致某些依赖只能在运行时被识别出来。
+- 但是，vite 的扫描并不是百分之百准确的，比如在某些动态 import 的场景下，由于 Vite 天然按需加载的特性，经常会导致某些依赖只能在运行时被识别出来。
 
 在 vite.config.js 文件中配置 optimizeDeps optimizeDeps.include:string[] 或者 optimizeDeps.exclude:string[] 选项可以选择需要或不需要进行预编译的依赖的名称
 
 Vite 则会根据该选项来确定是否对该依赖进行**预编译**。如果依赖项很大（包含很多内部模块）或者是 CommonJS，那么你应该包含它；如果依赖项很小，并且已经是有效的 ESM，则可以排除它，让浏览器直接加载它（不需要放入预构建的缓存里，浏览器启动后才去加载）。（性能优化思路）
 
-● 在启动时添加 --force options，可以用来强制重新(强制重新依赖预构建指的是忽略之前已构建的文件，直接重新编译)进行依赖预构建。
+- 在启动时添加 --force options，可以用来强制重新(强制重新依赖预构建指的是忽略之前已构建的文件，直接重新编译)进行依赖预构建。
 
 ## 依赖预构建的作用
 
-● 兼容 CommonJS 和 AMD 模块的依赖：因为 Vite 的 DevServer 是基于浏览器的 Natvie ES Module 实现的，所以对于使用的依赖如果是 CommonJS 或 AMD 的模块（必须经过构建，转换语法），则需要进行模块类型的转化（ES Module）。
+- 兼容 CommonJS 和 AMD 模块的依赖：因为 Vite 的 DevServer 是基于浏览器的 Natvie ES Module 实现的，所以对于使用的依赖如果是 CommonJS 或 AMD 的模块（必须经过构建，转换语法），则需要进行模块类型的转化（ES Module）。
 
-● 减少模块间依赖引用导致过多的请求次数（预构建的内容，不需要在浏览器页面启动后再去请求 esm 模块）：通常我们引入的一些依赖，它自己又会一些其他依赖。
+- 减少模块间依赖引用导致过多的请求次数（预构建的内容，不需要在浏览器页面启动后再去请求 esm 模块）：通常我们引入的一些依赖，它自己又会一些其他依赖。
 
 ## 官方示例
 
@@ -71,9 +72,9 @@ lodash-es 模块使用预编译相较于未使用预编译请求加载速度缩�
 
 所有的预构建产物默认缓存在 node_modules/.vite 目录中。如果以下 3 个地方都没有改动，Vite 将一直使用缓存文件:
 
-● package.json 的 dependencies 字段
-● 各种包管理器的 lockfile 文件
-● vite --force / 直接删掉 .vite 目录
+- package.json 的 dependencies 字段
+- 各种包管理器的 lockfile 文件
+- vite --force / 直接删掉 .vite 目录
 
 <img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/image (12).png" width="500"/>
 
@@ -167,6 +168,12 @@ Vite 以 原生 ESM 方式提供源码。这实际上是让浏览器接管了打
 Vite 同时利用 HTTP 头来加速整个页面的重新加载（再次让浏览器为我们做更多事情）：**源码模块**的请求会根据 304 Not Modified 进行协商缓存，
 
 而**依赖模块**请求则会通过 Cache-Control: max-age=31536000,immutable 进行强缓存，因此一旦被缓存它们将不需要再次请求。
+
+## 通过请求导入 ESM 模块
+
+尽管依赖模块可以被缓存，但是在首次构建的情况下
+
+vite 会解析每个 js 文件的 import 语句，生成标注 type:module 的浏览器 script，因此会发送大量请求，尤其是在嵌套导入的情况下，带来额外的网络往返，降低了效率
 
 ## 为什么生产环境仍需打包
 
