@@ -1,5 +1,15 @@
 # vue-lazy
 
+## intersectionObsever
+
+利用 `entry.isIntersecting` 方法
+
+```js
+new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+```
+
 ## ImageManager
 
 ```ts

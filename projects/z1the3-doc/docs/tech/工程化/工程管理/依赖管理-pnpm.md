@@ -30,6 +30,8 @@ node_modules 中只有一个叫 .pnpm 的文件夹以及一个叫做 express 的
 
 但是 express 只是一个软链。express 的**真实位置**在`node_modules/.pnpm/express@4.17.1/node_modules/express`里，我们的`.pnpm/` 以真正平铺的形式储存着所有的包，所以每个包（包括这个包的所有依赖包）都可以在这种命名模式的文件夹中被找到：`.pnpm/<name>@<version>/node_modules/<name>`
 
+\*\*这里的命名模式是依赖包+版本+该包的 peerDep+版本
+
 在这里面是真正的平铺，不会出现任何嵌套
 
 为什么要隔离出`express@4.17.1`呢
@@ -189,6 +191,14 @@ Pnpm 当前存在一定的兼容问题，在少数场景不可用。主要可能
 [https://pnpm.io/zh/blog/2020/05/27/flat-node-modules-is-not-the-only-way](https://pnpm.io/zh/blog/2020/05/27/flat-node-modules-is-not-the-only-way)
 
 ### peerDependencies
+
+如果项目依赖中有 react，就不会安装
+
+否则还是会自动安装
+
+如果版本不匹配，也不会安装
+
+只看有没有，不看版本，因此问题很多
 
 目的是**提示**宿主环境去安装满足 peerDependencies 所指定的依赖
 在依赖包时，永远都是引用宿主环境统一安装的依赖包

@@ -9,6 +9,8 @@
 "module" 字段是在 Node.js 版本 8 及以上引入的，它用于指定 ES 模块的入口文件路径。在使用支持 ES 模块的环境中，例如现代浏览器或 Node.js 版本 13 及以上，这个字段可以用来指定默认的模块入口。
 "main" 字段是 Node.js 中常用的字段，它用于指定 CommonJS 模块的入口文件路径。在使用 CommonJS 模块的环境中，例如 Node.js 版本 12 及以下，这个字段可以用来指定默认的模块入口。
 
+#### 如果包只支持 esm，那也可以用 main 来制定模块入口
+
 ```json title="package.json"
 {
     "main": "lib/cjs/index.js",

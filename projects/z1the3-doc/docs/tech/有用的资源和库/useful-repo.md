@@ -23,4 +23,16 @@ https://github.com/github/gitignore
 
 https://github.com/postcss/autoprefixer
 
-一个postcss插件，可以添加不同浏览器的供应商前缀
+一个 postcss 插件，可以添加不同浏览器的供应商前缀
+
+## braces
+
+https://github.com/micromatch/braces
+
+增强 glob 的能力和匹配性能，是 bash 相关的，但是通过 node 实现
+
+## zx
+
+https://github.com/google/zx
+
+用 node 模版字符串写 sh
