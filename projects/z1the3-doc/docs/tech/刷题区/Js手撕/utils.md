@@ -1,6 +1,6 @@
 # utils
 
-## 统计当前网页出现过多少个 html 标签
+## 统计当前网页出现过多少种 html 标签
 
 ```js
 new Set([...document.getElementsByTagName("*")].map((v) => v.tagName)).size;
@@ -71,47 +71,6 @@ function _render(vnode) {
 }
 ```
 
-## 观察者模式
-
-```js
-let watcher_ids = 0;
-let dep_ids = 0;
-// 观察者类
-class Watcher {
-  constructor() {
-    this.id = watcher_ids++;
-  }
-  // 观察到变化后的处理
-  update(ob) {
-    console.log("观察者" + this.id + `-检测到被观察者${ob.id}的${ob.state}`);
-  }
-}
-
-// 被观察者类
-class Dep {
-  constructor() {
-    this.watchers = [];
-    this.id = observed_ids++;
-    this.state = "默认状态";
-  }
-  // 添加观察者
-  addWatcher(watcher) {
-    this.watchers.push(Watcher);
-  }
-  // 删除观察者
-  removeWatcher(watcher) {
-    this.watchers = this.watchers.filter((w) => w.id != watcher.id);
-  }
-
-  // 通知自己所有的观察者，ob可以为被观察者自身
-  notify(ob) {
-    this.watchers.forEach((watcher) => {
-      watcher.update(ob);
-    });
-  }
-}
-```
-
 ## 解析 url 的 params
 
 ```js
@@ -178,9 +137,7 @@ function findMostWord(article) {
 }
 ```
 
-## 柯里化
-
-### 1.实现柯里化
+## 实现柯里化
 
 ```js
 const join = (a, b, c) => {
@@ -362,3 +319,308 @@ function rgbToHex(val) {
   }
 }
 ```
+
+## 数组转树
+
+```js
+// 例如将 input 转成output的形式
+let input = [
+  {
+    id: 1,
+    val: "学校",
+    parentId: null,
+  },
+  {
+    id: 2,
+    val: "班级1",
+    parentId: 1,
+  },
+  {
+    id: 3,
+    val: "班级2",
+    parentId: 1,
+  },
+  {
+    id: 4,
+    val: "学生1",
+    parentId: 2,
+  },
+  {
+    id: 5,
+    val: "学生2",
+    parentId: 2,
+  },
+  {
+    id: 6,
+    val: "学生3",
+    parentId: 3,
+  },
+];
+
+let output = {
+  id: 1,
+  val: "学校",
+  children: [
+    {
+      id: 2,
+      val: "班级1",
+      children: [
+        {
+          id: 4,
+          val: "学生1",
+          children: [],
+        },
+        {
+          id: 5,
+          val: "学生2",
+          children: [],
+        },
+      ],
+    },
+    {
+      id: 3,
+      val: "班级2",
+      children: [
+        {
+          id: 6,
+          val: "学生3",
+          children: [],
+        },
+      ],
+    },
+  ],
+};
+
+// 代码实现
+function arrayToTree(array) {
+  // 假设数组第一项，为根数组
+  let root = array[0];
+  array.shift();
+  let tree = {
+    id: root.id,
+    val: root.val,
+    // 由于会把根元素shift出去，所以数组长度会减少,*只会减少一次
+    children: array.length > 0 ? toTree(root.id, array) : [],
+  };
+  return tree;
+}
+
+// 传入父节点id，和没有根元素的array
+function toTree(parentId, array) {
+  let children = [];
+  let len = array.length;
+  for (let i = 0; i < len; i++) {
+    let node = array[i];
+    if (node.parentId === parentId) {
+      children.push({
+        id: node.id,
+        val: node.val,
+        // 没有child，toTree会返回children初值[],所以不用担心
+        children: toTree(node.id, array),
+      });
+    }
+  }
+  return children;
+}
+
+console.log(arrayToTree(input));
+```
+
+---
+
+## 树转数组(bfs 队列)
+
+```js
+let node = {
+  id: 0,
+  parentId: null,
+  name: "生物",
+  children: [
+    {
+      id: 1,
+      parentId: 0,
+      name: "动物",
+      children: [
+        {
+          id: 4,
+          parentId: 1,
+          name: "哺乳动物",
+          children: [
+            {
+              id: 8,
+              parentId: 4,
+              name: "大象",
+            },
+            {
+              id: 9,
+              parentId: 4,
+              name: "海豚",
+            },
+            {
+              id: 10,
+              parentId: 4,
+              name: "猩猩",
+            },
+          ],
+        },
+        {
+          id: 5,
+          parentId: 1,
+          name: "卵生动物",
+          children: [
+            {
+              id: 11,
+              parentId: 5,
+              name: "蟒蛇",
+            },
+            {
+              id: 12,
+              parentId: 5,
+              name: "麻雀",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 2,
+      parentId: 0,
+      name: "植物",
+      children: [
+        {
+          id: 6,
+          parentId: 2,
+          name: "种子植物",
+        },
+        {
+          id: 7,
+          parentId: 2,
+          name: "蕨类植物",
+        },
+      ],
+    },
+    {
+      id: 3,
+      parentId: 0,
+      name: "微生物",
+    },
+  ],
+};
+
+function transArr(node) {
+  let queue = [node];
+  let data = []; //返回的数组结构
+  while (queue.length !== 0) {
+    //当队列为空时就跳出循环
+    let item = queue.shift(); //取出队列中第一个元素
+    data.push({
+      id: item.id,
+      parentId: item.parentId,
+      name: item.name,
+    });
+    let children = item.children; // 取出该节点的孩子
+    if (children) {
+      for (let i = 0; i < children.length; i++) {
+        queue.push(children[i]); //将子节点加入到队列尾部
+      }
+    }
+  }
+  return data;
+}
+console.log(transArr(node));
+```
+
+## 实现 parseInt
+
+```js
+const _parseInt = (str, radix) => {
+ // 不为string类型先转化为string 类型
+ if (typeof str !== 'string') str = String(str)
+ // 删除⾸尾空⽩
+ str = str.trim()
+ // 正则匹配[+|-]?[0]?[Xx]?[0-9a-fA-F]+
+ const regex = /^(?<fuhao>[\+|\-]*)(?<radix>[0]?[Xx]?)(?<num>[0-9a-fA￾F]+)/
+ // ⽆法匹配返回NaN
+ if (!regex.test(str)) return NaN
+ // 匹配出符号、进制、数字三个分组
+ const groups = str.match(regex).groups
+ // radix的有效范围为 2-36
+ if (radix && (radix < 2 || radix > 36)) return NaN
+ // 如果没有指定radix, radix 会有以下默认值
+ if (!radix) {
+ if (groups.radix.toUpperCase() === '0X') radix = 16
+ else if (groups.radix === '0') radix = 8
+ else radix = 10
+ }
+ // 挨个字符串解析，如果遇到⽆法解析时则停⽌解析，返回已经解析好的整数
+ let splitArr = groups.num.split('')
+ const arr = []
+ for(let i = 0; i < splitArr.length; i++) {
+ // 根据charCode来做转⾏为实际数据, 0-9为[48-57],A-F为[65-70]
+ const charCode = splitArr[i].toUpperCase().charCodeAt()
+ let num
+ // 字符为[A-F]时, 实际数字为charCode -55
+ if(charCode >= 65) num = charCode - 55
+ // 字符为[0-9]时, 实际数字为charCode - 48
+ else num = charCode - 48
+ // 当实际数字⼤于radix时, ⽆法解析则停⽌字符串遍历
+ if (num > radix) {
+ break
+ } else {
+ arr.push(num)
+ }
+
+ const len = arr.length
+ // 当实际数字数组⻓度为0时, 返回NaN
+ if(!len) return NaN
+ let result = 0
+ // 依次解析实际数字数组, 组合成真正的数字
+ for(let i = 0; i < len; i++) {
+ const num = arr[i] * Math.pow(radix, len - i - 1)
+ result += num
+ }
+ // 算法匹配到的正负号
+ return result * (groups.fuhao === '-' ? -1 : 1)
+}
+```
+
+## Fisher–Yates 洗牌算法
+
+```js
+function FYShuffle(arr) {
+  let len = arr.length;
+
+  while (len > 1) {
+    let rand = Math.floor(Math.random() * len);
+    len--;
+    [arr[len], arr[ran]] = [arr[ran], arr[len]];
+  }
+
+  return arr;
+}
+```
+
+## 生成特定范围和长度的随机数组
+
+````js
+// 参数 数组长度、最小范围、最大范围
+function randomUniqueArr(len = 100, min = 0, max = 200) {
+  if (max - min < len) {
+    // 可生成数的范围小于数组长度
+    return null;
+  }
+  const hash = [];
+  while (hash.length < len) {
+    // 使用round可以取到min和max
+    const num = Math.round(Math.random() * max);
+    if (num < min) continue;
+    if (hash.indexOf(num) === -1) {
+      hash.push(num);
+    }
+  }
+  return hash;
+}
+
+console.log(randomUniqueArr());
+console.log(randomUniqueArr(20, 10, 31));```
+````

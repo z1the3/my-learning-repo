@@ -108,3 +108,30 @@ push 方法传对象就行
 ```
 
 注意:params 传参，push 里面只能是 name:'xxxx',不能是 path:'/xxx',因为 params 只能用 name 来引入路由，如果这里写成了 path，接收参数页面会是 undefined！！！
+
+## router-link
+
+active 状态会增加类名
+
+router-link-active
+
+配合 less 使用
+
+```js
+        .tab_item{
+            flex: 1;
+            text-align: center;
+            .tab_item_link{
+                padding-bottom: 5px;
+/*               灰字 */
+                color: $color-text-l;
+            }
+/*  ******         router-link-激活时的类名，和.tab_item并列一下 */
+            &.router-link-active{
+                .tab_item_link{
+                    color: $color-theme;
+                    border-bottom: 2px solid $color-theme;
+                }
+            }
+        }
+```

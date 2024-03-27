@@ -27,7 +27,8 @@ CSS 中可以通过 MiniCssExtractPlugin 为 CSS 文件设置 hash
 ### JS
 
 DefinePlugin 用于定义环境变量
-UglifyJsPlugin 用于压缩 JS 代码
+UglifyJsPlugin 用于压缩 JS 代码，不支持 ES6 以上
+TerserWebpackPlugin 压缩和混淆 js 代码，支持 ES6 以上
 
 ### 静态资源图片
 

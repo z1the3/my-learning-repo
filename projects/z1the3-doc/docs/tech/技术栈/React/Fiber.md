@@ -1,27 +1,6 @@
 # Fiber 架构
 
-## React 更新流程
-
-schedule（调度器） 负责
-维护时间切片
-与浏览器任务调度
-优先级调度
-
-reconciler（协调器）负责
-将 JSX 转化为 fiber
-fiber 树对比（双缓存）+ 增量 diff
-确定本次更新的 fiber
-
-renderer(渲染器）（renderDOM, renderSSR)
-用于管理一颗 react 树
-使其根据底层平台不同，用不同方式调用，实现跨端
-
-### 事件处理
-
-- 原生 dom 上提供事件处理 `@onclick="foo()"` 传入字符串并执行函数（用的很少）
-- react 上提供事件处理 `@onClick={foo}` 小驼峰
-  react 必须显式调用 event 对象上的 preventDefault 方法来阻止事件的默认行为
-  如果想不用合成事件处理，可以用 e.nativeEvent 拿到被包装前的原生事件
+用合成事件处理，可以用 e.nativeEvent 拿到被包装前的原生事件
 
 Fiber 的两个重要点
 

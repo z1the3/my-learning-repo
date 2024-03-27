@@ -1,33 +1,5 @@
 # js
 
-## ES6 新特性
-
-- let 和 const
-- 解构赋值（数组和对象
-- 扩展运算符
-- 字符串（模板字符串）
-- Symbol
-- Set Map
-- Proxy Reflect
-- Promise
-- Iterator 和 for of
-- Generator
-- async
-- Class
-- Decorator 装饰器
-- ES Module
-
-```js
- const { [listType]: { infoList } } = this.props;
- const { keyword, typeId, state, listType } = this.state;
-
-...hooks
-
-属性延申是React特有的
-var props = { foo: x, bar: y };
-var component = <Component { ...props } />;
-```
-
 ## Symbol
 
 ES6 引入了一种新的原始数据类型 Symbol，表示独一无二的值。它是 JavaScript 语言的第七种数据类型，前六种是：undefined、null、布尔值（Boolean）、字符串（String）、数值（Number）、对象（Object）。

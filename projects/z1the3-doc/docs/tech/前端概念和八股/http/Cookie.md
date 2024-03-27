@@ -3,6 +3,24 @@
 后端拿前端有两个同名的 cookie,是什么情况？
 因为父域和子域的 cookie 同时传了过来
 
+## 服务端读取 cookie
+
+服务器读取 cookie，需要安装 cookieParser 库，这样 req.cookies 能拿到
+
+```js
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const app = express();
+app.use(cookieParser());
+app.get("/", function (req, res) {
+  // set cookie的过程用中间件解决
+  res.cookie("sessionId", "12345", { httpOnly: true });
+  res.send("Hello World!");
+});
+```
+
+在上述代码中，使用 cookie-parser 中间件来解析 HTTP 请求中的 cookie 信息，
+
 ### cookie 的属性
 
 - Name

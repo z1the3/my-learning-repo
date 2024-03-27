@@ -143,6 +143,28 @@ Scope 在实际应用上，往往表示一个组织所管理的 pacakge，例如
 
 ```
 
+如果只有 umd,"main"字段可以配 umd，umd 是 cjs 的超集
+
+```
+  "main": "dist/axios.umd.js",
+```
+
+## 关于包 size 的概念
+
+### install size
+
+包安装时包括各个依赖的 size
+
+对 serverless 应用有重要用处
+
+### package size
+
+包括包中 md 和 example 文件等杂七杂八的 size
+
+### bundle size
+
+实际被引用后，打包成 bundle 后的 size
+
 ## 引用
 
 原文作者：z\_\_r

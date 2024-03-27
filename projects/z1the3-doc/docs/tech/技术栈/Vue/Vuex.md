@@ -27,6 +27,7 @@ const store = createStore({
     count: 1,
   },
   mutations: {
+    // increment就是type
     increment(state) {
       // 变更状态, 直接访问state
       state.count++;
