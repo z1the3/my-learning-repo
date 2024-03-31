@@ -1,4 +1,23 @@
-# loader
+# Webpack 的 loader
+
+## 常见 loader
+
+- vue-loader
+- ts-loader
+- tsx-loader
+- css-loader
+  - 支持模块化，css 压缩和文件导入等
+- style-loader
+  - 将 css 代码注入到 js 上
+- postcss-loader
+  - 后处理器，处理 css 在不同浏览器的兼容性
+- sass-loader less-loader
+- file-loader 把文件输出到一个文件夹中，在代码中能通过相对 URL 引用
+- url-loader(类似 file-loader,但是能在文件很小的情况下以 base64 的方式把文件内容直接注入到代码里去)
+- image-loader(加载并压缩图片文件)
+- source-map-loader(加载额外的 source-map 文件，以方便打点调试)
+- babel-loader(ES6toES5)
+- eslint-loader(通过 eslint 检查 js 代码)
 
 ## 使用 base64 的好处
 

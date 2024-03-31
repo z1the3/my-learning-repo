@@ -41,7 +41,8 @@ var component = <Component { ...props } />;
 - 箭头函数没有自己的 this
 - 箭头函数继承来的 this 指向无法改变
 - 箭头函数不能作为构造函数使用
-- 没有 arguments prototype 不能用作 generator
+- 没有 arguments prototype
+- 不能用作 generator
 
 ## Promise
 

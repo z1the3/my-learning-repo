@@ -167,16 +167,16 @@ function curry(fn) {
 }
 ```
 
-## 防抖节流
+## 防抖节流（闭包）
 
 ```js
 function debounce(fn, wait) {
   let timer = null;
 
   return function () {
+    // 注意args在这取，拿到返回function的参数
     const args = [...arguments];
 
-    // 如果此时存在定时器的话，则取消之前的定时器重新记时
     if (timer) {
       clearTimeout(timer);
       timer = null;
