@@ -1,0 +1,21 @@
+# Object.is
+
+```js
+// Object.is
+// 如果x === y相等时，返回x !== 0 || 1 / x === 1 / y
+// 否则返回x !== x && y !== y
+function is(x: any, y: any) {
+  return (
+    (x === y && (x !== 0 || 1 / x === 1 / y)) || (x !== x && y !== y) // eslint-disable-line no-self-compare
+  );
+}
+
+/*
+ * 为什么要这么比较？可以参考下面的图
+ */
+// x === y 的时候，比较了类型和值
+// 但，+0 === -0 ，结果为true，但我们希望结果应该是false
+// NaN === NaN，结果为false，但我们希望结果应该是true
+// 当 +0 === -0 进入判断体中，再比较x!==0，结果为false，+1/0 === -1/0 => Infinity === -Infinity，结果就为false
+// 当不相等的时候，进入第二个判断体，此时NaN比较则返回了true，然后x与y做&&比较，返回结果
+```

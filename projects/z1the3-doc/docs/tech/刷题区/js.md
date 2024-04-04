@@ -241,6 +241,11 @@ Function.prototype.bind = function (context, ...args) {
     return fn.apply(context, [...args, ...rest]);
   };
 };
+
+const bind =
+  (fn, ctx, ...args) =>
+  (...restArgs) =>
+    fn.call(ctx, ...args, ...restArgs);
 ```
 
 ### 实现 Promise.race

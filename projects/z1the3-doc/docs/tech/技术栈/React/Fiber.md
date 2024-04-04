@@ -85,7 +85,7 @@ WorkInProgress Tree 构造完毕，得到的就是新的 Fiber Tree，然后喜�
 
 还有一个叫 workInProgress，在状态发生更新时，基于下次屏幕渲染的状态内存构建的 Fiber 树。 这个树保存了下次更新屏幕 UI 所对应的状态。
 
-其实整个 render(协调) 阶段就是异步地创建 workInProgress 树，可以把它看做是一个草稿，等这个草稿完成了，
+其实整个 reconcile(协调) 阶段就是异步地创建 workInProgress 树，可以把它看做是一个草稿，等这个草稿完成了，
 
 就会同步地将其绘制到页面中。这时 workInProgress 树就变成了 current 树。Fiber 节点上有个属性叫 alternate，将两棵树关联起来。
 
@@ -94,6 +94,14 @@ WorkInProgress Tree 构造完毕，得到的就是新的 Fiber Tree，然后喜�
 fiberRootNode 整个应用的根节点，每调用一次 ReactDom.render 都会创建一个 rootFiber 。
 
 <img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/bfcb8edd-2eaa-4198-8883-c543ca388640.png" width="500"/>
+
+### fiber 树比较方式
+
+在 fiber node 上进行递归
+
+但是在比对时有缓存的逻辑，所以不是严格的树的每个节点对比
+
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/image (17).png" width="1500"/>
 
 ## react fiber 更新优先级
 

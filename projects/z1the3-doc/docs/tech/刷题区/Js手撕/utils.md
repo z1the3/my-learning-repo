@@ -183,6 +183,8 @@ function debounce(fn, wait) {
     }
 
     // 设置定时器，使事件间隔指定事件后执行
+
+    // 使用外界this，从而可以被call,单纯箭头函数没有this
     timer = setTimeout(() => {
       fn.apply(this, args);
     }, wait);
@@ -198,7 +200,7 @@ function throttle(fn, delay) {
 
     // 如果两次时间间隔超过了指定时间，则执行函数。
     if (nowTime - preTime >= delay) {
-      preTime = Date.now();
+      preTime = nowTime;
       // 但是这个版本有return值
       return fn.apply(this, args);
     }

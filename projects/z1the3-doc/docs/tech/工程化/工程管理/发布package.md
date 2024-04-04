@@ -49,10 +49,11 @@ npm whoami
 
 首先，你要确认当前的版本 tag 是什么，比如 alpha、beta、latest 等等。其次，你的 tag 需要和 version 的关系一一对应，比如你发布 alpha 版本的 package 时，需要在版本号中明确 alpha。以下几个比较好的例子
 
-|tag|version|
-|alpha|1.0.1-alpha.0|
-|beta|1.0.1-beta.0|
-|latest|1.0.1|
+| tag    | version       |
+| ------ | ------------- |
+| alpha  | 1.0.1-alpha.0 |
+| beta   | 1.0.1-beta.0  |
+| latest | 1.0.1         |
 
 默认的 tag 为 latest，你可以通过 --tag 来指定当前发布版本对应的 tag，需要注意的是同一个 tag 只能对应一个版本，比如发布 alpha 版本。
 
