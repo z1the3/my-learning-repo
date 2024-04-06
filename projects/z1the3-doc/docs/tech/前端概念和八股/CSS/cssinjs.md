@@ -51,3 +51,25 @@ CSS in JS 使用 JavaScript 的语法，是 JavaScript 脚本的一部分，不�
 
 https://zhuanlan.zhihu.com/p/103522819
 https://www.ruanyifeng.com/blog/2017/04/css_in_js.html
+
+## emotion css vs styled components
+
+Emotion CSS 和 Styled Components 都是在 React 应用中使用的 CSS-in-JS 库，它们提供了一种使用 JavaScript 编写 CSS 样式的方式，从而可以更好地管理和维护 CSS 代码。以下是它们之间的区别：
+
+### 语法
+
+Emotion CSS 使用类似 CSS 的语法，可以直接编写 CSS 样式（对象写法）。而 Styled Components 使用一种类似于 JavaScript 的语法，可以在 JavaScript 中直接编写 CSS 样式（模版字符串，无语法高亮）。
+
+### 组件化
+
+Styled Components 更加注重组件化，每个组件都有自己的样式，并且样式和组件之间的关系更加紧密。而 Emotion CSS 更加注重样式的复用，它可以在多个组件中重复使用同一个样式。
+
+### 性能
+
+Emotion CSS 使用 CSS-in-JS 技术，将 CSS 样式转换为 JavaScript 代码并动态注入到页面中，可以更好地控制 CSS 样式的加载和渲染顺序，从而提高性能。而 Styled Components 则使用模板字面量的方式，生成 CSS 代码并插入到文档中，这可能会影响页面的性能，不过也可以算 css in js。
+
+### 工具支持
+
+由于 Emotion CSS 使用 CSS-in-JS 技术，因此可以使用 CSS 工具来帮助开发人员调试样式。而 Styled Components 生成的 CSS 代码可能会很难调试，因为它们嵌入到 JavaScript 代码中。
+
+综上所述，Emotion CSS 和 Styled Components 都有各自的优缺点。选择哪个库主要取决于您的具体需求和偏好。如果您注重性能和工具支持，那么 Emotion CSS 可能更适合您；如果您注重组件化和可读性，那么 Styled Components 可能更适合您。

@@ -165,6 +165,18 @@ Scope 在实际应用上，往往表示一个组织所管理的 pacakge，例如
 
 实际被引用后，打包成 bundle 后的 size
 
+## package 的可靠性
+
+PQM 利他
+
+试想一下，如果在某些场景需要借助第三方 SDK 来实现，那你应该通过什么方式来快速验证某个 呢？
+
+- github star 数、npm 下载量...
+- 源代码质量、文档、单元测试...
+- Github 更新的频率、维护者的个数、issue/commit 的个数...
+  npm 搜索借助 P（popularity）、Q（quality）、M（maintainance） 三个指标分别对应以上三种情况进行了量化。往往 Q、M 的指标高时，P 不会太差。当然也有个例，比如 lodash 这种老牌库，不再需要 M 了，但他的 P、Q 仍然很高。
+  这些信息与上文中描述的 package.json 息息相关，可以说，一份规范的 package.json ，就是 npm package “SEO” 的最佳手段。
+
 ## 引用
 
 原文作者：z\_\_r

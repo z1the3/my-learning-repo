@@ -1,8 +1,21 @@
 # Webpack 分包
 
-分包在 optimization 字段中进行
+拓展
 
-## 分包的策略
+https://juejin.cn/post/7142797454490992653
+
+## 分包最大的好处就是利用浏览器缓存
+
+通过打包工具实现前端项目整体模块化的优势固然很明显，但是它同样存在一些弊端，那就是我们项目中的所有代码最终都被打包到了一起，如果我们应用非常复杂，模块非常多的话，我们的打包结果就会特别的大，进而导致我们的系统性能也会变差，首屏加载时间变长。
+
+我们可以使用 webpack-bundle-analyzer 插件来进行打包分析，根据包产物结构图进行分解：
+
+webpack 分包在 optimization 字段中配置
+
+## 分包（split chunk）的策略
+
+- 手动分包：将体积很小、改动很频繁的业务模块和体积很大、很少改动的第三方库分开打包，这样修改业务模块的代码不会导致第三方库的缓存失效。
+- 自动分包：配置好分包策略后 webpack 每次都会自动完成分包的流程，webpack4 中支持了零配置的特性，同时对块打包也做了优化，CommonsChunkPlugin 已经被移除了，现在使用 optimization.splitChunks 作为 CommonsChunkPlugin 的代替
 
 `import()`是最常见的产生 chunk 的情况
 
@@ -113,3 +126,12 @@ optimization:{
 
 分包：把 bundle 文件分成多个 chunk
 **运行时代码和第三方库作为 Chunk_Common**
+
+## 参考
+
+- https://zhuanlan.zhihu.com/p/555785707
+- https://juejin.cn/post/7195098658583838777
+- https://juejin.cn/post/6966879142218301448
+- https://zhuanlan.zhihu.com/p/349406330
+- https://juejin.cn/post/7054752322269741064
+- https://juejin.cn/post/7064853960636989454
