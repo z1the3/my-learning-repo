@@ -22,39 +22,6 @@
 
 ### 单例模式
 
-> 每个类只有一个实例
-> 创建前判断实例是否存在，存在就直接返回，不存在再创建
-
-其他例子：点击按钮显示弹窗；redux 的 store
-
-```js
-class CreateUser {
-  constructor(name) {
-    this.name = name;
-    this.getName();
-  }
-  getName() {
-    return this.name;
-  }
-}
-
-// 实现单例模式
-const ProxyMode = (function () {
-  let instance = null;
-  return function (name) {
-    if (!instance) {
-      instance = new CreateUser(name);
-    }
-    return instance;
-  };
-})();
-
-// 测试
-const a = new ProxyMode("aaa");
-const b = new ProxyMode("bbb");
-console.log(a === b); // true
-```
-
 ### 工厂模式
 
 > 根据不同的输入返回不同类的实例  

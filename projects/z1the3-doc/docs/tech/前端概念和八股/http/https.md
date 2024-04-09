@@ -42,11 +42,17 @@ tls1.3 还有个更厉害到地方在于会话恢复机制，在重连 TLvS1.3 �
 ### TLS 第三次握⼿
 
 客户端验证发来的 CA 和本地 CA 是否一致
+
 客户端验证完证书后，认为可信则继续往下⾛。接着，客户端就会⽣成⼀个新的随机数 (pre-master)，⽤服务器 的 RSA 公钥加密该随机数，通过「Change Cipher Key Exchange」消息传给服务端。
+
 服务端收到后，⽤ RSA 私钥解密，得到客户端发来的随机数 (pre-master)。
+
 ⾄此，客户端和服务端双⽅都共享了三个随机数，分别是 Client Random、Server Random、pre-master。
 于是，双⽅根据已经得到的三个随机数，⽣成会话密钥（Master Secret），它是对称密钥，⽤于对后续的 HTTP 请求/响应的数据加解密。 ⽣成完会话密钥后，然后客户端发⼀个「Change Cipher Spec」，告诉服务端开始使⽤加密⽅式发送消息。
+
 然后，客户端再发⼀个「Encrypted Handshake Message（Finishd）」消息，把之前所有发送的数据做个摘要，再⽤会话密钥（master secret）加密⼀下，让服务器做个验证，验证加密通信是否可⽤和之前握⼿信息是否有 中途篡改过
+
+只有第三个随机数是经过加密的
 
 ### TLS 第四次握⼿
 

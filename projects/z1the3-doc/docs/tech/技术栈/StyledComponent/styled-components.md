@@ -5,7 +5,9 @@ https://styled-components.com/docs/basics#motivation
 Styled-components 是 CSS in JS 最热门的一个库了，到目前为止 github 的 star 数已经超过了 35k
 通过 styled-components，可以使用 ES6 的标签模板字符串语法（Tagged Templates）为需要 styled 的 Component 定义一系列 CSS 属性
 
-当该组件的 JS 代码被解析执行的时候，styled-components 会动态生成一个 CSS 选择器，并把对应的 CSS 样式通过 style 标签的形式插入到 head 标签里面。动态生成的 CSS 选择器会有一小段哈希值来保证全局唯一性来避免样式发生冲突
+在这个过程中，styled-components 主要做了以下工作：
+（1）基于函数传入的样式规则字符串以及动态参数，生成最终样式规则以及唯一性的样式名。将样式规则插入到`<style></style>`中,把对应的 CSS 样式通过 style 标签的形式插入到 head 标签里面
+（2）将唯一类名添加到组件的 classname 属性中,动态生成的 CSS 选择器会有一小段哈希值来保证全局唯一性来避免样式发生冲突
 
 从上面的例子可以看出，styled-components 不需要你为需要设置样式的 DOM 节点设置一个样式名，使用完标签模板字符串定义后你会得到一个 styled 好的 Component，直接在 JSX 中使用这个 Component 就可以了
 可以看到截图里面框出来的样式生成了一段 hash 值，实现了局部 CSS 作用域的效果（scoping styles），各个组件的样式不会发生冲突
@@ -44,6 +46,8 @@ Styled-components 是 CSS in JS 最热门的一个库了，到目前为止 githu
 
 如 webkit 前缀
 
+- 样式复用
+
 ## 使用
 
 ```js
@@ -67,71 +71,6 @@ render(
   </Wrapper>
 );
 ```
-
-### 基于 props 调整
-
-```js
-
-const Button = styled.button<{ $primary?: boolean; }>`
-  background: ${props => props.$primary ? "#BF4F74" : "white"};
-  color: ${props => props.$primary ? "white" : "#BF4F74"};
-`
-    <Button $primary>Primary</Button>
-
-```
-
-### 继承样式
-
-`styled(Button)`
-
-继承后可以编辑
-
-```js
-const Button = styled.button`
-  color: #bf4f74;
-  font-size: 1em;
-  margin: 1em;
-  padding: 0.25em 1em;
-  border: 2px solid #bf4f74;
-  border-radius: 3px;
-`;
-
-// A new component based on Button, but with some override styles
-const TomatoButton = styled(Button)`
-  color: tomato;
-  border-color: tomato;
-`;
-```
-
-styled.xxx 一般适用于简单原生标签
-
-styled(xxx)一般适用于自定义 react 组件
-
-## 动态更改标签
-
-Button -> a 标签
-
-```js
-const Button = styled.button``
-
-<Button as=“a" href="#">
-
-```
-
-常用于导航栏按钮和链接间的条件切换
-
----
-
-组件也可以切换成自定义组件
-
-```jsx
-// xxx组件，但是拥有Button组件的样式
-<Button as={xxx}>
-```
-
-### 支持第三方组件库
-
-任何为元素传递 className prop 的组件都可以用 styled 覆盖
 
 ### 传递 prop
 

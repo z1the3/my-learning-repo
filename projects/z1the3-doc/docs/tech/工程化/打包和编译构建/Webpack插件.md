@@ -39,3 +39,30 @@ CopyWebpackPlugin 用于将静态文件直接复制到输出目录
 webpack-bundle-analyzer 用于分析并可视化打包后的模块大小和依赖关系
 FriendlyErrorsWebpackPlugin 用于友好地展示 Webpack 构建错误信息
 HotModuleReplacementPlugin 用于实现热模块替换功能
+
+### 写一个 webpack 插件,禁用某函数
+
+写一个禁用 Object.assign()的 plugin？
+
+自己写一个 plugin，首先要满足一个框架：
+
+1. 是一个类
+2. 在 apply 方法下实现功能，apply 方法接收第一个参数是 compiler 对象
+
+```js
+class ObjectAssignPlugin {
+   apply(compiler) {
+      compiler.hooks.compilation.tap('ObjectAssignPlugin', (compilation) => {
+        compilation.hooks.buildModule.tap('ObjectAssignPlugin', (module) => {
+          // console.log(module)
+          module.parser.hooks.call.for('Object.assign').tap('ObjectAssignPlugin', () => {
+            throw new Error(`Error: Object.assign is not allowed!`);
+          });
+        });
+      });
+    }
+}
+module.exports = ObjectAssignPlugin
+其中使用compilation的buildModule钩子，以此介入编译过程，在parser遇到Object.assign方法时抛出错误。
+
+```

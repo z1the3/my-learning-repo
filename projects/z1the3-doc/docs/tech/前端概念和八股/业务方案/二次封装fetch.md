@@ -1,4 +1,4 @@
-# fetch API
+# fetch（二次封装）
 
 ## 二次封装 fetch
 
