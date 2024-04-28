@@ -17,3 +17,63 @@
 
 > 引用
 > https://juejin.cn/post/6922088897979940871
+
+## 使用注释禁用 ESLint
+
+```js
+const a = 1; // eslint-disable-line
+
+// 禁用单条规则
+const res = eval("42"); // eslint-disable-line no-eval
+
+// 禁用功能块
+
+function usesEval() {
+  /* eslint-disable no-eval */
+  const res = eval("42");
+  const res2 = eval("test");
+
+  return res2 + res;
+}
+
+
+还可以通过将 /* eslint-disable */ 置于文件顶部来禁用所有 ESLint 规则。
+
+```
+
+## 全局禁用规则
+
+可以在 .eslintrc.js 文件单独配置全局禁用规则。
+
+也可以在 package.json 的 eslintConfig 字段配置禁用规则
+
+```js
+{
+  "rules": {
+    "no-eval": 0
+  }
+}
+
+
+{
+  "eslintConfig": {
+    "rules": {
+      "no-eval": 0
+    }
+  }
+}
+
+```
+
+文件层面禁用规则，使用 ignorePatterns
+
+或者使用 .eslintignore
+
+```js
+{
+  "ignorePatterns": ["temp.js", "**/vendor/*.js"],
+  "rules": {
+    // ...
+  }
+}
+```
