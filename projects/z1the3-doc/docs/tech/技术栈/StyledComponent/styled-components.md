@@ -12,6 +12,14 @@ Styled-components 是 CSS in JS 最热门的一个库了，到目前为止 githu
 从上面的例子可以看出，styled-components 不需要你为需要设置样式的 DOM 节点设置一个样式名，使用完标签模板字符串定义后你会得到一个 styled 好的 Component，直接在 JSX 中使用这个 Component 就可以了
 可以看到截图里面框出来的样式生成了一段 hash 值，实现了局部 CSS 作用域的效果（scoping styles），各个组件的样式不会发生冲突
 
+- render 方法外定义 styled-components。
+
+```js
+styled.div`是styled('div')`的语法糖。
+```
+
+- 从控制台查看，一个 styled-components 组件，都最少会有两个 class。一个 static class 没有任何样式，主要用于定位；一个 dynamic class，基于模版字符串中的 css 以及 props 动态生成。
+
 ## 使用动机
 
 **该库仅适用于 react**

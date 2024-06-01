@@ -7,6 +7,10 @@ Fiber 的两个重要点
 
 ## Fiber
 
+在 react 16 之前，Reconcilation 是同步的、递归执行的，通常也称它为 Stack Reconcilation，
+栈对于树这种数据结构的处理非常方便，也容易理解，但这种依赖于调用栈的方式不能随意中断，也很难被恢复，不利于异步处理。 这种调用栈，不是程序所能控制的， 如果你要恢复递归现场，可能需要从头开始, 恢复到之前的调用栈。
+所以 react 开发者想到了用链表模拟栈的做法，链表中断后的处理要更加容易些。
+
 ### 什么是 Fiber
 
 > 在计算机科学中，Fiber 是一种最轻量化的线程。它是一种用户态线程，让应用程序可以独立决定自己的线程要> 如何运作, 模拟线程的让出。操作系统内核不能看见它，也不会为它进行调度。 ——维基百科
@@ -22,15 +26,89 @@ Fiber 的两个重要点
 
 ### 在 React 当中
 
-在 React 中，Fiber 指的是一种协调引擎，又被称为 Concurrent (并发)模式，在版本 17.0.0 中，React 提供了三种渲染方式
+Concurrency 是 React 18 的关键词，可以理解成是一种背后的机制，保证 React 能够同时准备多套 UI。具体到表现上区别于以往的最大的特点就是渲染是可中断的。
 
-```
+这意味着当你的应用正在进行复杂更新的时候，仍然可以与页面进行交互，保证一个流畅的用户体验。
+
+既然是一种背后的机制，实际上开发者并非需要先学习并发渲染才能使用 React18，但是能够掌握并发渲染对于新特性的理解有非常大的作用。
+
+这边宏观介绍一下，核心实现是通过组件作为一个基本的工作单元将一个大的更新任务进行拆分，然后以时间切片的方式，分布在不同的时间片来执行，
+
+每个时间片执行完成后都会主动释放控制权，使得浏览器能够处理其它用户事件。
+
+而具体时间片上执行哪个任务是由任务上的相关优先级决定的，当高优先级的更新到来时，会中断旧的更新，优先执行高优先级更新，待完成后继续执行低优先级更新。
+
+react17 就已经有对 concurrent 模式的实验支持
+在 React 中，Fiber 指的是一种协调引擎，又被称为 Concurrent (并发)模式，在版本 17.0.0 中，React 提供了三种渲染方式, 在根组件可以控制
+
+```js
+
 1. legacy 模式： ReactDOM.render(<App />, rootNode)
 2. blocking 模式： ReactDOM.createBlockingRoot(rootNode).render(<App />)
 3. concurrent 模式： ReactDOM.createRoot(rootNode).render(<App />)
 ```
 
 https://www.w3.org/TR/requestidlecallback/
+
+react18 后，创建应用根节点方式改变
+
+其实是模式改变(legacy to concurrent)
+
+```js
+import { render } from "react-dom";
+const container = document.getElementById("app");
+render(<App tab="home" />, container);
+
+//卸载应用根节点
+unmountComponentAtNode(container);
+```
+
+```js
+import { createRoot } from "react-dom/client";
+const container = document.getElementById("app");
+const root = createRoot(container);
+root.render(<App tab="home" />);
+
+//卸载应用根节点
+root.unmount();
+```
+
+如果我们依赖的 React 版本在 18，我们使用 legacyMode 模式，会提示这样的 warning，但并不影响我们的运行，这只是提示我们可以使用 currentMode 的方式
+
+当然不只是渲染机制改变
+
+legacy 和 concurrency 的区别
+
+First, this fixes some of the ergonomics of the API when running updates. As shown above, in the legacy API, you need to continue to pass the container into render, even though it never changes. This also mean that we don’t need to store the root on the DOM node, though we still do that today.
+
+// SSR 相关
+Second, this change allows us to remove the hydrate method and replace with with an option on the root; and remove the render callback, which does not make sense in a world with partial hydration
+
+除了创建的方面提供了新的方法，在 render 完成后的回调函数也做了更新。
+React 18 之前的版本
+
+```js
+ReactDOM.render(container, <App tab="home" />, function() {
+  // Called after inital render or any update.
+  console.log('rendered').
+});
+```
+
+React 18 版本，删除了上面的回调函数：这个回调函数在某些情况下（ssr）并不能在期望的时间被触发。现在可以通过在根元素上绑定 requestIdleCallback, setTimeout, 或 ref 实现类似的功能。
+
+```js
+function App({ callback }) {
+  // Callback will be called when the div is first created.
+  return (
+    <div ref={callback}>
+      <h1>Hello World</h1>
+    </div>
+  );
+}
+const rootElement = document.getElementById("root");
+const root = ReactDOMClient.createRoot(rootElement);
+root.render(<App callback={() => console.log("renderered")} />);
+```
 
 #### 也是一种数据结构
 
@@ -43,7 +121,15 @@ React 没有使用 Generator 这语法层面的让出机制，而是实现了自
 
 2.优化每个任务，让任务执行的时间更短（vue）
 
-#### 原理
+### 原理
+
+#### 如何让浏览器持续保持响应
+
+> 开启了异步更新，也就是 Concurrent Mode
+> 由于 JS 是单线程的，如果 JS 在执行脚本，那么浏览器事件是无法响应的。所以，为了能够快速响应高优先级事件，不让浏览器假死，就必须在每帧的 16.6.ms 中预留一部分给浏览器。也就意味连续执行脚本时间不能超过 16.6。React Fiber 将这个时间定为 5ms（动态的）。
+> 在遍历组件构建 Fiber 过程中，每处理完一个节点，就会判断一下，是否还有剩余时间，如果没有了，则会交出控制权(setTimeout(0))。
+
+---
 
 React 的组件更新是 CPU 密集的操作，因为它要做对比新旧虚拟 DOM 树的操作（diff，React 中 Reconcilation 负责），找出需要更新的内容（patch），通过打补丁的方式更新真实 DOM 树（React 中 Renderer 负责）。当要对比的组件树非常多时，就会发生大量的新旧节点对比，CPU 花费时间庞大，当耗时大大超过 16.6ms（一秒 60 帧的基准） 时，用户会感觉到明显的卡顿。
 
@@ -100,6 +186,63 @@ generator 和 async/await 也可以做到在函数中间暂停函数执行的逻
 
 具有传染性，比如一个函数用了 async，调用它的函数就要加上 async，有语法开销，此外也会有性能上的额外开销。
 无法在 generator 和 async/await 中恢复一些中间状态。
+
+## fiber 结构
+
+```js
+export type Fiber = {
+  // Fiber 类型信息
+  type: any,
+  // ...
+  // 链表结构
+  // 指向父节点，或者render该节点的组件
+  return: Fiber | null,
+  // 指向第一个子节点
+  child: Fiber | null,
+  // 指向下一个兄弟节点
+  sibling: Fiber | null,
+};
+
+children: 指向第一个子元素
+sibling:当前元素的下一个兄弟元素
+return:上一个父元素
+
+通过return可以随时回到上面
+```
+
+有了这个数据结构调整，现在可以以迭代的方式来处理这些节点了。来看看 performUnitOfWork 的实现, 它其实就是一个深度优先的遍历
+
+```js
+/**
+ * @params fiber 当前需要处理的节点
+ * @params topWork 本次更新的根节点
+ */
+function performUnitOfWork(fiber: Fiber, topWork: Fiber) {
+  // 对该节点进行处理
+  beginWork(fiber);
+  // 如果存在子节点，那么下一个待处理的就是子节点
+  if (fiber.child) {
+    return fiber.child;
+  }
+  // 没有子节点了，上溯查找兄弟节点
+  let temp = fiber;
+  while (temp) {
+    completeWork(temp);
+    // 到顶层节点了, 退出
+    if (temp === topWork) {
+      break;
+    }
+    // 找到，下一个要处理的就是兄弟节点
+    if (temp.sibling) {
+      return temp.sibling;
+    }
+    // 没有, 继续上溯
+    temp = temp.return;
+  }
+}
+```
+
+<img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/4312ffcd-f070-4dec-9e10-80b822b5fc3.png" width="500"/>
 
 ## Fiber 双缓冲技术
 
@@ -158,7 +301,7 @@ Fiber 节点上有个 updateQueue 属性，React 每次触发更新都会生成�
 为了优先处理高优先级更新，标记了优先级还不够，还需要快。
 前面提到，为了让浏览器保持持续响应，React 每次执行构建脚本只花费 5ms，就交出执行权。当 React 再次获取到执行权后，会在通过调度器(Schedule)，获取最高优先级的 Updater 优先执行。
 
-## Fiber 与 requestIdleCallback
+## Fiber 与 requestIdleCallback( 优先级与浏览器 API 的关联)
 
 Fiber 所做的就是需要分解渲染任务，然后根据优先级使用 API 调度，异步执行指定任务：
 
@@ -192,3 +335,28 @@ function performWork(deadline) {
 ```
 
 workLoop**的工作会从更新队列(updateQueue)中弹出更新任务来执行，每执行完一个‘执行单元‘，就检查一下剩余时间是否充足，如果充足就进行执行下一个**执行单元，反之则停止执行，保存现场，等下一次有执行权时恢复
+
+fiber 也作为工作单元，它有以下属性保存更新记录。
+
+```js
+// 保存本次更新造成的状态改变相关信息
+this.pendingProps = pendingProps;
+this.memoizedProps = null;
+this.updateQueue = null;
+this.memoizedState = null;
+// 保存本次更新会造成的DOM操作
+this.effectTag = NoEffect;
+// 链表
+this.nextEffect = null;
+this.firstEffect = null;
+this.lastEffect = null;
+```
+
+React 用空间换时间，更高效的操作可以方便根据优先级进行操作。同时可以根据当前节点找到其他节点，在挂起和恢复过程中起到了关键作用。
+
+## 最后一个问题
+
+Fiber 让 React 更快了吗？
+Fiber 并没有让 React 变得更快了，反而是更慢了。之前一次更新同步执行可能需要 30ms，现在由于每 5ms 就会退出执行，进行一系列判断，增加了额外的调度时间，总的执行时间肯定大于 30ms 了。
+但是，Fiber 让 React 更丝滑了，不至于让浏览器假死，能快速响应用户交互。
+也许，用户要得并不是快...。

@@ -74,3 +74,129 @@ handleClick = () => {
   });
 };
 ```
+
+:::warning
+这个方法显著的影响性能。
+这个方法会强制显示 Suspense 上的 fallback
+:::
+
+## 批处理特点
+
+那么 18 批处理：比如，点击事件，如果一个点击事件中有两个状态需要被更新，React 会将他们处理为一次。即在一次更新中修改两个状态。
+
+并不会舍弃掉任何一个状态
+
+但是代价是无法获得中间状态
+
+批处理优点：不会触发页面多次渲染，只会触发一次
+
+在 React 17 中，**并不是每次都会被批处理合并为一次**。这里列举批处理的 3 种场景:
+第一种场景 (最常见)
+
+1. 两个无关 state 在事件监听函数的更新
+
+```js
+//React 17
+function App() {
+  console.log("rendering。。。。: ");
+  const [count, setCount] = useState(0);
+  const [flag, setFlag] = useState(false);
+
+  function handleClick() {
+    setCount((c) => c + 1);
+    setFlag((f) => !f);
+  }
+  return (
+    <div>
+      <button onClick={handleClick}>Next</button>
+      <h1 style={{ color: flag ? "blue" : "black" }}>{count}</h1>
+    </div>
+  );
+}
+```
+
+2. 两个无关 state 在 setTimeout 和 promise 的更新
+
+修改的状态行为存在于 setTimeout 或者 Promise 中
+
+```js
+function App() {
+  console.log("rendering。。。。: ");
+  const [count, setCount] = useState(0);
+  const [flag, setFlag] = useState(false);
+
+  function handleClick() {
+    setTimeout(() => {
+      setCount((c) => c + 1);
+      setFlag((f) => !f);
+    }, 300);
+  }
+  return (
+    <div>
+      <button onClick={handleClick}>Next</button>
+      <h1 style={{ color: flag ? "blue" : "black" }}>{count}</h1>
+    </div>
+  );
+}
+```
+
+可以看到存在于 setTimeout 中的两个状态的变化并没有合并为一次更新任务，而是触发了两次 render。我们再来看 promise 的情况：
+
+```js
+function App() {
+  console.log("rendering。。。。: ");
+  const [count, setCount] = useState(0);
+  const [flag, setFlag] = useState(false);
+
+  function handleClick() {
+    new Promise((resolve) => {
+      resolve();
+    }).then(() => {
+      setCount((c) => c + 1);
+      setFlag((f) => !f);
+    });
+  }
+  return (
+    <div>
+      <button onClick={handleClick}>Next</button>
+      <h1 style={{ color: flag ? "blue" : "black" }}>{count}</h1>
+    </div>
+  );
+}
+```
+
+3. 两个无关 state 在原生 js 的更新（利用 dom）
+
+```js
+function App() {
+  console.log("rendering。。。。: ");
+  const [count, setCount] = useState(0);
+  const [flag, setFlag] = useState(false);
+  function EventListen() {
+    setCount((c) => c + 1);
+    setFlag((f) => !f);
+  }
+  let handleClick = useCallback(() => {
+    document.body.addEventListener("click", EventListen);
+  });
+
+  return (
+    <div>
+      <button onClick={handleClick}>Next</button>
+      <h1 style={{ color: flag ? "blue" : "black" }}>{count}</h1>
+    </div>
+  );
+}
+```
+
+React 18 上面三种情况所有的更新都变为一次更新。
+
+Until React 18, we only batched updates during the React event handlers. Updates inside of promises, setTimeout, native event handlers, or any other event were not batched in React by default.
+
+在 React18 之前，我们只在 React 事件处理程序期间批量更新。其他的情况，例如 Promise、setTimeout、原生事件的处理程序或者其他事件的更新，不会触发 React 的批处理。
+
+## 边界情况
+
+React18 中程序运行期间更新状态始终通过批处理。但是有一种边界情况。
+在 React17 中， 类组件 有一个特殊情况：
+当我们在 setTimeout 中，我们在两个 setState 之间设置状态，状态可以被修改掉。

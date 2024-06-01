@@ -51,3 +51,38 @@ interface Point {
 
 const readonlyArray = ReadonlyArray < number >= [1, 2, 3];
 ```
+
+## 使用 Type 还是 Interface？
+
+有几种常用规则：
+
+- 在定义公共 API 时（比如编辑一个库）使用 interface，这样可以方便使用者继承接口
+
+- 在定义组件属性（Props）和状态（State）时，建议使用 type，因为 type 的约束性更强
+  interface 和 type 在 ts 中是两个不同的概念，但在 React 大部分使用的 case 中，interface 和 type 可以达到相同的功能效果
+
+type 和 interface 最大的区别是：
+
+- type 类型不能二次编辑，而 interface 可以随时扩展
+
+```js
+interface Animal {
+  name: string;
+}
+
+// 可以继续在原有属性基础上，添加新属性：color,而不用写原属性
+interface Animal {
+  color: string;
+}
+
+/********************************/
+type Animal = {
+  name: string,
+};
+
+// type类型不支持属性扩展
+// Error: Duplicate identifier 'Animal'
+type Animal = {
+  color: string,
+};
+```

@@ -1,5 +1,45 @@
 # less
 
+## 嵌套
+
+```css
+//less
+#header {
+  color: black;
+  .navigation {
+    font-size: 12px;
+  }
+  .logo {
+    width: 300px;
+  }
+  & .test {
+    width: 300px;
+  }
+}
+//css
+#header {
+  color: black;
+}
+#header .navigation {
+  font-size: 12px;
+}
+#header .logo {
+  width: 300px;
+}
+#header .test {
+  width: 300px;
+}
+```
+
+### &关键字:对父选择器的引用
+
+注：它重复**所有的祖先选择器**，而不是仅仅重复最近的父选择器。
+祖先选择器为.demo
+
+- && 表示.demo.demo
+- & & 表示.demo .demo
+- &, & 表示.demo, .demo
+
 ## 定义变量
 
 ```css
