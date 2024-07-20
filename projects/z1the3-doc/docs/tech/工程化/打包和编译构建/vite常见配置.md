@@ -1,5 +1,7 @@
 # vite 常见配置
 
+只记录有优化效果的！
+
 ## base
 
 开发或生产环境服务的公共基础路径。可以是以下几种值：
@@ -113,6 +115,21 @@ export default defineConfig({
         }),
       ],
     },
+  },
+});
+```
+
+## define
+
+定义全局常量替换方式。其中每项在开发环境下会被定义在全局，而在构建时被静态替换。
+
+对于非字符串值，Vite 将自动使用 JSON.stringify 将其转换为字符串。
+
+```js
+export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify("v1.0.0"),
+    __API_URL__: "window.__backend_api_url",
   },
 });
 ```

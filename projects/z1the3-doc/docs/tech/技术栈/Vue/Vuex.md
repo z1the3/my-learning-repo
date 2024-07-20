@@ -19,7 +19,7 @@ Mutation 的同时提供了订阅者模式供外部插件调用获取 State 数�
 
 ## mutation
 
-更改 Vuex 的 **store 中的状态的唯一方法是提交 mutation**。Vuex 中的 mutation 非常类似于事件：每个 mutation 都有一个字符串的事件类型 (type)和一个回调函数 (handler)。这个回调函数就是我们实际进行状态更改的地方，并且它会接受 state 作为第一个参数
+更改 Vuex 的 **store 中的状态的唯一方法是提交 mutation**。Vuex 中的 mutation 非常类似于事件：每个 mutation 都有一个字符串的事件类型 (type，如增加、删除或更新等)和一个回调函数 (handler)。这个回调函数就是我们实际进行状态更改的地方，并且它会接受 state 作为第一个参数
 
 ```js
 const store = createStore({
@@ -43,6 +43,8 @@ store.commit("increment");
 ```
 
 ## action
+
+Action 是用于异步操作的。它可以包含任何异步逻辑，如 API 请求、延时操作等。当异步操作完成后，Action 会提交一个 Mutation 来改变 State。这样可以确保异步操作不会直接改变 State，而是通过 Mutation 以同步的方式更新 State。
 
 ```js
 const store = createStore({
@@ -201,6 +203,8 @@ export default {
 ```
 
 ## Module
+
+Module 是用于将 Vuex Store 分割成模块化的方式。当应用变得庞大时，可以将不同的功能模块分组存储在不同的 Module 中，以便更好地管理和维护。每个 Module 都有自己的 State、Getter、Mutation 和 Action
 
 使用单一状态树，导致应用的所有状态集中到一个很大的对象。但是，当应用变得很大时，store 对象会变得臃肿不堪。
 为了解决以上问题，Vuex 允许我们将 store 分割到模块（module）。每个模块拥有自己的 state、mutation、action、getters、甚至是嵌套子模块——从上至下进行类似的分割：

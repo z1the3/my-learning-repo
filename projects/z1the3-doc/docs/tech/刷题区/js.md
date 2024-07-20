@@ -270,6 +270,8 @@ function getType(value) {
 
 ### promise 实现每隔 1 秒输出 1，2，3
 
+运用 reduce 的吃豆人思想！
+
 ```js
 let arr = [1, 2, 3];
 // 利用循环.then
@@ -279,7 +281,7 @@ arr.reduce((p, x) => {
       setTimeout(() => resolve(console.log(x)), 1000);
     });
   });
-  //初始值是Promise.resolve()
+  //* 初始值是Promise.resolve()
 }, Promise.resolve());
 ```
 
@@ -498,8 +500,6 @@ const request = async (url, fetchOption, options = defaultOptions) => {
   throw new Error("fetch failed");
 };
 ```
-
-### 手写 reduce
 
 ## react
 

@@ -19,8 +19,8 @@ webpack 分包在 optimization 字段中配置
 
 `import()`是最常见的产生 chunk 的情况
 
-1、Entry 分包（多入口应用）
-2、异步模块（动态引用 import('./xxx.js')
+1、Entry 分包（手动设置多个入口）
+2、异步模块（动态引用 `import('./xxx.js')`）
 3、Runtime 分包 （把运行时代码单独打包）
 
 ## 分包
@@ -125,7 +125,7 @@ optimization:{
    如果我们只改变其中一个页面，整个缓存都会失效
 
 分包：把 bundle 文件分成多个 chunk
-**运行时代码和第三方库作为 Chunk_Common**
+**运行时代码和第三方库作为 Chunk_Common， 不容易变动**
 
 ## 参考
 

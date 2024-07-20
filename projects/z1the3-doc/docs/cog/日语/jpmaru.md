@@ -59,3 +59,9 @@ https://www.jpmarumaru.com/tw/JPSongPlay-19890.html
 ## シネマ
 
 https://www.jpmarumaru.com/tw/JPSongPlay-18293.html
+
+## GBC
+
+### 空 の 箱
+
+https://www.jpmarumaru.com/tw/JPSongPlay-20444.html

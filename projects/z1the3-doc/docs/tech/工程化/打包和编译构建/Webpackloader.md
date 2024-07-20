@@ -54,10 +54,6 @@ url-loader 会将引入的图片编码，生成 dataURl。相当于把图片数�
 //通过url-loader快速转换base64
 //是不是非常方便，只需一行代码搞定，这是把10kb以内的图片转成成base64
 const testBase64 = require("!!url-loader?limit=10000!@/assets/images/test.png");
-
-//通过url-loader行内引用快速转换base64
-//是不是非常方便，只需一行代码搞定，这是把10kb以内的图片转成成base64
-const testBase64 = requier("!!url-loader?limit=10000!@/assets/images/test.png");
 ```
 
 > https://juejin.cn/post/7000225935215558687

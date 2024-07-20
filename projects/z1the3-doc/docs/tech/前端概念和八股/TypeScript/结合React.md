@@ -518,3 +518,274 @@ const App: React.FC = () => {
   );
 };
 ```
+
+## onSubmit(原生表单)
+
+如果不太关心事件的类型，可以直接使用 React.SyntheticEvent，
+
+如果目标表单有想要访问的自定义命名输入，可以使用类型扩展(&)
+
+```js
+import * as React from 'react'
+const App: React.FC = () => {
+  const onSubmit = (e: React.SyntheticEvent) => {
+    e.preventDefault()
+    const target = e.target as (typeof e.target &
+    // 类型扩展
+    {
+      password: { value: string }
+    })
+
+    const password = target.password.value
+    // do something...
+  }
+  return (
+  <form onSubmit={onSubmit}>
+    <div>
+    <label>
+              Password:
+    <input type="password" name="password" />
+    </label>
+    </div>
+    <div><input type="submit" value="Log in" />
+    </div>
+  </form>
+    )
+  }
+
+```
+
+## 使用查找类型访问组件属性类型
+
+通过查找类型（typeof）减少 type 的非必要导出，
+
+如果需要提供复杂的 type，**应当提取到作为公共 API 导出的文件中。**
+
+现在我们有一个 Counter 组件
+
+```js
+// counter.tsx
+import * as React from "react";
+export type Props = {
+  name: string,
+};
+
+const Counter: React.FC<Props> = (props) => {
+  return <></>;
+};
+
+export default Counter;
+```
+
+在其他引用它的组件中我们有两种方式获取到 Counter 的参数类型
+第一种是通过 typeof 操作符（推荐
+
+```js
+// Great
+import Counter from "./d-tips1";
+import * as React from "react";
+type PropsNew = React.ComponentProps<typeof Counter> & {
+  age: number,
+};
+
+const App: React.FC<PropsNew> = (props) => {
+  return <Counter {...props} />;
+};
+
+export default App;
+```
+
+第二种是通过在原组件进行导出,antd 会暴露类型
+
+```js
+import Counter, { Props } from "./d-tips1";
+type PropsNew = Props & {
+  age: number,
+};
+
+const App: React.FC<PropsNew> = (props) => {
+  return (
+    <>
+      <Counter {...props} />
+    </>
+  );
+};
+
+export default App;
+```
+
+## 事件处理
+
+我们在进行事件注册时经常会在事件处理函数中使用 event 事件对象，例如当使用鼠标事件时我们通过 clientX、clientY 去获取指针的坐标。
+
+大家可能会想到直接把 event 设置为 any 类型，但是这样就失去了我们对代码进行静态检查的意义。
+
+```js
+function handleEvent(event: any) {
+  console.log(event.clientY);
+}
+```
+
+通过 interface 对 event 对象进行类型声明编写的话又十分浪费时间，幸运的是 React 的声明文件提供了 Event 对象的类型声明
+
+Event 事件对象类型
+
+```
+- ClipboardEvent<T = Element> 剪切板事件对象
+- DragEvent<T =Element> 拖拽事件对象
+- ChangeEvent<T = Element> Change事件对象
+- KeyboardEvent<T = Element> 键盘事件对象
+- MouseEvent<T = Element> 鼠标事件对象
+- TouchEvent<T = Element> 触摸事件对象
+- WheelEvent<T = Element> 滚轮时间对象
+- AnimationEvent<T = Element> 动画事件对象
+- TransitionEvent<T = Element> 过渡事件对象
+```
+
+## 事件处理函数类型
+
+当我们定义事件处理函数时有没有更方便定义其函数类型的方式呢？答案是使用 React 声明文件所提供的 EventHandler 类型别名，通过不同事件的 EventHandler 的类型别名来定义事件处理函数的类型
+
+react 提供的
+
+```js
+type EventHandler<E extends React.SyntheticEvent<any>> = {
+  bivarianceHack(event: E): void
+}['bivarianceHack']
+
+type ReactEventHandler<T = Element> = EventHandler<React.SyntheticEvent<T>>
+
+type ClipboardEventHandler<T = Element> = EventHandler<React.ClipboardEvent<T>>
+
+type DragEventHandler<T = Element> = EventHandler<React.DragEvent<T>>
+
+type FocusEventHandler<T = Element> = EventHandler<React.FocusEvent<T>>
+
+type FormEventHandler<T = Element> = EventHandler<React.FormEvent<T>>
+......
+```
+
+bivarianceHack 为事件处理函数的类型定义，函数接收一个 event 对象，并且其类型为接收到的泛型变量 E 的类型, 返回值为 void
+
+> 关于为何是用 bivarianceHack 而不是(event: E): void，这与 strictfunctionTypes 选
+> 项下的功能兼容性有关。(event: E): void，如果该参数是派生类型，则不能将其传递给参数是>基类的函数。
+
+在不开 strictfunctionTypes 情况下，入参只支持逆变不支持协变
+
+可以用这种 hack 法解决
+
+```js
+class Animal {
+  private x: undefined
+}
+
+class Dog extends Animal {
+  private d: undefined
+}
+type EventHandler<E extends Animal>= (event: E) => void
+let z: EventHandler<Animal>= (o: Dog) => {} // fails under strictfunctionTypes
+type BivariantEventHandler<E extends Animal>= {
+bivarianceHack(event: E): void
+}['bivarianceHack']
+
+let y: BivariantEventHandler<Animal>= (o: Dog) => {}
+
+```
+
+## Promise 类型
+
+在做异步操作时我们经常使用 async 函数，函数调用时会 return 一个 Promise 对象，可以使用 then 方法添加回调函数。`Promise<T>` 是一个泛型类型，T 泛型变量用于确定 then 方法时接收的第一个回调函数的参数类型。
+
+```js
+
+type IResponse<T> = {
+  message: string
+  result: T
+  success: boolean
+}
+
+async function getResponse(): Promise<IResponse<number[]>> {
+  return {
+    message: '获取成功',
+    result: [1, 2, 3],
+    success: true,
+    }
+}
+
+getResponse().then(response => {
+  console.log(response.result)
+})
+```
+
+## 泛型参数的组件
+
+下面这个组件的 name 属性都是指定了传参格式，如果想不指定，而是想通过传入参数的类型去推导实际类型，这就要用到泛型。
+
+```js
+const TestB = ({ name, name2 }: { name: string; name2?: string }) => {
+return (
+<div className="test-b"
+      TestB--{name}
+      {name2}
+</div
+  )
+}
+```
+
+如果需要外部传入参数类型，只需
+
+```js
+
+type Props<T> = {
+  name: T
+  name2?: T
+}
+
+const TestC: <T>(props: Props<T>) => React.ReactElement = ({ name, name2 }) => {
+return (
+<div> className="test-b"
+      TestB--{name}
+      {name2}
+</div>
+  )
+}
+
+
+const TestD = () => {
+return (
+<div>
+      <TestC<string> name="123" />
+</div>
+  )
+}
+```
+
+**组件也可以传递泛型**
+
+### 什么时候使用泛型
+
+当你的函数，接口或者类：
+
+- 需要作用到很多类型的时候，举个例子
+  当我们需要一个 id 函数，函数的参数可以是任何值，返回值就是将参数原样返回，并且其只能接受一个参数，在 js 时代我们会很轻易地甩出一行
+  `const id = arg => arg`
+  由于其可以接受任意值，也就是说我们的函数的入参和返回值都应该可以是任意类型，如果不使用泛型，我们只能重复的进行定义
+
+```js
+type idBoolean = (arg: boolean) => boolean;
+type idNumber = (arg: number) => number;
+type idString = (arg: string) => string;
+```
+
+如果使用泛型，我们只需要
+
+```js
+function id<T>(arg: T): T {
+  return arg;
+}
+
+// 或
+const id1: <T>(arg: T) => T = (arg) => {
+  return arg;
+};
+```
