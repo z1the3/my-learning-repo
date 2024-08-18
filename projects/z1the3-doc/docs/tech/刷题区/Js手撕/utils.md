@@ -401,7 +401,7 @@ function arrayToTree(array) {
   let tree = {
     id: root.id,
     val: root.val,
-    // 由于会把根元素shift出去，所以数组长度会减少,*只会减少一次
+    // 由于会把根元素shift出去，所以数组长度会减少,于是看一下arr.length*只会减少一次
     children: array.length > 0 ? toTree(root.id, array) : [],
   };
   return tree;
@@ -424,8 +424,6 @@ function toTree(parentId, array) {
   }
   return children;
 }
-
-console.log(arrayToTree(input));
 ```
 
 ---

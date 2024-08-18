@@ -2,8 +2,10 @@
 
 ## 什么是 CSS Modules？
 
-顾名思义，css-modules 将 css 代码模块化，可以避免本模块样式被污染，并且可以很方便的复用 css 代码
+顾名思义，css-modules 将 css 代码模块化（命名空间），可以避免本模块样式被污染，并且可以很方便的复用 css 代码
+
 根据 CSS Modules 在 Gihub 上的项目，它被解释为：
+
 所有的类名和动画名称默认都有各自的作用域的 CSS 文件。
 
 所以 CSS Modules 既不是官方标准，也不是浏览器的特性，而是在构建步骤（例如使用 Webpack，记住 css-loader）中对 CSS 类名和选择器限定作用域的一种方式（类似于命名空间）
@@ -19,6 +21,9 @@
 ```
 
 打包工具会将 style.title 编译为带哈希的字符串
+
+dev 环境下，字符串会包含 title，而生产环境下是纯哈希字符串
+
 编译成 js 对象，因此需要引用`style.xxx`到 html 的 className 中
 
 css 最后会被替换成响应的字符串
@@ -34,8 +39,18 @@ css 最后会被替换成响应的字符串
 ```
 
 这样，就产生了独一无二的 class，解决了 CSS 模块化的问题
-使用了 CSS Modules 后，就相当于给每个 class 名外加加了一个 :local，以此来实现样式的局部化，如果你想切换到全局模式，使用对应的 :global。
-:local 与 :global 的区别是 CSS Modules 只会对 :local 块的 class 样式做 localIdentName 规则处理，:global 的样式编译后不变
+
+使用了 CSS Modules 后，就相当于给每个 class 名外加加了一个 :local，以此来实现样式的局部化，然后创建一个枚举对象，将本模块下的样式名，映射为哈希字符串
+
+### 全局模式
+
+如果你想切换到全局模式，使用对应的 :global。
+
+:local 与 :global 的区别是
+
+CSS Modules 只会对 :local 块的 class 样式做 localIdentName 规则处理，
+
+:global 的样式编译后不变，即会在全局生效，包括其他组件和该组件引用的第三方组件
 
 ```css
 .title {
@@ -49,13 +64,20 @@ css 最后会被替换成响应的字符串
 ### 优点
 
 - 能 100%解决 css 无作用域样式污染问题
+
 - 学习成本低：API 简洁到几乎零学习成本
 
 ### 缺点
 
-- 写法没有传统开发流程，如果你不想频繁的输入 styles.**，可以试一下 [react-css-modules](gajus/react-css-modules · GitHub)，它通过高阶函数的形式来避免重复输入 styles.**
-- 没有变量，通常要结合预处理器（纯 css）
+- 写法没有传统开发流程，如果你不想频繁的输入 styles.
+
+  **，可以试一下 [react-css-modules](gajus/react-css-modules · GitHub)，它通过
+  高阶函数的形式来避免重复输入 styles.**
+
+- 没有变量，通常要结合预处理器（因为是纯 css）
+
 - 代码可读性差，hash 值不方便 debug
+
   css modules 通常结合 less 等预处理器在 react 中使用，更多可参考 CSS Modules 详解及 React 中实践
   https://zhuanlan.zhihu.com/p/20495964
 

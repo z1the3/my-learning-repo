@@ -8,6 +8,16 @@ https://juejin.cn/post/7142797454490992653
 
 通过打包工具实现前端项目整体模块化的优势固然很明显，但是它同样存在一些弊端，那就是我们项目中的所有代码最终都被打包到了一起，如果我们应用非常复杂，模块非常多的话，我们的打包结果就会特别的大，进而导致我们的系统性能也会变差，首屏加载时间变长。
 
+## 其次好处
+
+将代码分离到不同的 bundle 中，之后我们可以按需加载，或者并行加载这些文件
+
+默认情况下，所有的 JavaScript 代码（业务代码、第三方依赖、暂时没有用到的模块）在首页全部都加载，就会影响首屏 的加载速度；
+
+代码分离可以分出更小的 bundle，以及控制资源加载优先级，提供代码的加载性能
+
+## 分析
+
 我们可以使用 webpack-bundle-analyzer 插件来进行打包分析，根据包产物结构图进行分解：
 
 webpack 分包在 optimization 字段中配置
@@ -17,11 +27,11 @@ webpack 分包在 optimization 字段中配置
 - 手动分包：将体积很小、改动很频繁的业务模块和体积很大、很少改动的第三方库分开打包，这样修改业务模块的代码不会导致第三方库的缓存失效。
 - 自动分包：配置好分包策略后 webpack 每次都会自动完成分包的流程，webpack4 中支持了零配置的特性，同时对块打包也做了优化，CommonsChunkPlugin 已经被移除了，现在使用 optimization.splitChunks 作为 CommonsChunkPlugin 的代替
 
-`import()`是最常见的产生 chunk 的情况
-
 1、Entry 分包（手动设置多个入口）
 2、异步模块（动态引用 `import('./xxx.js')`）
 3、Runtime 分包 （把运行时代码单独打包）
+
+以上`import()`是最常见的产生 chunk 的情况
 
 ## 分包
 
@@ -126,6 +136,57 @@ optimization:{
 
 分包：把 bundle 文件分成多个 chunk
 **运行时代码和第三方库作为 Chunk_Common， 不容易变动**
+
+## 分包实践
+
+### 多入口优化
+
+配置完多入口后
+
+最好使用 Entry Dependencies 或者 SplitChunksPlugin 进行多入口优化
+
+假如我们的 index.js 和 main.js 都依赖两个库：axios
+如果我们单纯的进行入口分离，那么打包后的两个 bunlde 都有会有一份 axios
+事实上我们可以对他们进行共享；
+
+```js
+entry:{
+  main1:{
+    import:'./src/main1.js',
+    dependOn: 'shared' //优化共享依赖
+  },
+  main2:{
+    import:'./src/main2.js',
+    dependOn: 'shared' //优化共享依赖
+  },
+  shared: ['axios']
+}
+
+```
+
+### 动态导入
+
+比如我们有一个模块 bar.js：
+
+该模块我们希望在代码运行过程中来加载它（比如判断一个条件成立时加载）；
+因为我们并不确定这个模块中的代码一定会用到，所以最好拆分成一个独立的 js 文件；
+这样可以保证不用到该内容时，浏览器不需要加载和处理该文件的 js 代码；
+这个时候我们就可以使用动态导入；
+
+在 webpack 中，通过动态导入获取到一个对象；
+真正导出的内容，在该对象的 default 属性中，所以我们需要做一个简单的解构；
+
+```js
+//直接在路由里写也行，会更方便
+btn.onclick = function () {
+  import(/* webpackChunkName: "about" */ "./router/about").then((res) => {
+    res.about();
+    res.default();
+  });
+};
+```
+
+## SplitChunks
 
 ## 参考
 

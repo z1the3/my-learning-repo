@@ -16,7 +16,8 @@
     width: 300px;
   }
 }
-//css
+
+//编译成 css 后，是后代选择器
 #header {
   color: black;
 }
@@ -26,6 +27,7 @@
 #header .logo {
   width: 300px;
 }
+// 注意这里不会嵌套和&同时出现不会造成重复
 #header .test {
   width: 300px;
 }
@@ -40,7 +42,17 @@
 - & & 表示.demo .demo
 - &, & 表示.demo, .demo
 
+使用场景主要是：`&__btn`, 满足 bem 规范，而不需要重写父选择器
+
 ## 定义变量
+
+@表示变量
+
+也可以在:root 定义变量
+
+然后其他地方直接用`var(--name)`
+
+这里能把变量限制在单个 less 文件范围内
 
 ```css
 @color: #f93d66;
@@ -54,24 +66,4 @@
     color: @color;
   }
 }
-```
-
-```yaml
-- name: 创建GitHub Release
-  id: create_release
-  uses: actions/create-release@latest
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  with:
-    tag_name: ${{ steps.version.outputs.value }}
-    release_name: ${{ steps.version.outputs.value }}
-    body: "图床更新"
-    draft: false
-    prerelease: false
-- name: 读取当前版本号
-  id: version
-  uses: ashley-taylor/read-json-property-action@v1.0
-  with:
-    path: ./package.json
-    property: version
 ```
