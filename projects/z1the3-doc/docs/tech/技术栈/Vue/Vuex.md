@@ -300,4 +300,46 @@ resetStoreVM 首先会遍历 wrappedGetters，使用 Object.defineProperty 方�
 
 相当于一道桥梁
 
-> 引用 https://juejin.cn/post/7002051814153519118#heading-0
+### commit 源码
+
+```js
+
+commit(_type, _payload, _options) {
+  // 检查传入的参数
+  const { type, payload, options } = unifyObjectStyle(
+    _type,
+    _payload,
+    _options
+  )
+
+  const mutation = { type, payload }
+  // 找到对应的 mutation 函数
+  const entry = this._mutations[type]
+  // 判断是否找到
+  if (!entry) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(`[vuex] unknown mutation type: ${type}`)
+    }
+    return
+  }
+  // _withCommit 函数将 _committing
+  // 设置为 TRUE，保证在 strict 模式下
+  // 只能 commit 改变状态
+  this._withCommit(() => {
+    entry.forEach(function commitIterator(handler) {
+      entry.push(function wrappedMutationHandler(payload) {
+        handler.call(store, local.state, payload)
+      })
+      // handle 就是 wrappedMutationHandler 函数
+      // wrappedMutationHandler 内部就是调用
+      // 对于的 mutation 函数
+      handler(payload)
+    })
+  })
+  // 执行订阅函数
+  this._subscribers.forEach(sub => sub(mutation, this.state))
+}
+
+```
+
+> https://juejin.cn/post/7002051814153519118#heading-0

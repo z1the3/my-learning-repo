@@ -45,28 +45,6 @@ import Triangles from '@site/src/components/Triangle'
 }
 ```
 
-## 2.单行，多行文本溢出
-
-单行
-
-```css
-overflow: hidden; // 溢出隐藏
-text-overflow: ellipsis; // 溢出用省略号显示
-white-space: nowrap; // 规定段落中的文本不进行换行
-```
-
-多行
-
-```css
-overflow: hidden; // 溢出隐藏
-text-overflow: ellipsis; // 溢出用省略号显示
-display: -webkit-box; // 作为弹性伸缩盒子模型显示。
--webkit-box-orient: vertical; // 设置伸缩盒子的子元素排列方式：从上到下垂直排列
--webkit-line-clamp: 3; // 显示的行数
-```
-
-注意：由于上面的三个属性都是 CSS3 的属性，没有浏览器可以兼容，所以要在前面加一个-webkit- 来兼容一部分浏览器。
-
 #
 
 ## 自适应正方形
