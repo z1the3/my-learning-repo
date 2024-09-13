@@ -54,8 +54,8 @@ while ((line = readline())) {
     num = parseInt(line);
     print(str.substring(0, num));
     i++;
-    //奇数行为字符串
   } else {
+    //奇数行为字符串
     str = line;
     i++;
   }

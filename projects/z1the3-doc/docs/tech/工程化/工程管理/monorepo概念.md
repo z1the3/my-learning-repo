@@ -30,7 +30,7 @@ element-plus, tinyVue, varlet
 
 ### 解决以下问题
 
-- 更便捷的代码复用：项目需要长期迭代和维护，不同模块能作为现成的轮子用于开发后续周边产品，不断积累工程能力
+- 更便捷的代码复用：项目需要长期迭代和维护，不同模块能作为现成的工具用于开发后续周边产品，不断积累工程能力
   有利于复用
 - 开发流程统一，几个项目共用基础设施，不用重复配置
 - 高效管理多个项目/包，有依赖的项目之间调试非常方便，上层应用能够感知其依赖的变化，可以很方便的对依赖项进行修改和调试。
@@ -61,7 +61,7 @@ Monorepo 中的子项目称为一个 workspace，多个 workspace 构成 workspa
 
 #### Pnpm monorepo
 
-在 monorepo 使用 pnpm 特别简单，直接声明一个 pnpm-workspace.yaml 即可。如果想维持原来的 lock 文件，执行 pnpm import package-lock.json/yarn.lock。
+在 monorepo 使用 pnpm 特别简单，直接声明一个 pnpm-workspace.yaml 即可。如果想维持原来的 lock 文件（yarn 迁移到 pnpm），执行 pnpm import package-lock.json/yarn.lock。
 
 ```
 // pnpm-workspace.yaml
@@ -94,4 +94,4 @@ packages:
 
 - 职责多代表代码多，然后随着历史记录的增长，仓库 clone 速度逐渐变慢，尤其是一些公司慢速网络环境下（即使加了 -depth）
 
-- 目录结构相对复杂，对有心贡献代码的社区同学不够友好
+- 目录结构相对复杂，对有心贡献代码的社区同学不够友好（本质上文档问题？）

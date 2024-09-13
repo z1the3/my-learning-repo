@@ -169,6 +169,9 @@ function curry(fn) {
 
 ## 防抖节流（闭包）
 
+防抖最终一定执行（一直取消）
+节流则一定会执行
+
 ```js
 function debounce(fn, wait) {
   let timer = null;
@@ -177,6 +180,7 @@ function debounce(fn, wait) {
     // 注意args在这取，拿到返回function的参数
     const args = [...arguments];
 
+    // 如果已经有，则清，到时间完再做
     if (timer) {
       clearTimeout(timer);
       timer = null;
@@ -213,7 +217,7 @@ function throttle(fn, wait) {
   return function () {
     // 此处的arguments为 throttle(fn(1,2,3),wait)的[1,2,3]
     let args = [...arguments];
-    // 只有在未开启定时器时才会开启，并不会覆盖
+    // 只有在未开启定时器时才会开启，并不会覆盖；开启了就会占着走完执行
     if (!timer) {
       timer = setTimeout(() => {
         fn.apply(this, args);

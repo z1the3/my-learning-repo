@@ -31,13 +31,11 @@
 
 ## 开启方式
 
-● body 标签是一个 bfc
+会创建 BFC 的容器：根元素（body）、浮动、绝对定位、inline-block、flex 和 grid 子项、overflow 不是 visible 的块盒,display:flow-root
 
-● overflow 非 visible
+BFC 不会和浮动元素重叠（即能被撑开）
 
-● position absolute 和 fixed
-
-● displayFLEX
+容器内既有行级和块级，会把行级用一个匿名容器包裹，因此行成为了块
 
 ### 清除浮动的几种办法
 

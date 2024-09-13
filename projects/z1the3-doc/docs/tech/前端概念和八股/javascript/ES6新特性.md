@@ -18,14 +18,14 @@
 - ES Module
 
 ```js
- const { [listType]: { infoList } } = this.props;
- const { keyword, typeId, state, listType } = this.state;
+const {
+  [listType]: { infoList },
+} = this.props;
+const { keyword, typeId, state, listType } = this.state;
 
-...hooks
-
-属性延申是React特有的
+属性延申是jsx特有的;
 var props = { foo: x, bar: y };
-var component = <Component { ...props } />;
+var component = <Component {...props} />;
 ```
 
 ## 分类一下

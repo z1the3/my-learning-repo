@@ -16,6 +16,18 @@ batchingStrategy 对象可以理解为“锁管理器”。
 
 出于性能原因，会将 React 事件处理程序中的多次 React 事件处理程序中的多次 setState 的状态修改合并成一次状态修改。 最终更新只产生一次组件及其子组件的重新渲染
 
+React 将一次渲染分为两个阶段：Reconciler, commit，具体来说：
+
+- Reconciler 阶段（可以打断）
+  setState 创建一个 update，将 Update 对象入队到 updateQueue 中
+  Scheduler 查看是否有更高优先级的任务，并将创建的更新加入任务队列，等待调度
+  在 requestIdleCallback 空闲时执行任务
+  从根节点开始遍历 FiberNode，并且构建 WorkInProgress Tree （用于处理 FiberNode 中间状态）
+  Reconciler（协调器） 阶段生成 EffectList（用于纪录副作用，比如 DOM 更新，生命周期方法等）
+
+- Commit 阶段（不可打断）
+  Renderer 根据 effectList 对 DOM 进行实际更新
+
 ### 不一定是累积状态
 
 对于相同属性的设置，React 只会为其保留最后一次的更新

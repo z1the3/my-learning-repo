@@ -4,7 +4,7 @@
 
 而 git hooks 本身在`.git/hooks`下
 
-但是在.git/hooks 下做 pre-commit，shell 脚本会被忽略，不受版本控制
+但是在.git/hooks 下做 pre-commit，shell 脚本会被 gitignore 忽略，不受 git 版本控制
 
 不过.git/hooks 是默认目录，可以放在更外层实现同步
 
