@@ -17,9 +17,9 @@
 - image-loader(加载并压缩图片文件)
 - source-map-loader(加载额外的 source-map 文件，以方便打点调试)
 - babel-loader(ES6toES5)
-- eslint-loader(通过 eslint 检查 js 代码)
+- eslint-loader(通过 eslint 检查 js 代码，并进行修复？)
 
-## 使用 base64 的好处
+## url-loader 使用 base64 的好处
 
 不用发送请求，可以直接嵌入到 html 中
 

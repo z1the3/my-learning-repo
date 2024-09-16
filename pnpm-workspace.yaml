@@ -1,3 +1,4 @@
 packages:
-  - 'projects/*'
-  - 'learning-demo/*'
+  - "projects/*"
+  - "learning-demo/*"
+  - "learning-template/*"

@@ -1,54 +1,54 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
-import type * as Preset from '@docusaurus/preset-classic';
+import { themes as prismThemes } from "prism-react-renderer";
+import type { Config } from "@docusaurus/types";
+import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
-  title: 'z1the3-doc',
-  tagline: '前端学习记录',
+  title: "z1the3-blog",
+  tagline: "前端学习记录",
   // favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://z1the3-doc.vercel.app',
+  url: "https://z1the3-doc.vercel.app",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: "/",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'zither', // Usually your GitHub org/user name.
-  projectName: 'my-learning-repo', // Usually your repo name.
+  organizationName: "zither", // Usually your GitHub org/user name.
+  projectName: "my-learning-repo", // Usually your repo name.
 
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "warn",
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: 'zh-Hans',
-    locales: ['en','zh-Hans'],
+    defaultLocale: "zh-Hans",
+    locales: ["en", "zh-Hans"],
   },
 
   presets: [
     [
-      'classic',
+      "classic",
       {
         docs: {
-          sidebarPath: './sidebars.ts',
+          sidebarPath: "./sidebars.ts",
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
         },
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: "./src/css/custom.css",
         },
       } satisfies Preset.Options,
     ],
@@ -58,46 +58,46 @@ const config: Config = {
     // Replace with your project's social card
     // image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'z1the3-doc',
+      title: "z1the3-blog",
       // logo: {
       //   alt: 'My Site Logo',
       //   src: 'img/logo.svg',
       // },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'techSidebar',
-          position: 'left',
-          label: '前端学习',
+          type: "docSidebar",
+          sidebarId: "techSidebar",
+          position: "left",
+          label: "前端学习",
         },
         {
-          type: 'docSidebar',
-          sidebarId: 'cogSidebar',
-          position: 'left',
-          label: '其他学习',
+          type: "docSidebar",
+          sidebarId: "cogSidebar",
+          position: "left",
+          label: "其他学习",
         },
-        {to: '/blog', label: '建设中', position: 'left'},
+        { to: "/blog", label: "建设中", position: "left" },
         {
-          href: 'https://github.com/z1the3/my-learning-repo',
-          label: 'GitHub',
-          position: 'right',
+          href: "https://github.com/z1the3/my-learning-repo",
+          label: "GitHub",
+          position: "right",
         },
       ],
     },
     footer: {
-      style: 'dark',
+      style: "dark",
       links: [
         {
-          title: 'Docs',
+          title: "Docs",
           items: [
             {
-              label: 'docs',
-              to: '/docs/intro',
+              label: "docs",
+              to: "/docs/intro",
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} z1the3-doc, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} z1the3-blog, Inc. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

@@ -51,6 +51,8 @@ HotModuleReplacementPlugin 用于实现热模块替换功能
 
 ```js
 class ObjectAssignPlugin {
+
+  // complier-> compliation -> module -> call(调用函数的钩子)
    apply(compiler) {
       compiler.hooks.compilation.tap('ObjectAssignPlugin', (compilation) => {
         compilation.hooks.buildModule.tap('ObjectAssignPlugin', (module) => {

@@ -1,5 +1,7 @@
 # vue-lazy
 
+图片懒加载自定义指令实现
+
 ## intersectionObsever
 
 利用 `entry.isIntersecting` 方法
