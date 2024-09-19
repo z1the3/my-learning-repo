@@ -49,10 +49,6 @@ Symbol.for("bar") === Symbol.for("bar"); // true，证明了上面说的
 
 使用 Reflect.ownKeys(obj)
 
-## this 绑定
-
-this 绑定的优先级：new 绑定 > 显式绑定 > 隐式绑定 > 默认绑定。
-
 ## await
 
 #### async 的传染性
