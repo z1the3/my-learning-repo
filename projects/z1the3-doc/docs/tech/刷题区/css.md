@@ -2,7 +2,15 @@
 
 ## 1.实现三角形
 
-分别通过 border 线性渐变 clip-path 实现
+有三种思路
+
+分别通过
+
+- border
+- 线性渐变
+- clip-path
+
+实现
 
 import Triangles from '@site/src/components/Triangle'
 
@@ -44,8 +52,6 @@ import Triangles from '@site/src/components/Triangle'
   clip-path: polygon(0 0, 0% 100%, 100% 50%);
 }
 ```
-
-#
 
 ## 自适应正方形
 
