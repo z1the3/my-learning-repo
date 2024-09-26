@@ -1,4 +1,4 @@
-# Vue23 对比
+# Vue3 优化
 
 <img src="https://cdn.jsdelivr.net/gh/z1the3/myCDNassets/assets/monorepo-project/projects/z1the3-doc/source/6f67a590-5088-11eb-85f6-6fac77c0c9b3.png" width="1200"/>
 
@@ -91,7 +91,7 @@ Teleport 是一种能够将我们的模板移动到 DOM 中 Vue app 之外的其
 
 对使用者，打包出来的包体积变小了
 
-## compositon Api
+## compositon API
 
 可与现有的 Options API 一起使用
 灵活的逻辑组合与复用
@@ -222,6 +222,5 @@ render(ctx, _cache){
 ### PatchFlag
 
 在 Vue2 中，每次渲染时都会对整个 VNode 进行比较和更新，即使只有部分内容发生了变化。这会导致一些不必要的性能损耗。而在 Vue3 中，引入了 PatchFlag 的概念，它会标记 VNode 中哪些部分发生了变化，从而只对变化的部分进行比较和更新。
-下面是一个 Vue2 和 Vue3 的编译结果对比示例：
 
 > 引用 https://developer.aliyun.com/article/1410650#slide-1

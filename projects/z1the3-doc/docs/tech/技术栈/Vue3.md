@@ -175,33 +175,6 @@ const AsyncComp = defineAsyncComponent({
 
 # Vue 八股
 
-## 响应式原理
-
-vue 双向数据绑定原理?
-
-vue 是通过基于发布订阅模式（观察者）的数据劫持来实现双向数据绑定的
-
-- Observer 观察者函数：监听所有数据的变化，当数据变动时获取最新的值并通知给订阅者（数据劫持）
-- Watcher 订阅者函数：当接受到观察者的通知和提供的数据后同步更新视图
-- Compile 解析器函数：解析 DOM 元素上的 v-model 指令和 `{{}}` 语法
-
-  vue.2 是基于 Object.defineProperty，vue.3 是基于 Proxy
-
-### 数据劫持＋观察者模式
-
-1.初始化响应对象--------给 data 中对象的每个 key 创建 dep(放在**ob**里)
-observe(this.$data) defineReactive(obj,key,obj[key])
-
-2.编译模板并依赖收集---------对每个组件,生成一个 watcher,如果用到了某个 key,创建 watcher 时会触发该 key 的 getter, 进而将该 watcher 加入到 key 对应对象的 dep 里
-
-Dep.target 挂载当前 watcher
-
-3.以后触发 setter 时,会触发 Dep 上的 notify 使用 watcher 的 update 进而改变视图
-执行 this.updaterFn.call()
-
-4.在 update 中, 而在绑定响应式时，会同时将 a.b.c 以字符串形式储存起来作为 expression
-该 expression 会在搜索时提供参考，于是就可以在组件的 data 中找到对应的 a.b.c（而且类似组件属性上的 value，跟视图直接绑定），这时修改其值，再触发回调重新渲染
-
 ## diff
 
 只比较两个节点的一层子节点，就是同层比较的意思

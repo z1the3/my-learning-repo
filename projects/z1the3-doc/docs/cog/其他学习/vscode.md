@@ -20,3 +20,7 @@ shift + opt + A
 ## 打开终端快捷键
 
 `ctrl + ·`
+
+## markdown all in one 插件
+
+command + K + V 打开预览

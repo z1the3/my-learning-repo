@@ -114,3 +114,9 @@ cookie 的内容就是保存的一小段文本信息，这些文本信息组成�
   优先级，当 cookie 数量过多时，优先级低的会被清除
 
 https://blog.csdn.net/qq_39834073/article/details/107808959
+
+## 域名共享
+
+二级域名及其子域名间是可以共享cookie的，如a.young.com 和 b.young.com 之间是可以共享的。
+
+服务端写入cookie到.young.com即可

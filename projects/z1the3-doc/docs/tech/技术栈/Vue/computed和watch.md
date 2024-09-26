@@ -5,29 +5,26 @@
 计算属性执行的时候会访问到, this.a 和 this.b. 这时候这两个值因为 Data 初始化的时候就被定义成响应式数据了. 它们内部会有一个 Dep 实例, Dep 实例就会把这个计算 computed watcher 放到自己的 sub 数组里. 待日后自己更新了, 就去通知数组内的 watcher 实例更新.
 
 ```js
-const computedWatcherOptions = { lazy: true }
+const computedWatcherOptions = { lazy: true };
 
 // vm: 组件实例 computed 组件内的 计算属性对象
-function initComputed (vm: Component, computed: Object) {
+function initComputed(vm: Component, computed: Object) {
   // 遍历所有的计算属性
   for (const key in computed) {
     // 用户定义的 computed
-    const userDef = computed[key]
-    const getter = typeof userDef === 'function' ? userDef : userDef.get
+    const userDef = computed[key];
+    const getter = typeof userDef === "function" ? userDef : userDef.get;
 
     watchers[key] = new Watcher( // 👈 这里
       vm,
       getter || noop,
       noop,
       computedWatcherOptions
-    )
+    );
 
-  defineComputed(vm, key, userDef) //对计算属性本身做响应式处理
+    defineComputed(vm, key, userDef); //对计算属性本身做响应式处理
+  }
 }
-
-
-
-
 ```
 
 ### dirty 的作用

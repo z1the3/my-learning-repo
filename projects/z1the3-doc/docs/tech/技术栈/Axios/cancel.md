@@ -1,8 +1,25 @@
 # Cancel
 
-取消的本质： 希望后面的请求发出去的时候，如果前面的请求还没有响应将前面的请求取消
+需求: 希望后面的请求发出去的时候，如果前面的请求还没有响应将前面的请求取消
 
-取消利用 xhr 的 abort
+原理:利用 xhr 的 abort
+
+```js
+// xhr.ts
+// 解构赋值＋默认值
+    const { data = null, method = 'get', url, headers,responseType,timeout,
+cancelToken } = config
+
+
+  // 发送前插入取消逻辑，如果promise变了，会异步触发这里
+    if(cancelToken){
+        cancelToken.promise.then(((reason: any)=>{
+            request.abort()
+            reject(reason)
+        }))
+    }
+   request.send()
+```
 
 暴露 resolve 通过执行器函数
 

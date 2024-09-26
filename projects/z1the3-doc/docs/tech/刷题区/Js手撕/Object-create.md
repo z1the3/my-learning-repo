@@ -1,4 +1,4 @@
-# Object.create
+# Object.create(利用new)
 
 自己搞个构造函数出来
 
