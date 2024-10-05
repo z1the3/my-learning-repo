@@ -88,10 +88,15 @@ cookie 的内容就是保存的一小段文本信息，这些文本信息组成�
   但是在 b.a.com/b/a 可以访问
 
 - Expires/Max-age
+
+  例如 Expires: 2024-09-29T06:18:30.000Z
+
   可以用 Expires 时间戳
+
   也可以用 Max-age 有效期，若设置为 0，则立刻失效，表示删除该 cookie
 
   max-age 属性为正数，则表示该 cookie 会在 max-age 秒之后自动失效
+
   设置为 -1 则在页面关闭时失效，默认为 -1。max-age 为负数，则表示该 cookie 仅在本浏览器窗口以及本窗口打开的子窗口内有效，关闭窗口后该 cookie 即失效。
 
 - Size
@@ -117,6 +122,6 @@ https://blog.csdn.net/qq_39834073/article/details/107808959
 
 ## 域名共享
 
-二级域名及其子域名间是可以共享cookie的，如a.young.com 和 b.young.com 之间是可以共享的。
+二级域名及其子域名间是可以共享 cookie 的，如 a.young.com 和 b.young.com 之间是可以共享的。
 
-服务端写入cookie到.young.com即可
+服务端写入 cookie 到.young.com 即可

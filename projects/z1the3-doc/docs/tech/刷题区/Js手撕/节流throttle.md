@@ -1,7 +1,8 @@
-# 节流
+# 节流 throttle
+
+切记需要回收
 
 ```js
-
 // 时间戳版
 function throttle(fn, delay) {
   var preTime = Date.now();
@@ -62,6 +63,8 @@ function throttle(fn, delay) {
     }
   };
 }
+```
+
 ```
 
 ```

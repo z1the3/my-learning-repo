@@ -1,21 +1,5 @@
 # Vue3
 
-## MVVM
-
-分为 model 模型层 view 视图层 viewModel 视图模型层
-模型层：负责处理业务逻辑，和服务端交互
-视图层：负责将数据模型转化为 UI 展示，可以理解为 html 页面
-视图模型层：视图和模型连接的桥梁，通过双向数据绑定连接
-
-View 是视图层，也就是用户界面。前端主要由 HTML 和 CSS 来构成，为了更方便地展现 ViewModel 或者 Model 层的数据。
-Model 是指数据模型，泛指后端进行的各种业务逻辑处理和数据操控，主要围绕数据库系统展开。这里的难点主要在于需要和前端约定统一的接口规则。
-ViewModel 由前端开发人员组织生成和维护的视图数据层。在这一层，前端开发者从后端获取得到 Model 数据进行转换出来，做二次封装，以生成符合 View 层使用预期的视图数据模型。视图状态和行为都封装在 ViewModel 里。这样的封装使得 ViewModel 可以完整地去描述 View 层。
-
-在 MVVM 架构中，是不允许数据和视图直接通信的，只能通过 ViewModel 来通信，而 ViewModel 就是定义了一个 Observer 观察者。ViewModel 是连接 View 和 Model 的中间件。
-
-ViewModel 能够观察到数据的变化，并对视图对应的内容进行更新。
-ViewModel 能够监听到视图的变化，并能够通知数据发生变化。
-
 ## 单文件组件
 
 被称为单文件组件 (也被称为 `\*.vue 文件`，英文 Single-File Components，缩写为 SFC)。
@@ -191,39 +175,3 @@ vue3 使用最长递增序列 + 静态标记
 
 内存占用： 被缓存的组件会一直占用内存，如果页面中包含大量需要缓存的组件，可能会导致内存占用过大。
 生命周期问题： 使用 keep-alive 后，组件的生命周期会发生变化，mounted 钩子函数只会在第一次渲染时调用，之后切换时不再调用，而 activated 和 deactivated 钩子函数会被调用。
-
-## vue2 覆盖数组方法
-
-### 1. Object.defineProperty 的缺点
-
-- 不能监听数组：因为数组没有 getter 和 setter，因为数组长度不确定，如果太长性能负担太大
-- 只能监听属性，而不是整个对象，需要遍历循环属性（暴力递归
-- 只能监听属性变化，不能监听属性的删减
-
-### 2. proxy 的好处
-
-- 可以监听数组
-- 监听整个对象不是属性
-- 13 种拦截方法，强大很多
-- 返回新对象而不是直接修改原对象，更符合 immutable；
-
-### 3. proxy 的缺点
-
-- 兼容性不好，而且无法用 polyfill 磨平
-
-Vue 无法检测 property 的添加或移除
-由于 Vue 会在初始化实例时对 property 执行 getter/setter 转化
-
-push,
-pop,
-shift,
-unshift,
-splice,
-sort,
-reverse
-
-### 对于返回新数组
-
-filter
-concat
-slice

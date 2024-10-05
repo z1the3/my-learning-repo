@@ -43,3 +43,12 @@ for...of...若想实现对象的遍历，需要手动实现迭代器 Symbol.iter
 
 6、Reflect.ownKeys(obj)
 返回一个数组,包含对象自身的所有属性,不管属性名是 Symbol 或字符串,也不管是否可枚举.
+
+## requestAnimationFrame(fn)
+
+```js
+const timer = window.requestAnimationFrame(fn);
+
+// 支持取消
+window.cancelAnimationFrame(timer);
+```

@@ -33,7 +33,7 @@ function initComputed(vm: Component, computed: Object) {
 
 如果包含复杂性的计算，则这一步有机会回避掉
 
-一开始 dirty 为 true, 一旦执行了一次计算,就会设置为 false. 然后当它定义的函数内部依赖的值比如: this.a 和 this.b 发声了变化. 这个值就会重新变为 true;
+一开始 dirty 为 true, 一旦执行了一次计算,就会设置为 false. 然后当它定义的函数内部依赖的值比如: this.a 和 this.b 发生了变化. 这个值就会重新变为 true;
 
 即
 下一次执行计算属性时,就会去重新计算,(只在调用时决定是否重新计算，是同步的；而不是在依赖发生变化后，立即变动)

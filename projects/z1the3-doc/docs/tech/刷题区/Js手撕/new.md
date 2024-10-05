@@ -18,3 +18,8 @@ const _new = function (constructor, ...args) {
   return res instanceof Object ? res : obj;
 };
 ```
+
+和object create的区别是
+
+- object create利用了new，自身创建了构造函数
+- new的输入是构造函数，object create的输入是构造函数的prototype
