@@ -135,7 +135,7 @@ function useState(initState) {
 ```js
 function mountState<S>(
   initialState: (()=>S) | S)
-): [S, Dispatch<BasicStateAction<S>>] {
+: [S, Dispatch<BasicStateAction<S>>] {
   // 获取当前新创建fiber的memorizedState上的最新hook
   const hook = mountWorkInProgressHook()
   if(typeof initialState === 'function'){
@@ -150,7 +150,7 @@ function mountState<S>(
     // 此处在useReducer中不同
     lastRenderedReducer: basicStateReducer,
     lastRenderedState: (initialState: any)
-  )
+  }
 
   // 基于dispatchAction
   const dispatch: Dispatch<BasicStateAction<S>> =
@@ -162,6 +162,7 @@ function mountState<S>(
 
   return [hook.memorizedState,dispatch]
 
+  )
 }
 
 ```

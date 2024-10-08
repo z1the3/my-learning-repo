@@ -28,14 +28,16 @@ webpack 分包在 optimization 字段中配置
 - 自动分包：配置好分包策略后 webpack 每次都会自动完成分包的流程，webpack4 中支持了零配置的特性，同时对块打包也做了优化，CommonsChunkPlugin 已经被移除了，现在使用 optimization.splitChunks 作为 CommonsChunkPlugin 的代替
 
 1、Entry 分包（手动设置多个入口）
+
 2、异步模块（动态引用 `import('./xxx.js')`）
+
 3、Runtime 分包 （把运行时代码单独打包）
 
 以上`import()`是最常见的产生 chunk 的情况
 
 ## 分包
 
-bundle 文件 = 运行时代码（很小一部分，常规 js 逻辑） + 第三方库 js + 页面
+bundle 文件 = 运行时代码（很小一部分，常规 js 逻辑） + 第三方库 js + 页面（框架？）
 
 ## chunk 和 bundle 的区别是什么
 
@@ -51,8 +53,8 @@ bundle 文件 = 运行时代码（很小一部分，常规 js 逻辑） + 第三
 
 
     entry:{
-    chunk1:a.js,
-    chunk2:b.js
+      chunk1:a.js,
+      chunk2:b.js
     }
     尽管依赖关系重合也会生成两个 chunk
    ```
@@ -109,7 +111,7 @@ optimization:{
     vendor:{
      test: /node_modules/,
      chunks: "initial",
-     neme:"vendor",
+     name:"vendor",
      enforce: true
     }
    }
@@ -187,6 +189,8 @@ btn.onclick = function () {
 ```
 
 ## SplitChunks
+
+略
 
 ## 参考
 
