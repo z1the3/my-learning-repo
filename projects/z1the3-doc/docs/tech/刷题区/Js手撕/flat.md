@@ -13,6 +13,7 @@ function flatten(arr) {
     // 当前元素是一个数组，对其进行递归展平
     if (Array.isArray(item)) {
       // 递归展平结果拼接到结果数组
+      // 利用concat或[...res, ...flatten(item)]
       res = res.concat(flatten(item));
     }
     // 否则直接加入结果数组
@@ -62,8 +63,10 @@ function flattenArray(arr) {
   while (stack.length) {
     const next = stack.pop();
     if (Array.isArray(next)) {
+      // ** push 方法支持多参数
       stack.push(...next);
     } else {
+      // 注意unshift保证顺序
       flattened.unshift(next);
     }
   }
@@ -73,5 +76,4 @@ function flattenArray(arr) {
 const nestedArray = [1, 2, [3, 4], [5, [6, 7]]];
 const flattenedArray = flattenArray(nestedArray);
 console.log(flattenedArray);
-
 ```

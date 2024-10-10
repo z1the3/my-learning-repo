@@ -1,4 +1,4 @@
-# JSON2DOM
+# 虚拟 Dom/JSON2DOM
 
 ```js
 {

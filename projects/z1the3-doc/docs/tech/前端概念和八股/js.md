@@ -1,38 +1,5 @@
 # js
 
-## await
-
-#### async 的传染性
-
-比如一个函数用了 async，调用它的函数就要加上 async，有语法开销
-
-#### 解决 aysnc/await 同一函数内无法执行并行的缺点
-
-```js
-async function selectPizza() {
-  const pizzaData = await getPizzaData(); // async call
-  const chosenPizza = choosePizza(); // sync call
-  await addPizzaToCart(chosenPizza); // async call
-}
-async function selectDrink() {
-  const drinkData = await getDrinkData(); // async call
-  const chosenDrink = chooseDrink(); // sync call
-  await addDrinkToCart(chosenDrink); // async call
-}
-(async () => {
-  const pizzaPromise = selectPizza();
-  const drinkPromise = selectDrink();
-  await pizzaPromise;
-  await drinkPromise;
-  orderItems(); // async call
-})()(
-  // Although I prefer it this way
-  async () => {
-    Promise.all([selectPizza(), selectDrink()]).then(orderItems); // async call
-  }
-)();
-```
-
 ## 装饰器
 
 ### vue2+ts

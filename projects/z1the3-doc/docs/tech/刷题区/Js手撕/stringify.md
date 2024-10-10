@@ -24,7 +24,7 @@ function jsonStringify(object) {
     );
   }
   if (typeof object === "string") {
-    // 如果是 string 类型，需要加上双引号！！
+    // 如果是 string 类型，需要加上“双引号”！！
     return `"${object}"`;
   }
   // 数字，null等

@@ -1,5 +1,7 @@
 # 实现 setTimeout
 
+> window.cancelAnimationFrame
+
 每隔一个 FRAME 轮询一次
 
 ```js

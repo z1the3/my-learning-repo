@@ -19,6 +19,8 @@ function add() {
       return prev + cur;
     });
   };
+
+  // ** 实现链式调用
   return inner;
 }
 

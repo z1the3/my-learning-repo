@@ -13,7 +13,8 @@ function throttle(fn, delay) {
     // 如果两次时间间隔超过了指定时间，则执行函数。
     if (nowTime - preTime >= delay) {
       preTime = nowTime;
-      // 但是这个版本有return值
+      // 虽然这个版本有return值
+      // 不过节流本身的意义就不会需要使用return
       return fn.apply(this, args);
     }
   };
@@ -37,7 +38,7 @@ function throttle(fn, wait) {
 }
 ```
 
-但是节流存在两种边界条件 1.如果使用定时器法，第一次执行，它**也会延迟 wait 毫秒执行**，我们希望第一次能立即执行；
+但是节流存在两种情况 1.如果使用定时器法，第一次执行，它**也会延迟 wait 毫秒执行**，我们希望第一次能立即执行；
 使用时间戳法可以实现
 
 2.如果使用时间戳法，最后一次是不执行的，因为判断之后发现没到 ddl，直接结束了

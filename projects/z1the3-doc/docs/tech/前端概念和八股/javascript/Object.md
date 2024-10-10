@@ -1,5 +1,15 @@
 # Object
 
+## Object 的原型方法
+
+1. constructor
+2. hasOwnProperty(propertyName)
+3. isPrototypeOf
+4. propertyIsEnumberalbe
+5. toLocaleString
+6. toString
+7. valueOf
+
 ## 对象浅拷贝
 
 ```js

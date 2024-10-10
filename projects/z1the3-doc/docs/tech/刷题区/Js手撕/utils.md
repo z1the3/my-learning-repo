@@ -1,11 +1,5 @@
 # utils
 
-## 统计当前网页出现过多少种 html 标签
-
-```js
-new Set([...document.getElementsByTagName("*")].map((v) => v.tagName)).size;
-```
-
 ## 解析 url 的 params
 
 ```js
@@ -294,22 +288,6 @@ const _parseInt = (str, radix) => {
  }
  // 算法匹配到的正负号
  return result * (groups.fuhao === '-' ? -1 : 1)
-}
-```
-
-## Fisher–Yates 洗牌算法
-
-```js
-function FYShuffle(arr) {
-  let len = arr.length;
-
-  while (len > 1) {
-    let rand = Math.floor(Math.random() * len);
-    len--;
-    [arr[len], arr[ran]] = [arr[ran], arr[len]];
-  }
-
-  return arr;
 }
 ```
 

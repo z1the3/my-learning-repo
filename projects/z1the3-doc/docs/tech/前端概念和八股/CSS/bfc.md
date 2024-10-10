@@ -36,7 +36,7 @@
 1. 根元素（body）
 2. 浮动
 3. 绝对定位
-4. 行块布局 inline-block
+4. 行块布局 及 inline-block
 5. flex 和 grid 子项
 6. overflow 不是 visible 的块盒
 7. display:flow-root

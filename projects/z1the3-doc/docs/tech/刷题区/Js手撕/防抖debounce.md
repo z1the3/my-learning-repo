@@ -17,6 +17,7 @@ function debounce(fn, wait) {
       timer = null;
     }
 
+    // 不管怎样都要
     // 设置定时器，使事件间隔指定事件后执行
 
     // 使用外界this，从而可以被call,单纯箭头函数没有this

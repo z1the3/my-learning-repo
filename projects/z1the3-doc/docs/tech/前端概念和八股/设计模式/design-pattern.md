@@ -24,61 +24,6 @@
 
 ### 工厂模式
 
-> 根据不同的输入返回不同类的实例  
-> 将对象的创建和实现分离
-
-工厂负责创建对象，产品封装对象的具体实现
-
-其他例子：document.createElement 创建 DOM 元素
-
-```js
-/* 产品类1 */
-class Product1 {
-  constructor() {
-    this.type = "Product1";
-  }
-  operate() {
-    console.log(this.type);
-  }
-}
-
-/* 产品类2 */
-class Product2 {
-  constructor() {
-    this.type = "Product2";
-  }
-  operate() {
-    console.log(this.type);
-  }
-}
-
-/* 工厂类 */
-class Factory {
-  static getInstance(type) {
-    switch (type) {
-      case "Product1":
-        return new Product1();
-      case "Product2":
-        return new Product2();
-      default:
-        throw new Error("当前没有这个产品");
-    }
-  }
-}
-
-const prod1 = Factory.getInstance("Product1");
-prod1.operate(); // 输出: Product1
-const prod2 = Factory.getInstance("Product3"); // 输出: Error 当前没有这个产品
-```
-
-为什么使用工厂方法呢？
-**因为 new SomeClass 来构建对象本质上属于硬编码，**写死了类型。
-为了将 object 的构建和使用分开，才引入了工厂函数作为中间抽象。
-上面的例子中，使用工厂方法之后，还可以将 CarFactory.create 的参数写在配置文件，或者通过命令行传递。这样如果需要改变车辆品牌，只需要修改配置或者参数即可，不用修改编译代码。
-仔细想一下，工厂方法其实和下面的代码没有本质区别。
-
-之前 MAX 是硬编码的某个值，比如 100； 之后引入了函数 getMax，至于 getMax 返回的值是怎么来的我们不关心，只要是 int 类型即可。 getMax 的角色和工厂方法是一样的。
-
 ## 结构型
 
 ### 代理模式
