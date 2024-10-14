@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  width: 100%
+
+}
+
+.squ1 {
+  width: 50%;
+  background: #ccc;
+  height: 50vw;
+}
+
+
+
+.squ2 {
+  width: 50%;
+  /* 该元素真实高度为0，我们看到的只是它往下偏移而露出的padding背景色 */
+  /* padding-top后的百分比以父容器**宽度**为准 */
+  padding-top: 50%;
+  height: 0;
+
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  background-color: antiquewhite;
+}
