@@ -7,6 +7,7 @@
   "scripts": {
     "test:jest-learning": "pnpm -C learning-demo/jest-learning test",
     "dev:doc": "pnpm -C projects/z1the3-doc start",
+    "serve:doc": "pnpm -C projects/z1the3-doc serve",
     "commit": "pnpm run lint && git-cz",
     "build:doc": "pnpm -C projects/z1the3-doc build",
     "lint:md": "markdownlint -c .markdownlintrc -f . -j",
