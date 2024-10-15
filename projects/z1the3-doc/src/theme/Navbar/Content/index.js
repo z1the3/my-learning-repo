@@ -11,6 +11,7 @@ import NavbarMobileSidebarToggle from '@theme/Navbar/MobileSidebar/Toggle';
 import NavbarLogo from '@theme/Navbar/Logo';
 import NavbarSearch from '@theme/Navbar/Search';
 import styles from './styles.module.css';
+import { CheckIn } from '../../../components/CheckIn';
 function useNavbarItems() {
   // TODO temporary casting until ThemeConfig type is improved
   return useThemeConfig().navbar.items;
@@ -70,7 +71,7 @@ export default function NavbarContent() {
               <SearchBar />
             </NavbarSearch>
           )}
-          <div>1111</div>
+          <CheckIn/>
         </>
       }
     />
