@@ -1,5 +1,6 @@
 import React from 'react';
-import {useThemeConfig, ErrorCauseBoundary} from '@docusaurus/theme-common';
+import clsx from "clsx";
+import { useThemeConfig, ErrorCauseBoundary } from '@docusaurus/theme-common';
 import {
   splitNavbarItems,
   useNavbarMobileSidebar,
@@ -16,7 +17,7 @@ function useNavbarItems() {
   // TODO temporary casting until ThemeConfig type is improved
   return useThemeConfig().navbar.items;
 }
-function NavbarItems({items}) {
+function NavbarItems({ items }) {
   return (
     <>
       {items.map((item, i) => (
@@ -27,7 +28,7 @@ function NavbarItems({items}) {
               `A theme navbar item failed to render.
 Please double-check the following navbar item (themeConfig.navbar.items) of your Docusaurus config:
 ${JSON.stringify(item, null, 2)}`,
-              {cause: error},
+              { cause: error },
             )
           }>
           <NavbarItem {...item} />
@@ -36,11 +37,13 @@ ${JSON.stringify(item, null, 2)}`,
     </>
   );
 }
-function NavbarContentLayout({left, right}) {
+function NavbarContentLayout({ left, right }) {
   return (
     <div className="navbar__inner">
       <div className="navbar__items">{left}</div>
-      <div className="navbar__items navbar__items--right">{right}</div>
+      {/* 替换样式 */}
+      {/* <div className="navbar__items navbar__items--right">{right}</div> */}
+      <div className={clsx("navbar__items", styles['navbar__items--right--custom'])}>{right}</div>
     </div>
   );
 }
@@ -71,7 +74,7 @@ export default function NavbarContent() {
               <SearchBar />
             </NavbarSearch>
           )}
-          <CheckIn/>
+          <CheckIn />
         </>
       }
     />

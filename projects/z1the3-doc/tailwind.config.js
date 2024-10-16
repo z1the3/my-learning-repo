@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const plugin = require('tailwindcss/plugin')
 module.exports = {
   darkMode: ["class"],
   content: [
@@ -73,5 +74,31 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"),
+    // plugin(function ({ addBase, theme }) {
+    //   addBase({
+    //     'h1': { fontSize: '3rem' },
+    //     'h2': { fontSize: '2rem' },
+    //     'h3': { fontSize: '1.5rem' },
+    //     'ul': {
+    //         display: "block",
+    //         listStyleType: "disc",
+    //         marginBlockStart: "1em",
+    //         marginBlockEnd: "1em",
+    //         marginInlineStart: "0",
+    //         marginInlineEnd: "0",
+    //         paddingInlineStart: "40px",
+    //         unicodeBidi: "isolate"
+    //     },
+    //     'li': {
+    //         display: 'list-item',
+    //         textAlign: '-webkit-match-parent',
+    //         unicodeBidi: 'isolate'
+    //     }
+    //   })
+    // })
+  ],
+  corePlugins: {
+    preflight: false,
+  }
 }

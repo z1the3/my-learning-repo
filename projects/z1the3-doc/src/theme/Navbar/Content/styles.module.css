@@ -6,3 +6,12 @@ Hide color mode toggle in small viewports
     display: none;
   }
 }
+
+/* 删除原先的navbarItemsRight样式 */
+.navbar__items--right--custom {
+    justify-content: flex-end;
+    flex: 0 0 auto;
+}
+
+.navbar__items--right--custom > :last-child{
+}

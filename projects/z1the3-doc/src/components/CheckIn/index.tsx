@@ -29,10 +29,10 @@ export const CheckIn = () => {
             className="h-12 w-12 shrink-0 rounded-full"
             variant="outline"
           >打卡</Button>
-          <DrawerClose>
+          {/* <DrawerClose>
             <Button
               variant="outline">取消</Button>
-          </DrawerClose>
+          </DrawerClose> */}
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
