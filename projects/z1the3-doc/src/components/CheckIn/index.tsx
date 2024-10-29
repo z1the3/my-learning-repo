@@ -9,25 +9,47 @@ import {
   DrawerTrigger,
 } from "../ui/drawer"
 import { Button } from "../ui/button"
+import CheckIner from "./CheckIner"
+import { useEffect, useRef, useState } from "react"
+import moment from "moment"
 
 
 export const CheckIn = () => {
 
+  const CheckInerRef = useRef(new CheckIner())
+  const [pageRecord, setPageRecord] = useState()
 
 
+  useEffect(() => {
+
+    CheckInerRef.current.getPageRecord().then(data => {
+      setPageRecord(data)
+    })
+  }, [])
+
+  const getLastCheckDays = () => {
+    const hasRecord = pageRecord?.["hasRecord"]
+    return hasRecord ? moment(pageRecord?.["lastCheckInDate"])?.fromNow() : pageRecord?.['text']
+  }
   return <>
     <Drawer>
       <DrawerTrigger>打卡</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>打卡 '标题'</DrawerTitle>
-          <DrawerDescription>你已经xxx天没有访问该页面了</DrawerDescription>
+          <DrawerTitle>{`打卡 ${CheckInerRef.current.getCurrentPathname()}`}</DrawerTitle>
+          <DrawerDescription>{!pageRecord ? '加载中' :
+            getLastCheckDays()}</DrawerDescription>
         </DrawerHeader>
         <DrawerFooter>
           <Button
             size="icon"
             className="h-12 w-12 shrink-0 rounded-full"
             variant="outline"
+            onClick={() => {
+              CheckInerRef.current.doCheckIn().then((res) => {
+                console.log(res)
+              })
+            }}
           >打卡</Button>
           {/* <DrawerClose>
             <Button

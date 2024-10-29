@@ -25,8 +25,11 @@
 - ~~配置 jest~~
 - ~~配置格式规范和语法检测~~
 - 配置 lint-staged 和 husky
-- 部署文档站
-- 实现文档打卡组件 /components/CheckIn
+- ~~部署文档站~~
+- ~~实现文档打卡组件主要能力 /components/CheckIn~~
+  - 实现打卡成功失败提示
+  - 实现备注
+  - 待补充
 - ~~增加搜索插件~~
 - ~~配置 tailwind 和 shadcnUI 环境~~
 - 增加插件支持 webpack 别名
