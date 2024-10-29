@@ -15,8 +15,13 @@ import moment from "moment"
 // 组件部署会在服务端加载，访问不到window.location 报错
 // 需要设置到客户端渲染
 import BrowserOnly from '@docusaurus/BrowserOnly';
+import useIsBrowser from "@docusaurus/useIsBrowser"
 
 export const CheckIn = () => {
+  const isBrowser = useIsBrowser();
+  if (!isBrowser) {
+    return null;
+  }
 
   const CheckInerRef = useRef(new CheckIner())
   const [pageRecord, setPageRecord] = useState()
