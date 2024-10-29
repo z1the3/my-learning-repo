@@ -93,7 +93,7 @@ cookie 的内容就是保存的一小段文本信息，这些文本信息组成�
 
   可以用 Expires 时间戳
 
-  也可以用 Max-age 有效期，若设置为 0，则立刻失效，表示删除该 cookie
+  若设置为 0，则立刻失效，表示删除该 cookie
 
   max-age 属性为正数，则表示该 cookie 会在 max-age 秒之后自动失效
 

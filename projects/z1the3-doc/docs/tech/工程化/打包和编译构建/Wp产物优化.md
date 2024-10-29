@@ -13,3 +13,5 @@ Tree-shaking 是一种在构建过程中清除无用代码的技术。使用 Tre
 code-splitting 是 Webpack 中最引人注目的特性之一。此特性能够把代码分离到不同的 bundle 中，然后可以按需加载或并行加载这些文件。code-splitting 可以用于获取更小的 bundle，以及控制资源加载优先级，如果使用合理，会极大影响加载时间。
 
 > https://juejin.cn/post/6844903639635623949
+
+### 生产模式进行公共依赖包抽离

@@ -7,3 +7,9 @@
 ## font-style
 
 斜体..
+
+## web fonts
+
+### 将字体部署在 CDN 上
+
+### 将字体以 Base64 形式保存在 CSS 中并通过 localstorage 进行缓存
