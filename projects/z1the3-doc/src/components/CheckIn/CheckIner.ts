@@ -17,7 +17,7 @@ class CheckIner {
   }
   public getCurrentPathname = () => {
     const pattern = /^(?:[^\/]*\/){3}(.+)/;
-    const match = location.pathname.match(pattern);
+    const match = window.location.pathname.match(pattern);
     return decodeURIComponent(match[1]);
   };
 
@@ -29,7 +29,7 @@ class CheckIner {
         return allPageRecord[key];
       } else {
         return {
-          key: location.pathname,
+          key: this.getCurrentPathname(),
           hasRecord: false,
           text: "未检测到打卡记录",
         };
