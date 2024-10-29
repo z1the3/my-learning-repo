@@ -18,7 +18,7 @@ class CheckIner {
   public getCurrentPathname = () => {
     const pattern = /^(?:[^\/]*\/){3}(.+)/;
     const match = window.location.pathname.match(pattern);
-    return decodeURIComponent(match[1]);
+    return match?.[1] ? decodeURIComponent(match[1]) : "";
   };
 
   // 获取当前页面打卡情况：异步操作
