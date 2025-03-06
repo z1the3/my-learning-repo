@@ -1,4 +1,11 @@
-# 包管理工具
+# npm
+
+## npm i -g
+
+安装到全局，如 webpack
+但是推荐安装到本项目，作为项目依赖，防止不同项目因依赖不同版本的 webpack 导致冲突
+
+安装到本项目后，可执行文件被放在 node_modules/.bin/webpack 中
 
 ## 如何确定包管理工具的种类和版本
 
@@ -33,3 +40,16 @@ Before: 一般情况下，如果我们想使用 es-lint, 会先通过 npm instal
 After: npx es-lint your_file.js
 原理：npx 在运行时会自动去 ./node_moudles/.bin 和 环境变量中 寻找命令
 **不会安装**
+
+## npm i -D
+
+npm i -D 是 npm install --save-dev 的简写
+
+--save 表示保存到 package.json 中
+-dev 表示安装到 devDependencies 中
+
+```
+package  最新的稳定版
+package@<version> 安装指定版本
+package@beta 安装最新的体验版本
+```

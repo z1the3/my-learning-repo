@@ -11,3 +11,9 @@ pnpm 项目 npx 改用 pnpm dlx
 ```
 pnpm --recursive run your-build-script-command
 ```
+
+## 安装 devDependencies 依赖
+
+```
+pnpm install xxx -D
+```

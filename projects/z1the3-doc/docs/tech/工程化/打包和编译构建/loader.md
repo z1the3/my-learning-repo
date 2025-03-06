@@ -58,3 +58,52 @@ const testBase64 = require("!!url-loader?limit=10000!@/assets/images/test.png");
 ```
 
 > https://juejin.cn/post/7000225935215558687
+
+## style-loader css-loader
+
+使用后会在 bundle.js 中注入其他 css 文件中那些的 css，而不会额外生成 css 文件
+
+css-loader: 处理原 css 文件
+style-loader: 将 css 的内容用 js 里的字符串存储起来，在网页执行 js 时通过 DOM 操作
+动态地向 HTML head 标签里插入 HTML style 标签
+
+缺点：导致 JS 文件变大，无法利用 css 缓存，加载网页时间变长
+
+解决方法：利用 plugin 机制单独输出 css 文件
+
+## loader 传参
+
+- loader 的执行顺序是从后往前
+
+- 每个 loader 都可以通过 URL querystring 的方式传入参数
+  例如 css-loader?minimize 中的 minimize 告诉 css-loader 要开启 css 压缩
+
+- 也可以通过对象形式配置
+
+  ```js
+  use: [
+    "style-loader",
+    {
+      loader: "css-loader",
+      options: {
+        minimize: true,
+      },
+    },
+  ];
+  ```
+
+- 也可以专门创建文件，在源码中指定用什么 loader 去处理文件（但是不便于统一管理）
+  `require('style-loader!css-loader?minimize!./main.css')`
+
+- 每个 官方 loader 的具体用法可以查阅 webpack 官方（https://github.com/webpack-contrib/css-loader）
+
+## test exclude include
+
+除了支持正则和字符串，还支持数组类型
+这样不必使用正则表达“或”关系了
+
+```js
+test: [/\.jsx?$/, /\.tsx?$/],
+include: [path.resolve(__dirname,'src'),path.resolve(__dirname,'tests')]
+
+```

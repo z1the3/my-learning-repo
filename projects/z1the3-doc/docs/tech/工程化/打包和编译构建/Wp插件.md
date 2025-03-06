@@ -3,6 +3,20 @@
 啥是 plugin?
 将自己的逻辑融入到 Webpack 的构建流程中，实现一系列功能（打包优化，资源管理，注入环境变量）
 
+plugin 广泛地来说不针对特定的模块，具体的 plugin 可能专门为某类模块的负责
+webpack 通过 plugins 属性来配置使用的插件列表
+plugins 属性是一个数组，里面每一项都是插件的一个实例
+
+```js
+// 需要实例化
+plugins: [
+  new ExtractTextPlugin.extract({
+    // 配置输出单独css文件的名称
+    filename: `[name]_[contenthash:8].css`,
+  }),
+];
+```
+
 ## 常用
 
 ### 全局

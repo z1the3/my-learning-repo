@@ -61,3 +61,15 @@ https://cloud.tencent.com/developer/article/2084919
 ### 超级右键
 
 Appstore 中安装
+
+## 解压.tar.gz
+
+```
+命令 tar -zxvf 文件名.tar.gz 用于在 Linux 或类 Unix 系统上解压缩 .tar.gz 文件。以下是参数的作用：
+
+-z：表示使用 gzip 解压。
+-x：表示解压文件。
+-v：表示在解压的过程中显示详细信息。
+-f：指定要解压的文件名。
+总体而言，这个命令会解压指定的 .tar.gz 文件，并在终端中显示解压过程的详细信息。
+```

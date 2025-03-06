@@ -1,6 +1,25 @@
 # fs 模块
 
-## 监听文件变动
+先引用模块
+
+```js
+const fs = require("fs");
+```
+
+## fs.readFile(path,格式,callback)
+
+```js
+const demoFilePath = "./demo.txt"; // 读取demo文件
+fs.readFile(demoFilePath, "utf8", (err, data) => {
+  // 参数error
+  if (err) {
+    console.error("读取demo文件时出错:", err);
+    return;
+  }
+});
+```
+
+## fs.watch 监听文件变动
 
 `fs.watch(filename[, options][, listener])`
 

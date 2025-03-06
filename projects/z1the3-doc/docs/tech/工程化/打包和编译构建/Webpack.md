@@ -1,5 +1,9 @@
 # Webpack
 
+是一个构建过程运行在 node.js 环境下的工具
+
+所以 config.js 需要使用 commonJS 语法**导出**一个描述配置的对象
+
 ## 配置
 
 ```json
@@ -143,6 +147,15 @@
 
 ### devServer
 
+- 提供 http 服务预览网页，而不是本地文件预览
+- 监听文件的变化并自动刷新网页，做到实时预览
+- 支持 source map，方便调试
+
+devserver 会启动一个 HTTP 服务器
+通过 websocket 协议实现随代码变更自动刷新网页
+
+> 尝试修改 index.html 并不会触发热更新，因为监听对象是 entry 本身和依赖的文件，即 bundle 变化
+
 ```json
     devServer: {
       contentBase: resolve(__dirname, 'build'), // 运行项目的目录
@@ -152,6 +165,10 @@
       hot: true // 开启热模替换功能 HMR
     }
 ```
+
+### sourcemap
+
+开启后，在开发者工具中 sources 栏下可以看到**可调试**的源码
 
 ## 优化
 

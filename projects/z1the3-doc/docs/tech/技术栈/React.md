@@ -1,14 +1,5 @@
 # React
 
-## 缓存优化 memo
-
-pureComponent shouldComponentUpdate React.memo
-
-前两个供类组件使用，React.memo 供函数式组件使用，是一个高阶组件，通过包裹函数返回一个新组件
-浅比较 props 不改变则不重新渲染
-
-pureComponent 即将 shouldComponentUpdate 设定为浅比较 props 的父组件
-
 ## React 18 新特性
 
 ### Concurrent Rendering 并发渲染
